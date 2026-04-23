@@ -8,1697 +8,621 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg:        #080b10;
-      --bg2:       #0d1117;
-      --bg3:       #111820;
-      --line:      #1e2d3d;
-      --steel:     #8fb4cc;
-      --accent:    #00d4ff;
-      --accent2:   #ff6b35;
-      --text:      #c9d8e8;
-      --text-dim:  #5a7a94;
-      --white:     #eef4f9;
-      --grid-col:  rgba(0,212,255,0.04);
+      --bg:#080b10; --bg2:#0d1117; --bg3:#111820; --line:#1e2d3d;
+      --steel:#8fb4cc; --accent:#00d4ff; --accent2:#ff6b35;
+      --text:#c9d8e8; --text-dim:#5a7a94; --white:#eef4f9;
+      --grid-col:rgba(0,212,255,0.04);
     }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:16px;overflow-x:hidden;}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-col) 1px,transparent 1px),linear-gradient(90deg,var(--grid-col) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 4rem;height:64px;background:rgba(8,11,16,0.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
+    .nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.12em;color:var(--white);}
+    .nav-logo span{color:var(--accent);}
+    .nav-links{display:flex;gap:2.5rem;}
+    .nav-links a{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color .2s;}
+    .nav-links a:hover{color:var(--accent);}
 
-    html { scroll-behavior: smooth; }
+    #hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:0 4rem;overflow:hidden;}
+    .hero-bg-text{position:absolute;right:-2rem;top:50%;transform:translateY(-50%);font-family:'Bebas Neue',sans-serif;font-size:clamp(12rem,20vw,22rem);color:rgba(0,212,255,.025);line-height:1;user-select:none;pointer-events:none;white-space:nowrap;}
+    .hero-content{position:relative;z-index:1;max-width:760px;}
+    .hero-tag{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;opacity:0;animation:fadeUp .7s .2s forwards;}
+    .hero-tag::before{content:'';display:block;width:40px;height:1px;background:var(--accent);}
+    .hero-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,9vw,8.5rem);line-height:.92;color:var(--white);letter-spacing:.02em;opacity:0;animation:fadeUp .8s .35s forwards;}
+    .hero-name .ac{color:var(--accent);}
+    .hero-role{font-size:1.05rem;color:var(--steel);font-weight:300;margin-top:1.5rem;max-width:520px;line-height:1.7;opacity:0;animation:fadeUp .8s .5s forwards;}
+    .hero-cta{display:flex;gap:1rem;margin-top:2.5rem;opacity:0;animation:fadeUp .8s .65s forwards;}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.75rem;font-family:'DM Mono',monospace;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border-radius:2px;cursor:pointer;border:none;transition:all .2s;}
+    .btn-p{background:var(--accent);color:var(--bg);font-weight:500;}
+    .btn-p:hover{background:#33ddff;transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,212,255,.3);}
+    .btn-g{background:transparent;color:var(--text);border:1px solid var(--line);}
+    .btn-g:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);}
+    .hero-stats{display:flex;gap:3rem;margin-top:4rem;opacity:0;animation:fadeUp .8s .8s forwards;}
+    .stat-item{border-left:2px solid var(--accent);padding-left:1rem;}
+    .stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--white);line-height:1;}
+    .stat-label{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);margin-top:.2rem;}
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Outfit', sans-serif;
-      font-size: 16px;
-      overflow-x: hidden;
-    }
+    section{position:relative;z-index:1;padding:7rem 4rem;}
+    .sec-hdr{display:flex;align-items:center;gap:1.5rem;margin-bottom:4rem;}
+    .sec-num{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--accent);letter-spacing:.2em;}
+    .sec-ttl{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,4vw,3.5rem);letter-spacing:.05em;color:var(--white);}
+    .sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);}
 
-    /* ─── GRID OVERLAY ─── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image:
-        linear-gradient(var(--grid-col) 1px, transparent 1px),
-        linear-gradient(90deg, var(--grid-col) 1px, transparent 1px);
-      background-size: 60px 60px;
-      pointer-events: none;
-      z-index: 0;
-    }
+    /* PROJECTS */
+    #projects{background:var(--bg2);}
+    .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.5rem;}
+    .pcard{background:var(--bg3);border:1px solid var(--line);border-radius:4px;overflow:hidden;transition:border-color .25s,transform .25s,box-shadow .25s;}
+    .pcard:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,212,255,.1);}
 
-    /* ─── NAV ─── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 4rem;
-      height: 64px;
-      background: rgba(8,11,16,0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--line);
-    }
+    .cgal{position:relative;width:100%;height:240px;overflow:hidden;background:#060a0f;cursor:pointer;}
+    .cgal img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s;}
+    .cgal img.active{opacity:1;}
+    .gdots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:2;}
+    .gdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:background .2s;}
+    .gdot.active{background:var(--accent);}
+    .gnav{position:absolute;top:50%;transform:translateY(-50%);z-index:3;background:rgba(0,0,0,.5);border:none;color:var(--accent);width:30px;height:30px;border-radius:50%;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
+    .cgal:hover .gnav{opacity:1;}
+    .gnav.prev{left:10px;} .gnav.next{right:10px;}
 
-    .nav-logo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.5rem;
-      letter-spacing: 0.12em;
-      color: var(--white);
-    }
-    .nav-logo span { color: var(--accent); }
+    .cbody{padding:1.25rem 1.5rem 1.5rem;}
+    .ctag{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem;}
+    .cttl{font-size:1.05rem;font-weight:600;color:var(--white);margin-bottom:.5rem;}
+    .cdesc{font-size:.82rem;color:var(--text-dim);line-height:1.65;margin-bottom:1.1rem;}
+    .cftr{display:flex;align-items:center;justify-content:space-between;}
+    .ccnt{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--text-dim);}
+    .cxbtn{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:.35rem .85rem;border-radius:2px;cursor:pointer;transition:all .2s;}
+    .cxbtn:hover{background:rgba(0,212,255,.18);}
 
-    .nav-links { display: flex; gap: 2.5rem; }
-    .nav-links a {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: var(--accent); }
+    .upload-zone{border:1px dashed rgba(0,212,255,.4);border-radius:4px;padding:2rem;text-align:center;cursor:pointer;margin:0;background:rgba(0,212,255,.02);transition:all .25s;display:flex;align-items:center;gap:1.5rem;height:240px;border-radius:0;border:none;justify-content:center;flex-direction:column;}
+    .upload-zone:hover,.upload-zone.dragover{background:rgba(0,212,255,.06);}
+    .uico{font-size:2rem;color:var(--accent);}
+    .uttl{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.1em;color:var(--white);margin-bottom:.2rem;}
+    .usub{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-dim);letter-spacing:.08em;}
+    .usub span{color:var(--accent);}
+    #fileInput{display:none;}
 
-    /* ─── HERO ─── */
-    #hero {
-      position: relative;
-      min-height: 100vh;
-      display: flex; align-items: center;
-      padding: 0 4rem;
-      overflow: hidden;
-    }
+    /* EXPERIENCE */
+    #experience{background:var(--bg);}
+    .timeline{position:relative;padding-left:2rem;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--accent),var(--line),transparent);}
+    .tl-item{position:relative;margin-bottom:3.5rem;padding-left:2rem;}
+    .tl-item::before{content:'';position:absolute;left:-2rem;top:8px;width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px rgba(0,212,255,.6);}
+    .tl-date{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.35rem;}
+    .tl-role{font-size:1.15rem;font-weight:600;color:var(--white);margin-bottom:.25rem;}
+    .tl-co{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--steel);margin-bottom:1rem;}
+    .tl-pts{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.25rem;}
+    .tl-pts li{font-size:.87rem;color:var(--text-dim);line-height:1.65;padding-left:1.2rem;position:relative;}
+    .tl-pts li::before{content:'›';position:absolute;left:0;color:var(--accent);}
+    .tl-photos{display:flex;gap:.75rem;overflow-x:auto;padding-bottom:.5rem;}
+    .tl-photos::-webkit-scrollbar{height:3px;}
+    .tl-photos::-webkit-scrollbar-thumb{background:var(--line);}
+    .tl-photo{flex-shrink:0;width:140px;height:90px;border-radius:2px;overflow:hidden;border:1px solid var(--line);cursor:pointer;transition:border-color .2s;}
+    .tl-photo:hover{border-color:var(--accent);}
+    .tl-photo img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
+    .tl-photo:hover img{transform:scale(1.05);}
 
-    .hero-bg-text {
-      position: absolute;
-      right: -2rem; top: 50%;
-      transform: translateY(-50%);
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(12rem, 20vw, 22rem);
-      color: rgba(0,212,255,0.025);
-      line-height: 1;
-      user-select: none;
-      pointer-events: none;
-      white-space: nowrap;
-    }
+    /* SKILLS */
+    #skills{background:var(--bg2);}
+    .sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;}
+    .sblk{background:var(--bg3);border:1px solid var(--line);border-radius:4px;padding:1.5rem;transition:border-color .2s;}
+    .sblk:hover{border-color:var(--steel);}
+    .sblk-ttl{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--line);}
+    .stags{display:flex;flex-wrap:wrap;gap:.5rem;}
+    .stag{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--text);background:rgba(255,255,255,.04);border:1px solid var(--line);padding:.3rem .75rem;border-radius:2px;transition:all .2s;}
+    .stag:hover{border-color:var(--steel);color:var(--white);}
 
-    .hero-content { position: relative; z-index: 1; max-width: 760px; }
+    /* ABOUT */
+    #about{background:var(--bg);}
+    .agrid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
+    .atext p{font-size:.95rem;color:var(--text-dim);line-height:1.9;margin-bottom:1.25rem;}
+    .atext p strong{color:var(--text);font-weight:600;}
+    .acert{background:var(--bg3);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:2px;padding:1.25rem 1.5rem;margin-top:1.5rem;}
+    .acert-ttl{font-size:.9rem;font-weight:600;color:var(--white);margin-bottom:.3rem;}
+    .acert-sub{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text-dim);letter-spacing:.08em;}
+    .acert-id{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--accent);margin-top:.5rem;}
+    .alist{display:flex;flex-direction:column;gap:1rem;}
+    .aitem{display:flex;gap:1rem;align-items:flex-start;background:var(--bg3);border:1px solid var(--line);border-radius:4px;overflow:hidden;transition:border-color .2s;cursor:pointer;}
+    .aitem:hover{border-color:var(--accent2);}
+    .aphoto{flex-shrink:0;width:90px;height:75px;overflow:hidden;background:#060a0f;}
+    .aphoto img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
+    .aitem:hover .aphoto img{transform:scale(1.08);}
+    .abody{padding:.85rem 1rem .85rem 0;display:flex;flex-direction:column;justify-content:center;}
+    .aico{font-size:1.1rem;margin-bottom:.15rem;}
+    .attl{font-size:.88rem;font-weight:600;color:var(--white);margin-bottom:.2rem;}
+    .asub{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--text-dim);}
 
-    .hero-tag {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--accent);
-      display: flex; align-items: center; gap: 0.75rem;
-      margin-bottom: 1.5rem;
-      opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
-    }
-    .hero-tag::before {
-      content: '';
-      display: block; width: 40px; height: 1px;
-      background: var(--accent);
-    }
+    /* LIGHTBOX */
+    .lightbox{position:fixed;inset:0;z-index:500;background:rgba(4,7,12,.97);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+    .lightbox.active{opacity:1;pointer-events:all;}
+    .lb-img{max-width:90vw;max-height:85vh;object-fit:contain;border-radius:2px;border:1px solid var(--line);}
+    .lb-close{position:fixed;top:1.5rem;right:1.5rem;background:var(--bg3);border:1px solid var(--line);color:var(--text);width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+    .lb-close:hover{border-color:var(--accent);color:var(--accent);}
+    .lb-cap{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;}
+    .lb-nav{position:fixed;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.5);border:1px solid var(--line);color:var(--accent);width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+    .lb-nav:hover{border-color:var(--accent);background:rgba(0,212,255,.1);}
+    .lb-nav.prev{left:1.5rem;} .lb-nav.next{right:1.5rem;}
 
-    .hero-name {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(4rem, 9vw, 8.5rem);
-      line-height: 0.92;
-      color: var(--white);
-      letter-spacing: 0.02em;
-      opacity: 0; animation: fadeUp 0.8s 0.35s forwards;
-    }
-    .hero-name .accent { color: var(--accent); }
+    /* CONTACT */
+    #contact{background:var(--bg2);text-align:center;}
+    .ci{max-width:600px;margin:0 auto;}
+    .ch{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);color:var(--white);letter-spacing:.05em;line-height:1;margin-bottom:1.25rem;}
+    .ch span{color:var(--accent);}
+    .csub{font-size:.9rem;color:var(--text-dim);line-height:1.8;margin-bottom:2.5rem;}
+    .clinks{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+    .clink{display:flex;align-items:center;gap:.6rem;font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;color:var(--text);padding:.8rem 1.5rem;border:1px solid var(--line);border-radius:2px;transition:all .2s;}
+    .clink:hover{color:var(--accent);border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,212,255,.12);}
 
-    .hero-role {
-      font-size: 1.05rem;
-      color: var(--steel);
-      font-weight: 300;
-      margin-top: 1.5rem;
-      letter-spacing: 0.05em;
-      max-width: 520px;
-      line-height: 1.7;
-      opacity: 0; animation: fadeUp 0.8s 0.5s forwards;
-    }
+    footer{position:relative;z-index:1;padding:2rem 4rem;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+    .fl{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;color:var(--text-dim);}
+    .fr{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-dim);}
 
-    .hero-cta {
-      display: flex; gap: 1rem; margin-top: 2.5rem;
-      opacity: 0; animation: fadeUp 0.8s 0.65s forwards;
-    }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s;}
+    .reveal.visible{opacity:1;transform:none;}
 
-    .btn {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      padding: 0.75rem 1.75rem;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      text-decoration: none;
-      border-radius: 2px;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s;
-    }
-    .btn-primary {
-      background: var(--accent);
-      color: var(--bg);
-      font-weight: 500;
-    }
-    .btn-primary:hover { background: #33ddff; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,212,255,0.3); }
-    .btn-ghost {
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--line);
-    }
-    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+    .loader{position:fixed;inset:0;background:#060d18;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;z-index:9999;transition:opacity .9s,visibility .9s;}
+    .loader.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+    .loader canvas{display:block;}
+    .loader-name{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:.28em;color:#eef4f9;margin-top:-4px;opacity:0;animation:lnFade 1s .6s forwards;}
+    .loader-sub{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(0,180,255,.5);margin-top:.35rem;opacity:0;animation:lnFade .8s 1s forwards;}
+    @keyframes lnFade{to{opacity:1;}}
 
-    .hero-stats {
-      display: flex; gap: 3rem; margin-top: 4rem;
-      opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
-    }
-    .stat-item { border-left: 2px solid var(--accent); padding-left: 1rem; }
-    .stat-num {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 2.2rem;
-      color: var(--white);
-      line-height: 1;
-    }
-    .stat-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-top: 0.2rem;
-    }
-
-    /* ─── SECTIONS ─── */
-    section {
-      position: relative; z-index: 1;
-      padding: 7rem 4rem;
-    }
-
-    .section-header {
-      display: flex; align-items: center; gap: 1.5rem;
-      margin-bottom: 4rem;
-    }
-    .section-num {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--accent);
-      letter-spacing: 0.2em;
-    }
-    .section-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(2.2rem, 4vw, 3.5rem);
-      letter-spacing: 0.05em;
-      color: var(--white);
-    }
-    .section-line {
-      flex: 1; height: 1px;
-      background: linear-gradient(90deg, var(--line), transparent);
-    }
-
-    /* ─── CAD PROJECTS ─── */
-    #projects { background: var(--bg2); }
-
-    .projects-intro {
-      font-size: 0.9rem;
-      color: var(--text-dim);
-      font-family: 'DM Mono', monospace;
-      margin-bottom: 3rem;
-      line-height: 1.8;
-      max-width: 600px;
-    }
-
-    /* Upload zone */
-    .upload-zone {
-      border: 1px dashed var(--accent);
-      border-radius: 4px;
-      padding: 3rem 2rem;
-      text-align: center;
-      cursor: pointer;
-      margin-bottom: 3rem;
-      background: rgba(0,212,255,0.02);
-      transition: all 0.25s;
-      position: relative;
-    }
-    .upload-zone:hover, .upload-zone.dragover {
-      background: rgba(0,212,255,0.06);
-      border-color: #33ddff;
-      box-shadow: 0 0 30px rgba(0,212,255,0.1);
-    }
-    .upload-icon {
-      font-size: 2.5rem;
-      color: var(--accent);
-      display: block;
-      margin-bottom: 1rem;
-    }
-    .upload-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.4rem;
-      letter-spacing: 0.1em;
-      color: var(--white);
-      margin-bottom: 0.5rem;
-    }
-    .upload-sub {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.1em;
-      color: var(--text-dim);
-    }
-    .upload-sub span { color: var(--accent); }
-    #fileInput { display: none; }
-
-    /* Projects grid */
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .project-card {
-      background: var(--bg3);
-      border: 1px solid var(--line);
-      border-radius: 4px;
-      overflow: hidden;
-      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
-      cursor: pointer;
-    }
-    .project-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(0,212,255,0.1);
-    }
-
-    .card-viewer {
-      width: 100%; height: 240px;
-      background: #060a0f;
-      position: relative;
-      overflow: hidden;
-    }
-    .card-viewer canvas { display: block; }
-
-    .card-viewer-placeholder {
-      width: 100%; height: 100%;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 0.75rem;
-      color: var(--text-dim);
-    }
-    .card-viewer-placeholder svg { opacity: 0.4; }
-    .card-viewer-placeholder span {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .card-body { padding: 1.25rem 1.5rem 1.5rem; }
-
-    .card-tag {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.5rem;
-    }
-    .card-title {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--white);
-      margin-bottom: 0.4rem;
-    }
-    .card-desc {
-      font-size: 0.82rem;
-      color: var(--text-dim);
-      line-height: 1.6;
-      margin-bottom: 1rem;
-    }
-    .card-meta {
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .card-size {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--text-dim);
-    }
-    .card-btn {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--accent);
-      background: rgba(0,212,255,0.08);
-      border: 1px solid rgba(0,212,255,0.2);
-      padding: 0.35rem 0.85rem;
-      border-radius: 2px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .card-btn:hover { background: rgba(0,212,255,0.18); }
-
-    /* ─── MODAL VIEWER ─── */
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(4,7,12,0.95);
-      z-index: 1000;
-      display: flex; flex-direction: column;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.25s;
-    }
-    .modal-overlay.active {
-      opacity: 1; pointer-events: all;
-    }
-
-    .modal-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1rem 2rem;
-      border-bottom: 1px solid var(--line);
-      background: var(--bg2);
-    }
-    .modal-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.4rem;
-      letter-spacing: 0.08em;
-      color: var(--white);
-    }
-    .modal-controls {
-      display: flex; gap: 0.75rem; align-items: center;
-    }
-
-    .ctrl-btn {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      background: var(--bg3);
-      border: 1px solid var(--line);
-      padding: 0.4rem 0.85rem;
-      border-radius: 2px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .ctrl-btn:hover { color: var(--white); border-color: var(--steel); }
-
-    .ctrl-btn-close {
-      color: var(--text);
-      background: transparent;
-      border: 1px solid var(--line);
-      padding: 0.4rem 0.9rem;
-      border-radius: 2px;
-      cursor: pointer;
-      font-size: 1.1rem;
-      transition: all 0.2s;
-    }
-    .ctrl-btn-close:hover { border-color: #ff6b6b; color: #ff6b6b; }
-
-    .modal-body {
-      flex: 1;
-      position: relative;
-      display: flex;
-    }
-
-    #modalCanvas {
-      flex: 1;
-      display: block;
-      width: 100% !important;
-      height: 100% !important;
-    }
-
-    .modal-sidebar {
-      width: 260px;
-      background: var(--bg2);
-      border-left: 1px solid var(--line);
-      padding: 1.5rem;
-      overflow-y: auto;
-      display: flex; flex-direction: column; gap: 1.5rem;
-    }
-
-    .sidebar-section-title {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.75rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .sidebar-row {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 0.5rem;
-    }
-    .sidebar-key {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--text-dim);
-    }
-    .sidebar-val {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--white);
-    }
-
-    .color-picker-row {
-      display: flex; flex-direction: column; gap: 0.5rem;
-    }
-    .color-picker-row label {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--text-dim);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-    .color-row-swatches { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    .swatch {
-      width: 24px; height: 24px;
-      border-radius: 2px;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: border-color 0.15s, transform 0.15s;
-    }
-    .swatch:hover, .swatch.active { border-color: var(--white); transform: scale(1.1); }
-
-    .hint-list { display: flex; flex-direction: column; gap: 0.5rem; }
-    .hint {
-      display: flex; gap: 0.75rem; align-items: center;
-    }
-    .hint-key {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.6rem;
-      background: var(--bg3);
-      border: 1px solid var(--line);
-      padding: 0.15rem 0.45rem;
-      border-radius: 2px;
-      color: var(--steel);
-      white-space: nowrap;
-    }
-    .hint-desc {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.62rem;
-      color: var(--text-dim);
-    }
-
-    .desc-input {
-      width: 100%;
-      background: var(--bg3);
-      border: 1px solid var(--line);
-      border-radius: 2px;
-      padding: 0.6rem 0.75rem;
-      color: var(--text);
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.82rem;
-      resize: vertical;
-      min-height: 80px;
-      transition: border-color 0.2s;
-    }
-    .desc-input:focus { outline: none; border-color: var(--accent); }
-    .name-input {
-      width: 100%;
-      background: var(--bg3);
-      border: 1px solid var(--line);
-      border-radius: 2px;
-      padding: 0.55rem 0.75rem;
-      color: var(--white);
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-      transition: border-color 0.2s;
-    }
-    .name-input:focus { outline: none; border-color: var(--accent); }
-
-    .save-btn {
-      width: 100%;
-      padding: 0.65rem;
-      background: var(--accent);
-      color: var(--bg);
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      font-weight: 500;
-      border: none; border-radius: 2px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.2s;
-    }
-    .save-btn:hover { background: #33ddff; transform: translateY(-1px); }
-
-    /* ─── EXPERIENCE ─── */
-    #experience { background: var(--bg); }
-
-    .timeline { position: relative; padding-left: 2rem; }
-    .timeline::before {
-      content: '';
-      position: absolute; left: 0; top: 0; bottom: 0;
-      width: 1px;
-      background: linear-gradient(180deg, var(--accent), var(--line), transparent);
-    }
-
-    .timeline-item {
-      position: relative; margin-bottom: 3.5rem;
-      padding-left: 2rem;
-    }
-    .timeline-item::before {
-      content: '';
-      position: absolute; left: -2rem; top: 6px;
-      width: 9px; height: 9px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 12px rgba(0,212,255,0.6);
-    }
-
-    .tl-date {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
-      color: var(--accent);
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      margin-bottom: 0.35rem;
-    }
-    .tl-role {
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: var(--white);
-      margin-bottom: 0.25rem;
-    }
-    .tl-company {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--steel);
-      margin-bottom: 1rem;
-    }
-    .tl-points {
-      list-style: none;
-      display: flex; flex-direction: column; gap: 0.5rem;
-    }
-    .tl-points li {
-      font-size: 0.87rem;
-      color: var(--text-dim);
-      line-height: 1.65;
-      padding-left: 1.2rem;
-      position: relative;
-    }
-    .tl-points li::before {
-      content: '›';
-      position: absolute; left: 0;
-      color: var(--accent);
-    }
-
-    /* ─── SKILLS ─── */
-    #skills { background: var(--bg2); }
-
-    .skills-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .skill-block {
-      background: var(--bg3);
-      border: 1px solid var(--line);
-      border-radius: 4px;
-      padding: 1.5rem;
-      transition: border-color 0.2s;
-    }
-    .skill-block:hover { border-color: var(--steel); }
-
-    .skill-block-title {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 1rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .skill-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .skill-tag {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.05em;
-      color: var(--text);
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--line);
-      padding: 0.3rem 0.75rem;
-      border-radius: 2px;
-      transition: all 0.2s;
-    }
-    .skill-tag:hover { border-color: var(--steel); color: var(--white); }
-
-    /* ─── ABOUT ─── */
-    #about { background: var(--bg); }
-
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: start;
-    }
-
-    .about-text p {
-      font-size: 0.95rem;
-      color: var(--text-dim);
-      line-height: 1.9;
-      margin-bottom: 1.25rem;
-    }
-    .about-text p strong {
-      color: var(--text);
-      font-weight: 600;
-    }
-
-    .about-cert {
-      background: var(--bg3);
-      border: 1px solid var(--line);
-      border-left: 3px solid var(--accent);
-      border-radius: 2px;
-      padding: 1.25rem 1.5rem;
-      margin-top: 1.5rem;
-    }
-    .cert-title {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--white);
-      margin-bottom: 0.3rem;
-    }
-    .cert-sub {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
-      color: var(--text-dim);
-      letter-spacing: 0.08em;
-    }
-    .cert-id {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--accent);
-      margin-top: 0.5rem;
-    }
-
-    .awards-list { display: flex; flex-direction: column; gap: 1rem; }
-    .award-item {
-      display: flex; gap: 1.25rem; align-items: flex-start;
-      padding: 1rem 1.25rem;
-      background: var(--bg3);
-      border: 1px solid var(--line);
-      border-radius: 4px;
-      transition: border-color 0.2s;
-    }
-    .award-item:hover { border-color: var(--accent2); }
-    .award-icon {
-      font-size: 1.5rem;
-      flex-shrink: 0;
-      margin-top: 0.1rem;
-    }
-    .award-body {}
-    .award-title {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--white);
-      margin-bottom: 0.2rem;
-    }
-    .award-sub {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--text-dim);
-    }
-
-    /* ─── CONTACT ─── */
-    #contact {
-      background: var(--bg2);
-      text-align: center;
-    }
-    .contact-inner { max-width: 600px; margin: 0 auto; }
-    .contact-headline {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(2.5rem, 5vw, 4.5rem);
-      color: var(--white);
-      letter-spacing: 0.05em;
-      line-height: 1;
-      margin-bottom: 1.25rem;
-    }
-    .contact-headline span { color: var(--accent); }
-
-    .contact-sub {
-      font-size: 0.9rem;
-      color: var(--text-dim);
-      line-height: 1.8;
-      margin-bottom: 2.5rem;
-    }
-
-    .contact-links {
-      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
-    }
-    .contact-link {
-      display: flex; align-items: center; gap: 0.6rem;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      text-decoration: none;
-      color: var(--text);
-      padding: 0.8rem 1.5rem;
-      border: 1px solid var(--line);
-      border-radius: 2px;
-      transition: all 0.2s;
-    }
-    .contact-link:hover {
-      color: var(--accent);
-      border-color: var(--accent);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0,212,255,0.12);
-    }
-
-    /* ─── FOOTER ─── */
-    footer {
-      position: relative; z-index: 1;
-      padding: 2rem 4rem;
-      border-top: 1px solid var(--line);
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .footer-left {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.12em;
-      color: var(--text-dim);
-    }
-    .footer-right {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--text-dim);
-    }
-
-    /* ─── ANIMATIONS ─── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .reveal {
-      opacity: 0; transform: translateY(28px);
-      transition: opacity 0.7s, transform 0.7s;
-    }
-    .reveal.visible { opacity: 1; transform: none; }
-
-    /* ─── LOADING ─── */
-    .loader {
-      position: fixed; inset: 0;
-      background: var(--bg);
-      display: flex; align-items: center; justify-content: center;
-      flex-direction: column; gap: 1.5rem;
-      z-index: 9999;
-      transition: opacity 0.6s, visibility 0.6s;
-    }
-    .loader.hidden { opacity: 0; visibility: hidden; }
-    .loader-text {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.8rem;
-      letter-spacing: 0.2em;
-      color: var(--white);
-    }
-    .loader-bar {
-      width: 200px; height: 2px;
-      background: var(--line);
-      border-radius: 1px;
-      overflow: hidden;
-    }
-    .loader-bar-inner {
-      height: 100%;
-      background: var(--accent);
-      width: 0%;
-      animation: loadBar 1.2s ease forwards;
-    }
-    @keyframes loadBar {
-      to { width: 100%; }
-    }
-
-    /* ─── RESPONSIVE ─── */
-    @media (max-width: 900px) {
-      nav { padding: 0 1.5rem; }
-      .nav-links { gap: 1.5rem; }
-      section { padding: 5rem 1.5rem; }
-      #hero { padding: 0 1.5rem; }
-      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-      .hero-stats { gap: 1.5rem; }
-      footer { padding: 2rem 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
-    }
-
-    @media (max-width: 640px) {
-      .nav-links { display: none; }
-      .projects-grid { grid-template-columns: 1fr; }
-      .skills-grid { grid-template-columns: 1fr; }
-      .modal-sidebar { display: none; }
-    }
+    @media(max-width:900px){nav{padding:0 1.5rem;}section{padding:5rem 1.5rem;}#hero{padding:0 1.5rem;}.agrid{grid-template-columns:1fr;gap:2.5rem;}.hero-stats{gap:1.5rem;}footer{padding:2rem 1.5rem;flex-direction:column;gap:.5rem;text-align:center;}}
+    @media(max-width:640px){.nav-links{display:none;}.pgrid{grid-template-columns:1fr;}.sgrid{grid-template-columns:1fr;}}
   </style>
 </head>
 <body>
 
-  <!-- Loader -->
-  <div class="loader" id="loader">
-    <div class="loader-text">AMRITANSHU JAIN</div>
-    <div class="loader-bar"><div class="loader-bar-inner"></div></div>
+<div class="loader" id="loader">
+  <canvas id="gearCanvas" width="340" height="340"></canvas>
+  <div class="loader-name">AMRITANSHU JAIN</div>
+  <div class="loader-sub">Mechanical Design Engineer</div>
+</div>
+
+<nav>
+  <div class="nav-logo">AJ<span>.</span></div>
+  <div class="nav-links">
+    <a href="#projects">Projects</a><a href="#experience">Experience</a>
+    <a href="#skills">Skills</a><a href="#about">About</a><a href="#contact">Contact</a>
   </div>
+</nav>
 
-  <!-- Nav -->
-  <nav>
-    <div class="nav-logo">AJ<span>.</span></div>
-    <div class="nav-links">
-      <a href="#projects">Projects</a>
-      <a href="#experience">Experience</a>
-      <a href="#skills">Skills</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-text">ENGINEER</div>
+  <div class="hero-content">
+    <div class="hero-tag">Mechanical Design Engineer</div>
+    <h1 class="hero-name">AMRITANSHU<br><span class="ac">JAIN</span></h1>
+    <p class="hero-role">Driven by iterative development and structured problem-solving. Building the next generation of general-purpose robotics hardware that seamlessly blends into the environment.</p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn btn-p">View Projects</a>
+      <a href="#contact" class="btn btn-g">Get In Touch</a>
     </div>
-  </nav>
-
-  <!-- Hero -->
-  <section id="hero">
-    <div class="hero-bg-text">ENGINEER</div>
-    <div class="hero-content">
-      <div class="hero-tag">Mechanical Design Engineer</div>
-      <h1 class="hero-name">AMRITANSHU<br><span class="accent">JAIN</span></h1>
-      <p class="hero-role">Driven by iterative development and structured problem-solving. Building the next generation of general-purpose robotics hardware that seamlessly blends into the environment.</p>
-      <div class="hero-cta">
-        <a href="#projects" class="btn btn-primary">View CAD Projects</a>
-        <a href="#contact" class="btn btn-ghost">Get In Touch</a>
-      </div>
-      <div class="hero-stats">
-        <div class="stat-item">
-          <div class="stat-num">3+</div>
-          <div class="stat-label">Years Experience</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">3</div>
-          <div class="stat-label">Intl. Awards</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">1</div>
-          <div class="stat-label">Publication</div>
-        </div>
-      </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-num">3+</div><div class="stat-label">Years Experience</div></div>
+      <div class="stat-item"><div class="stat-num">3</div><div class="stat-label">Intl. Awards</div></div>
+      <div class="stat-item"><div class="stat-num">1</div><div class="stat-label">Publication</div></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Projects -->
-  <section id="projects">
-    <div class="section-header reveal">
-      <span class="section-num">01 /</span>
-      <h2 class="section-title">CAD Projects</h2>
-      <div class="section-line"></div>
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="sec-hdr reveal"><span class="sec-num">01 /</span><h2 class="sec-ttl">Projects & CAD Work</h2><div class="sec-line"></div></div>
+  <div class="pgrid">
+
+    <!-- Chirathe Robotics — TORSO -->
+    <div class="pcard reveal">
+      <div class="cgal" data-group="torso">
+        <img class="active" src="https://drive.google.com/thumbnail?id=1cpRkTL-VJMtKJicEqtMnHLMl-nQ5jphY&sz=w800" alt="Quadruped TORSO"/>
+        <img src="https://drive.google.com/thumbnail?id=1fdaIc7G5pA7f_DGPlRJhNqCjE1LcIVI3&sz=w800" alt="Isometric CAD View 1"/>
+        <img src="https://drive.google.com/thumbnail?id=13AVhwlPg2QVwWfaX_w_gGegpryzytEbJ&sz=w800" alt="Isometric CAD View 2"/>
+        <button class="gnav prev">‹</button><button class="gnav next">›</button>
+        <div class="gdots"><div class="gdot active"></div><div class="gdot"></div><div class="gdot"></div></div>
+      </div>
+      <div class="cbody">
+        <div class="ctag">Strider Robotics · Aug 2023 – Feb 2024</div>
+        <div class="cttl">Quadruped TORSO Assembly</div>
+        <div class="cdesc">Protective chassis housing electronics for the quadruped robot, designed for optimal center-of-gravity balance and high TRL Indian robotics applications.</div>
+        <div class="cftr"><span class="ccnt">3 renders</span><button class="cxbtn" data-group="torso">Expand →</button></div>
+      </div>
     </div>
 
-    <p class="projects-intro reveal">
-      Upload your STL, OBJ, or PLY files below to visualize them interactively.<br />
-      Supported formats: <span style="color:var(--accent)">STL · OBJ · PLY</span>
-    </p>
-
-    <div class="upload-zone reveal" id="uploadZone">
-      <span class="upload-icon">⬡</span>
-      <div class="upload-title">Drop CAD Files Here</div>
-      <p class="upload-sub">Drag & drop or click to browse — <span>.STL .OBJ .PLY</span></p>
-      <input type="file" id="fileInput" multiple accept=".stl,.obj,.ply" />
-    </div>
-
-    <div class="projects-grid" id="projectsGrid">
-      <!-- Sample placeholder cards -->
-      <div class="project-card reveal" data-sample="quadruped-torso">
-        <div class="card-viewer">
-          <div class="card-viewer-placeholder">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-              <rect x="8" y="16" width="32" height="22" rx="2" stroke="#00d4ff" stroke-width="1.5"/>
-              <path d="M16 16V12a8 8 0 0116 0v4" stroke="#00d4ff" stroke-width="1.5"/>
-              <circle cx="24" cy="27" r="4" stroke="#00d4ff" stroke-width="1.5"/>
-            </svg>
-            <span>Upload to view</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="card-tag">Strider Robotics · 2023</div>
-          <div class="card-title">Quadruped TORSO Assembly</div>
-          <div class="card-desc">Protective chassis housing electronics for the quadruped robot, optimized for center-of-gravity balance.</div>
-          <div class="card-meta">
-            <span class="card-size">Sample Project</span>
-          </div>
-        </div>
+    <!-- IISc RBCCPS — 4DOF Arm -->
+    <div class="pcard reveal">
+      <div class="cgal" data-group="arm">
+        <img class="active" src="https://drive.google.com/thumbnail?id=18w7mXf6gTsp9s00U-lhj7BdX2VoU9oNZ&sz=w800" alt="Robotic Arm on Quadruped"/>
+        <img src="https://drive.google.com/thumbnail?id=1bxHHrGlRVhEsFQU_wScVoKgPk5IG4lLH&sz=w800" alt="CAD of Manipulator on Quadruped"/>
+        <img src="https://drive.google.com/thumbnail?id=1bon-V5-s1R_ckRYHykCJk6jXie29ascI&sz=w800" alt="3D Printed Gearbox"/>
+        <img src="https://drive.google.com/thumbnail?id=1hKZuKFle9dDY-NfO5nb7PUE4Q23EMqUo&sz=w800" alt="Actuator Cross-Section"/>
+        <img src="https://drive.google.com/thumbnail?id=1Tme33sFVBgGSi_FaHt9BithD8ULrVmC6&sz=w800" alt="Team with Manipulator"/>
+        <button class="gnav prev">‹</button><button class="gnav next">›</button>
+        <div class="gdots"><div class="gdot active"></div><div class="gdot"></div><div class="gdot"></div><div class="gdot"></div><div class="gdot"></div></div>
       </div>
-
-      <div class="project-card reveal" data-sample="4dof-arm">
-        <div class="card-viewer">
-          <div class="card-viewer-placeholder">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-              <path d="M12 36L20 20L28 28L36 12" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/>
-              <circle cx="12" cy="36" r="3" stroke="#00d4ff" stroke-width="1.5"/>
-              <circle cx="36" cy="12" r="3" stroke="#00d4ff" stroke-width="1.5"/>
-            </svg>
-            <span>Upload to view</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="card-tag">IISc RBCCPS · 2022–23</div>
-          <div class="card-title">4DOF Articulated Arm</div>
-          <div class="card-desc">Cost-effective pesticide spraying arm for STOCH quadruped. Custom planetary gearbox with 8:1 reduction ratio.</div>
-          <div class="card-meta">
-            <span class="card-size">Sample Project</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="project-card reveal" data-sample="rover-wheel">
-        <div class="card-viewer">
-          <div class="card-viewer-placeholder">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-              <circle cx="24" cy="24" r="14" stroke="#00d4ff" stroke-width="1.5"/>
-              <circle cx="24" cy="24" r="5" stroke="#00d4ff" stroke-width="1.5"/>
-              <path d="M24 10v4M24 34v4M10 24h4M34 24h4" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            <span>Upload to view</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="card-tag">Mars Rover Manipal · 2021–22</div>
-          <div class="card-title">All-Terrain Rover Wheel</div>
-          <div class="card-desc">3D printed wheel with custom planetary gearbox and fully floating bearing assembly to minimize motor loads.</div>
-          <div class="card-meta">
-            <span class="card-size">Sample Project</span>
-          </div>
-        </div>
+      <div class="cbody">
+        <div class="ctag">IISc RBCCPS · Dec 2022 – Jul 2023</div>
+        <div class="cttl">4DOF Robotic Arm for STOCH Quadruped</div>
+        <div class="cdesc">Cost-effective pesticide spraying arm with custom 8:1 planetary gearbox and high-performance BLDC motors for precise torque and velocity control.</div>
+        <div class="cftr"><span class="ccnt">5 renders</span><button class="cxbtn" data-group="arm">Expand →</button></div>
       </div>
     </div>
-  </section>
 
-  <!-- Experience -->
-  <section id="experience">
-    <div class="section-header reveal">
-      <span class="section-num">02 /</span>
-      <h2 class="section-title">Work Experience</h2>
-      <div class="section-line"></div>
-    </div>
-
-    <div class="timeline">
-      <div class="timeline-item reveal">
-        <div class="tl-date">May 2024 — Present</div>
-        <div class="tl-role">Lead Mechanical Engineer</div>
-        <div class="tl-company">KinesthetIQ Robotics Studio · Bengaluru</div>
-        <ul class="tl-points">
-          <li>Developing Human-Robot interaction devices for bimanual teleoperation on generalist tasks</li>
-          <li>Designing cost-effective Robot Operating Devices (ROD) with indigenous components</li>
-          <li>Managing team of engineers developing low-cost hardware for embodied AI</li>
-          <li>Pioneering work cell standardization to scale data collection for Large Behaviour Models</li>
-          <li>Developing prismatic lift systems for Mobile Manipulation</li>
-        </ul>
+    <!-- Curiouz TechLabs — FEA -->
+    <div class="pcard reveal">
+      <div class="cgal" data-group="fea">
+        <img class="active" src="https://drive.google.com/thumbnail?id=1HeYvs7SvzzxQ3TlXpRHM4GvIj5gtXej_&sz=w800" alt="Implant Stress Analysis"/>
+        <img src="https://drive.google.com/thumbnail?id=1wAEmNStcqYrudogLLXyoOdS70iNP1hoQ&sz=w800" alt="CAD of Lower Human Jaw"/>
+        <button class="gnav prev">‹</button><button class="gnav next">›</button>
+        <div class="gdots"><div class="gdot active"></div><div class="gdot"></div></div>
       </div>
-
-      <div class="timeline-item reveal">
-        <div class="tl-date">Aug 2023 — Feb 2024</div>
-        <div class="tl-role">Mechanical Design Engineer</div>
-        <div class="tl-company">ARTPARK · Chirathe Robotics (Strider Robotics) · Bengaluru</div>
-        <ul class="tl-points">
-          <li>Designed and developed TORSO for quadruped robot, housing electronics at optimal COG</li>
-          <li>Contributed to quadruped robot at high TRL for Indian applications</li>
-          <li>Maintained comprehensive CAD documentation, technical drawings, and test results</li>
-        </ul>
-      </div>
-
-      <div class="timeline-item reveal">
-        <div class="tl-date">Dec 2022 — Jul 2023</div>
-        <div class="tl-role">Research Intern</div>
-        <div class="tl-company">Robert Bosch Centre for Cyber-Physical Systems · IISc · Bengaluru</div>
-        <ul class="tl-points">
-          <li>Designed cost-effective 4DOF articulated arm for STOCH quadruped pesticide spraying</li>
-          <li>Utilized BLDC motors with custom 8:1 planetary gearbox for torque and velocity control</li>
-          <li>Collaborated with cross-functional teams on design requirements and specifications</li>
-        </ul>
-      </div>
-
-      <div class="timeline-item reveal">
-        <div class="tl-date">Jul 2022 — Sep 2023</div>
-        <div class="tl-role">Mechanical Head</div>
-        <div class="tl-company">Mars Rover Manipal · MIT Udupi</div>
-        <ul class="tl-points">
-          <li>Led 10 engineers across 4 disciplines — Wheel, Suspension, Soil Module, 6-DOF Arm</li>
-          <li>Managed budget, fundraising, recruitment, and competition logistics</li>
-          <li>Determined design and manufacturing cycle for annual competition readiness</li>
-        </ul>
+      <div class="cbody">
+        <div class="ctag">Curiouz TechLabs · May – Dec 2022</div>
+        <div class="cttl">Mandibular Implant FEA Analysis</div>
+        <div class="cdesc">3D Finite Element Analysis of biomechanical behavior in mandibular overdentures. Published in the Journal of Composites Science, December 2022.</div>
+        <div class="cftr"><span class="ccnt">2 renders</span><button class="cxbtn" data-group="fea">Expand →</button></div>
       </div>
     </div>
-  </section>
 
-  <!-- Skills -->
-  <section id="skills">
-    <div class="section-header reveal">
-      <span class="section-num">03 /</span>
-      <h2 class="section-title">Skills & Tools</h2>
-      <div class="section-line"></div>
-    </div>
-
-    <div class="skills-grid">
-      <div class="skill-block reveal">
-        <div class="skill-block-title">CAD / Simulation</div>
-        <div class="skill-tags">
-          <span class="skill-tag">SolidWorks</span>
-          <span class="skill-tag">SolidWorks Motion Study</span>
-          <span class="skill-tag">SolidWorks Visualize</span>
-          <span class="skill-tag">ANSYS Space Claim</span>
-          <span class="skill-tag">ANSYS Static Structural</span>
-          <span class="skill-tag">ANSYS Explicit Dynamics</span>
-        </div>
+    <!-- Upload Card -->
+    <div class="pcard reveal" style="border-style:dashed;border-color:rgba(0,212,255,.3);background:rgba(0,212,255,.015);">
+      <div class="upload-zone" id="uploadZone">
+        <span class="uico">⬡</span>
+        <div><div class="uttl">Upload CAD Files</div><div class="usub">Drop <span>.STL .OBJ .PLY</span> to add to gallery</div></div>
+        <input type="file" id="fileInput" multiple accept=".stl,.obj,.ply"/>
       </div>
-
-      <div class="skill-block reveal">
-        <div class="skill-block-title">Manufacturing</div>
-        <div class="skill-tags">
-          <span class="skill-tag">FDM 3D Printing</span>
-          <span class="skill-tag">Ultimaker CURA</span>
-          <span class="skill-tag">DFMA</span>
-          <span class="skill-tag">DFM · DFR · DFC</span>
-          <span class="skill-tag">Power Tools</span>
-          <span class="skill-tag">Post-processing</span>
-        </div>
-      </div>
-
-      <div class="skill-block reveal">
-        <div class="skill-block-title">Engineering</div>
-        <div class="skill-tags">
-          <span class="skill-tag">FEA</span>
-          <span class="skill-tag">Gearbox Design</span>
-          <span class="skill-tag">Actuator Systems</span>
-          <span class="skill-tag">Robotics Hardware</span>
-          <span class="skill-tag">Quality Control</span>
-        </div>
-      </div>
-
-      <div class="skill-block reveal">
-        <div class="skill-block-title">Management & Tools</div>
-        <div class="skill-tags">
-          <span class="skill-tag">Project Management</span>
-          <span class="skill-tag">Microsoft 365</span>
-          <span class="skill-tag">Adobe Photoshop</span>
-          <span class="skill-tag">Adobe Premiere Pro</span>
-          <span class="skill-tag">Technical Writing</span>
-        </div>
+      <div class="cbody">
+        <div class="ctag">Interactive 3D Viewer</div>
+        <div class="cttl">Add Your Own CAD Files</div>
+        <div class="cdesc">Upload STL, OBJ, or PLY files to render them in the browser with full rotate, pan, and zoom.</div>
       </div>
     </div>
-  </section>
 
-  <!-- About -->
-  <section id="about">
-    <div class="section-header reveal">
-      <span class="section-num">04 /</span>
-      <h2 class="section-title">About</h2>
-      <div class="section-line"></div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="sec-hdr reveal"><span class="sec-num">02 /</span><h2 class="sec-ttl">Work Experience</h2><div class="sec-line"></div></div>
+  <div class="timeline">
+
+    <div class="tl-item reveal">
+      <div class="tl-date">May 2024 — Present</div>
+      <div class="tl-role">Lead Mechanical Engineer</div>
+      <div class="tl-co">KinesthetIQ Robotics Studio · Bengaluru</div>
+      <ul class="tl-pts">
+        <li>Developing Human-Robot interaction devices for bimanual teleoperation on generalist tasks</li>
+        <li>Designing cost-effective Robot Operating Devices (ROD) with indigenous components</li>
+        <li>Managing team of engineers developing low-cost hardware for embodied AI</li>
+        <li>Pioneering work cell standardization to scale data collection for Large Behaviour Models</li>
+        <li>Developing prismatic lift systems for Mobile Manipulation</li>
+      </ul>
     </div>
 
-    <div class="about-grid">
-      <div class="about-text reveal">
-        <p>Driven by <strong>iterative development</strong>, I embrace structured problem-solving to tackle complex engineering challenges. I've had the privilege to be part of and lead multiple talented teams of skilled engineers.</p>
-        <p>My long-term goal is to <strong>deploy general-purpose robotics hardware</strong> that seamlessly blends into the environment — from custom gearboxes to full system integration.</p>
-        <p>With real-world experience across the entire supply chain, I believe <strong>resilience is key</strong> to building exceptional products. I've worked everything from custom actuators to system-level deployment.</p>
-
-        <div class="about-cert">
-          <div class="cert-title">SolidWorks CSWP Certified Professional</div>
-          <div class="cert-sub">Mechanical Design — Dassault Systèmes</div>
-          <div class="cert-id">Credential ID: VR7JPXUA2T</div>
-        </div>
-
-        <div class="about-cert" style="margin-top:1rem; border-left-color: var(--accent2);">
-          <div class="cert-title">B.Tech — Mechanical Engineering</div>
-          <div class="cert-sub">Manipal Institute of Technology, Manipal · 2020–2024</div>
-        </div>
-      </div>
-
-      <div class="reveal">
-        <div class="sidebar-section-title" style="margin-bottom:1.25rem;">Honors & Awards</div>
-        <div class="awards-list">
-          <div class="award-item">
-            <div class="award-icon">🥉</div>
-            <div class="award-body">
-              <div class="award-title">International Rover Challenge (IRC)</div>
-              <div class="award-sub">3rd Prize · Space Robotics Society · 2023</div>
-            </div>
-          </div>
-          <div class="award-item">
-            <div class="award-icon">🥈</div>
-            <div class="award-body">
-              <div class="award-title">International Rover Design Challenge (IRDC)</div>
-              <div class="award-sub">2nd Prize · Space Robotics Society · 2022</div>
-            </div>
-          </div>
-          <div class="award-item">
-            <div class="award-icon">🥉</div>
-            <div class="award-body">
-              <div class="award-title">International Rover Design Challenge (IRDC)</div>
-              <div class="award-sub">3rd Prize · Mars Society South Asia · 2021</div>
-            </div>
-          </div>
-          <div class="award-item">
-            <div class="award-icon">🚀</div>
-            <div class="award-body">
-              <div class="award-title">University Rover Challenge (URC)</div>
-              <div class="award-sub">Final Round Qualifier · The Mars Society · 2022</div>
-            </div>
-          </div>
-        </div>
+    <div class="tl-item reveal">
+      <div class="tl-date">Aug 2023 — Feb 2024</div>
+      <div class="tl-role">Mechanical Design Engineer</div>
+      <div class="tl-co">ARTPARK · Chirathe Robotics (Strider Robotics) · Bengaluru</div>
+      <ul class="tl-pts">
+        <li>Designed and developed TORSO for quadruped robot at optimal COG</li>
+        <li>Contributed to quadruped at high TRL for Indian robotics applications</li>
+        <li>Maintained comprehensive CAD documentation, drawings, and test results</li>
+      </ul>
+      <div class="tl-photos">
+        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=1cpRkTL-VJMtKJicEqtMnHLMl-nQ5jphY&sz=w1200" data-caption="Quadruped TORSO"><img src="https://drive.google.com/thumbnail?id=1cpRkTL-VJMtKJicEqtMnHLMl-nQ5jphY&sz=w400" loading="lazy" alt="TORSO"/></div>
+        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=1fdaIc7G5pA7f_DGPlRJhNqCjE1LcIVI3&sz=w1200" data-caption="Isometric CAD View 1"><img src="https://drive.google.com/thumbnail?id=1fdaIc7G5pA7f_DGPlRJhNqCjE1LcIVI3&sz=w400" loading="lazy" alt="CAD 1"/></div>
+        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=13AVhwlPg2QVwWfaX_w_gGegpryzytEbJ&sz=w1200" data-caption="Isometric CAD View 2"><img src="https://drive.google.com/thumbnail?id=13AVhwlPg2QVwWfaX_w_gGegpryzytEbJ&sz=w400" loading="lazy" alt="CAD 2"/></div>
       </div>
     </div>
-  </section>
 
-  <!-- Contact -->
-  <section id="contact">
-    <div class="contact-inner">
-      <div class="contact-headline reveal">LET'S BUILD<br><span>SOMETHING</span></div>
-      <p class="contact-sub reveal">Have a robotics project, research opportunity, or just want to connect? I'm always open to interesting conversations about hardware and embodied AI.</p>
-      <div class="contact-links reveal">
-        <a href="tel:+919849565839" class="contact-link">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.64A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
-          +91 98495 65839
-        </a>
-        <a href="mailto:amritj2002@gmail.com" class="contact-link">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          amritj2002@gmail.com
-        </a>
-        <a href="https://linkedin.com/in/amritanshu-jain" target="_blank" class="contact-link">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-          LinkedIn
-        </a>
+    <div class="tl-item reveal">
+      <div class="tl-date">Dec 2022 — Jul 2023</div>
+      <div class="tl-role">Research Intern</div>
+      <div class="tl-co">Robert Bosch Centre for Cyber-Physical Systems · IISc · Bengaluru</div>
+      <ul class="tl-pts">
+        <li>Designed 4DOF articulated arm for STOCH quadruped pesticide spraying</li>
+        <li>Custom 8:1 planetary gearbox with BLDC motors for torque control</li>
+        <li>Collaborated with cross-functional teams on design requirements</li>
+      </ul>
+      <div class="tl-photos">
+        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=1Tme33sFVBgGSi_FaHt9BithD8ULrVmC6&sz=w1200" data-caption="Team with Manipulator"><img src="https://drive.google.com/thumbnail?id=1Tme33sFVBgGSi_FaHt9BithD8ULrVmC6&sz=w400" loading="lazy" alt="Team"/></div>
+        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=18w7mXf6gTsp9s00U-lhj7BdX2VoU9oNZ&sz=w1200" data-caption="Arm on Quadruped"><img src="https://drive.google.com/thumbnail?id=18w7mXf6gTsp9s00U-lhj7BdX2VoU9oNZ&sz=w400" loading="lazy" alt="Arm"/></div>
+        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=1bxHHrGlRVhEsFQU_wScVoKgPk5IG4lLH&sz=w1200" data-caption="CAD of Manipulator"><img src="https://drive.google.com/thumbnail?id=1bxHHrGlRVhEsFQU_wScVoKgPk5IG4lLH&sz=w400" loading="lazy" alt="CAD"/></div>
+        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=1bon-V5-s1R_ckRYHykCJk6jXie29ascI&sz=w1200" data-caption="3D Printed Gearbox"><img src="https://drive.google.com/thumbnail?id=1bon-V5-s1R_ckRYHykCJk6jXie29ascI&sz=w400" loading="lazy" alt="Gearbox"/></div>
+        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=1hKZuKFle9dDY-NfO5nb7PUE4Q23EMqUo&sz=w1200" data-caption="Actuator Cross-Section"><img src="https://drive.google.com/thumbnail?id=1hKZuKFle9dDY-NfO5nb7PUE4Q23EMqUo&sz=w400" loading="lazy" alt="Actuator"/></div>
       </div>
     </div>
-  </section>
 
-  <!-- Footer -->
-  <footer>
-    <div class="footer-left">© 2025 AMRITANSHU JAIN — MECHANICAL DESIGN ENGINEER</div>
-    <div class="footer-right">BENGALURU, KARNATAKA · INDIA</div>
-  </footer>
-
-  <!-- Modal Viewer -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal-header">
-      <div class="modal-title" id="modalTitle">CAD VIEWER</div>
-      <div class="modal-controls">
-        <button class="ctrl-btn" id="btnWireframe">Wireframe</button>
-        <button class="ctrl-btn" id="btnFlat">Flat</button>
-        <button class="ctrl-btn" id="btnReset">Reset View</button>
-        <button class="ctrl-btn-close" id="modalClose">✕</button>
+    <div class="tl-item reveal">
+      <div class="tl-date">May 2022 — Dec 2022</div>
+      <div class="tl-role">Research Intern</div>
+      <div class="tl-co">Curiouz TechLabs · Udupi</div>
+      <ul class="tl-pts">
+        <li>Biomechanical FEA of mandibular overdenture implants and loading conditions</li>
+        <li>Supported PhD research on stress distribution in implant retained overdentures</li>
+        <li>Published in the Journal of Composites Science (Dec 2022)</li>
+      </ul>
+      <div class="tl-photos">
+        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=1HeYvs7SvzzxQ3TlXpRHM4GvIj5gtXej_&sz=w1200" data-caption="Implant Stress Analysis"><img src="https://drive.google.com/thumbnail?id=1HeYvs7SvzzxQ3TlXpRHM4GvIj5gtXej_&sz=w400" loading="lazy" alt="FEA"/></div>
+        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=1wAEmNStcqYrudogLLXyoOdS70iNP1hoQ&sz=w1200" data-caption="CAD — Lower Human Jaw"><img src="https://drive.google.com/thumbnail?id=1wAEmNStcqYrudogLLXyoOdS70iNP1hoQ&sz=w400" loading="lazy" alt="Jaw"/></div>
       </div>
     </div>
-    <div class="modal-body">
-      <canvas id="modalCanvas"></canvas>
-      <div class="modal-sidebar">
-        <div>
-          <div class="sidebar-section-title">Project Details</div>
-          <input class="name-input" id="projectName" placeholder="Project name…" />
-          <textarea class="desc-input" id="projectDesc" placeholder="Add a description…"></textarea>
-          <button class="save-btn" id="saveDetails">Save Details</button>
-        </div>
 
-        <div>
-          <div class="sidebar-section-title">Appearance</div>
-          <div class="color-picker-row">
-            <label>Model Color</label>
-            <div class="color-row-swatches" id="colorSwatches">
-              <div class="swatch active" style="background:#8fb4cc" data-color="#8fb4cc"></div>
-              <div class="swatch" style="background:#00d4ff" data-color="#00d4ff"></div>
-              <div class="swatch" style="background:#ff6b35" data-color="#ff6b35"></div>
-              <div class="swatch" style="background:#a8ff78" data-color="#a8ff78"></div>
-              <div class="swatch" style="background:#e8e8e8" data-color="#e8e8e8"></div>
-              <div class="swatch" style="background:#c9a96e" data-color="#c9a96e"></div>
-            </div>
-          </div>
-        </div>
+    <div class="tl-item reveal">
+      <div class="tl-date">Jul 2022 — Sep 2023</div>
+      <div class="tl-role">Mechanical Head</div>
+      <div class="tl-co">Mars Rover Manipal · MIT Udupi</div>
+      <ul class="tl-pts">
+        <li>Led 10 engineers across Wheel, Suspension, Soil Module, and 6-DOF Arm subsystems</li>
+        <li>Managed budget, fundraising, recruitment, training and competition logistics</li>
+        <li>Determined design and manufacturing cycle for annual competition readiness</li>
+      </ul>
+    </div>
 
-        <div>
-          <div class="sidebar-section-title">File Info</div>
-          <div class="sidebar-row">
-            <span class="sidebar-key">Filename</span>
-            <span class="sidebar-val" id="infoFilename">—</span>
-          </div>
-          <div class="sidebar-row">
-            <span class="sidebar-key">Size</span>
-            <span class="sidebar-val" id="infoSize">—</span>
-          </div>
-          <div class="sidebar-row">
-            <span class="sidebar-key">Format</span>
-            <span class="sidebar-val" id="infoFormat">—</span>
-          </div>
-          <div class="sidebar-row">
-            <span class="sidebar-key">Triangles</span>
-            <span class="sidebar-val" id="infoTris">—</span>
-          </div>
-        </div>
+  </div>
+</section>
 
-        <div>
-          <div class="sidebar-section-title">Controls</div>
-          <div class="hint-list">
-            <div class="hint"><span class="hint-key">Left drag</span><span class="hint-desc">Rotate model</span></div>
-            <div class="hint"><span class="hint-key">Right drag</span><span class="hint-desc">Pan view</span></div>
-            <div class="hint"><span class="hint-key">Scroll</span><span class="hint-desc">Zoom in/out</span></div>
-            <div class="hint"><span class="hint-key">Double click</span><span class="hint-desc">Focus origin</span></div>
-          </div>
+<!-- SKILLS -->
+<section id="skills">
+  <div class="sec-hdr reveal"><span class="sec-num">03 /</span><h2 class="sec-ttl">Skills & Tools</h2><div class="sec-line"></div></div>
+  <div class="sgrid">
+    <div class="sblk reveal"><div class="sblk-ttl">CAD / Simulation</div><div class="stags"><span class="stag">SolidWorks</span><span class="stag">Motion Study</span><span class="stag">SolidWorks Visualize</span><span class="stag">ANSYS Space Claim</span><span class="stag">ANSYS Static Structural</span><span class="stag">Explicit Dynamics</span></div></div>
+    <div class="sblk reveal"><div class="sblk-ttl">Manufacturing</div><div class="stags"><span class="stag">FDM 3D Printing</span><span class="stag">Ultimaker CURA</span><span class="stag">DFMA · DFM · DFR · DFC</span><span class="stag">Power & Hand Tools</span><span class="stag">Post-processing</span></div></div>
+    <div class="sblk reveal"><div class="sblk-ttl">Engineering</div><div class="stags"><span class="stag">FEA</span><span class="stag">Gearbox Design</span><span class="stag">Actuator Systems</span><span class="stag">Robotics Hardware</span><span class="stag">Quality Control</span><span class="stag">Embodied AI HW</span></div></div>
+    <div class="sblk reveal"><div class="sblk-ttl">Management & Tools</div><div class="stags"><span class="stag">Project Management</span><span class="stag">Microsoft 365</span><span class="stag">Adobe Photoshop</span><span class="stag">Premiere Pro</span><span class="stag">Technical Writing</span></div></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="sec-hdr reveal"><span class="sec-num">04 /</span><h2 class="sec-ttl">About</h2><div class="sec-line"></div></div>
+  <div class="agrid">
+    <div class="atext reveal">
+      <p>Driven by <strong>iterative development</strong>, I embrace structured problem-solving to tackle complex engineering challenges across the full hardware stack.</p>
+      <p>My long-term goal is to <strong>deploy general-purpose robotics hardware</strong> that seamlessly blends into the environment — from custom gearboxes to full system integration.</p>
+      <p>With real-world experience spanning the entire supply chain, I believe <strong>resilience is key</strong> to building exceptional products.</p>
+      <div class="acert"><div class="acert-ttl">SolidWorks CSWP Certified Professional</div><div class="acert-sub">Mechanical Design — Dassault Systèmes</div><div class="acert-id">Credential ID: VR7JPXUA2T</div></div>
+      <div class="acert" style="margin-top:1rem;border-left-color:var(--accent2);"><div class="acert-ttl">B.Tech — Mechanical Engineering</div><div class="acert-sub">Manipal Institute of Technology, Manipal · 2020–2024</div></div>
+    </div>
+    <div class="reveal">
+      <div class="sec-num" style="display:block;margin-bottom:1.25rem;">Honors & Awards</div>
+      <div class="alist">
+        <div class="aitem" data-src="https://drive.google.com/thumbnail?id=1KEqwzAzX76T4JXQSu_sGCCLbyN4tSY8l&sz=w1200" data-caption="IRC 2023 — 3rd Prize">
+          <div class="aphoto"><img src="https://drive.google.com/thumbnail?id=1KEqwzAzX76T4JXQSu_sGCCLbyN4tSY8l&sz=w300" loading="lazy" alt="IRC 2023"/></div>
+          <div class="abody"><div class="aico">🥉</div><div class="attl">International Rover Challenge (IRC)</div><div class="asub">3rd Prize · Space Robotics Society · 2023</div></div>
+        </div>
+        <div class="aitem" data-src="https://drive.google.com/thumbnail?id=17Q0FqKQ1ywFSOzUpfMIs9jEKUhjbMGjg&sz=w1200" data-caption="IRDC 2022 — 2nd Prize">
+          <div class="aphoto"><img src="https://drive.google.com/thumbnail?id=17Q0FqKQ1ywFSOzUpfMIs9jEKUhjbMGjg&sz=w300" loading="lazy" alt="IRDC 2022"/></div>
+          <div class="abody"><div class="aico">🥈</div><div class="attl">International Rover Design Challenge (IRDC)</div><div class="asub">2nd Prize · Space Robotics Society · 2022</div></div>
+        </div>
+        <div class="aitem" data-src="https://drive.google.com/thumbnail?id=1G_yTo3rAyL59WS0vVL3NYU71HJqdM3Wj&sz=w1200" data-caption="IRDC 2021 — 3rd Prize">
+          <div class="aphoto"><img src="https://drive.google.com/thumbnail?id=1G_yTo3rAyL59WS0vVL3NYU71HJqdM3Wj&sz=w300" loading="lazy" alt="IRDC 2021"/></div>
+          <div class="abody"><div class="aico">🥉</div><div class="attl">International Rover Design Challenge (IRDC)</div><div class="asub">3rd Prize · Mars Society South Asia · 2021</div></div>
+        </div>
+        <div class="aitem" data-src="https://drive.google.com/thumbnail?id=1bKziUrj3RvmCyYbXMTbCMXcqKuvDslgV&sz=w1200" data-caption="URC 2022 — Final Round">
+          <div class="aphoto"><img src="https://drive.google.com/thumbnail?id=1bKziUrj3RvmCyYbXMTbCMXcqKuvDslgV&sz=w300" loading="lazy" alt="URC 2022"/></div>
+          <div class="abody"><div class="aico">🚀</div><div class="attl">University Rover Challenge (URC)</div><div class="asub">Final Round Qualifier · The Mars Society · 2022</div></div>
+        </div>
+        <div class="aitem" data-src="https://drive.google.com/thumbnail?id=1yRa-nJtN9IjC7sAOl9Nv8vpzM3CXzOWe&sz=w1200" data-caption="Mars Rover Manipal Team">
+          <div class="aphoto"><img src="https://drive.google.com/thumbnail?id=1yRa-nJtN9IjC7sAOl9Nv8vpzM3CXzOWe&sz=w300" loading="lazy" alt="MRM Team"/></div>
+          <div class="abody"><div class="aico">🤖</div><div class="attl">Mars Rover Manipal</div><div class="asub">Mechanical Head · MIT Udupi · 2021–2023</div></div>
         </div>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- Three.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script>
-  // ── Loader hide ──
-  window.addEventListener('load', () => {
-    setTimeout(() => document.getElementById('loader').classList.add('hidden'), 1300);
-  });
+<!-- CONTACT -->
+<section id="contact">
+  <div class="ci">
+    <div class="ch reveal">LET'S BUILD<br><span>SOMETHING</span></div>
+    <p class="csub reveal">Have a robotics project, research opportunity, or just want to connect? I'm always open to conversations about hardware and embodied AI.</p>
+    <div class="clinks reveal">
+      <a href="tel:+919849565839" class="clink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.64A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>+91 98495 65839</a>
+      <a href="mailto:amritj2002@gmail.com" class="clink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>amritj2002@gmail.com</a>
+      <a href="https://linkedin.com/in/amritanshu-jain" target="_blank" class="clink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+    </div>
+  </div>
+</section>
 
-  // ── Scroll reveal ──
-  const revealEls = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('visible'), i * 80);
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.1 });
-  revealEls.forEach(el => observer.observe(el));
+<footer>
+  <div class="fl">© 2025 AMRITANSHU JAIN — MECHANICAL DESIGN ENGINEER</div>
+  <div class="fr">BENGALURU, KARNATAKA · INDIA</div>
+</footer>
 
-  // ── STL / OBJ / PLY Loaders (inline, no external loader files needed) ──
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-nav prev" id="lbPrev">‹</button>
+  <img class="lb-img" id="lbImg" src="" alt=""/>
+  <button class="lb-nav next" id="lbNext">›</button>
+  <button class="lb-close" id="lbClose">✕</button>
+  <div class="lb-cap" id="lbCap"></div>
+</div>
 
-  function parseSTL(buffer) {
-    // Try binary first
-    const headerView = new DataView(buffer);
-    const numTriangles = headerView.getUint32(80, true);
-    const expectedBinarySize = 84 + numTriangles * 50;
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ── Planetary Gearbox Loader ──
+(function(){
+  const cv=document.getElementById('gearCanvas');
+  const ctx=cv.getContext('2d');
+  const W=340,H=340,CX=170,CY=170;
+  const Ns=12,Np=36,Nr=84,m=3.1;
+  const Rs=Ns/2*m,Rp=Np/2*m,Rr=Nr/2*m;
+  const orbit=Rs+Rp;
+  const add=m,ded=m*1.25;
+  const RaS=Rs+add,RdS=Rs-ded,RaP=Rp+add,RdP=Rp-ded,RiR=Rr-add,RoR=Rr+ded;
+  const Wsun=1.4,Wcar=Wsun/8;
+  const Wplan=-Wsun*(Rs+Rp)/(8*Rp);
+  let sunA=0,carA=0,planA=0,lastT=null,gearRAF=null,progress=0;
+  const CYAN='#00d4ff',BG='#060d18';
 
-    if (buffer.byteLength === expectedBinarySize) {
-      // Binary STL
-      const positions = [];
-      const normals = [];
-      let offset = 84;
-      for (let i = 0; i < numTriangles; i++) {
-        const nx = headerView.getFloat32(offset, true); offset += 4;
-        const ny = headerView.getFloat32(offset, true); offset += 4;
-        const nz = headerView.getFloat32(offset, true); offset += 4;
-        for (let v = 0; v < 3; v++) {
-          positions.push(
-            headerView.getFloat32(offset, true), offset += 4,
-            headerView.getFloat32(offset, true), offset += 4,
-            headerView.getFloat32(offset, true)
-          ); offset += 4;
-          normals.push(nx, ny, nz);
-        }
-        offset += 2; // attribute byte count
-      }
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-      geo.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
-      return { geo, triangles: numTriangles };
-    }
-
-    // ASCII STL
-    const text = new TextDecoder().decode(buffer);
-    const positions = [];
-    const re = /vertex\s+([\d.eE+\-]+)\s+([\d.eE+\-]+)\s+([\d.eE+\-]+)/g;
-    let m;
-    while ((m = re.exec(text)) !== null) {
-      positions.push(parseFloat(m[1]), parseFloat(m[2]), parseFloat(m[3]));
-    }
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    geo.computeVertexNormals();
-    return { geo, triangles: positions.length / 9 };
-  }
-
-  function parsePLY(buffer) {
-    const text = new TextDecoder().decode(buffer);
-    const lines = text.split('\n');
-    let vertexCount = 0, faceCount = 0, headerEnd = 0;
-    for (let i = 0; i < lines.length; i++) {
-      const l = lines[i].trim();
-      if (l.startsWith('element vertex')) vertexCount = parseInt(l.split(' ')[2]);
-      if (l.startsWith('element face')) faceCount = parseInt(l.split(' ')[2]);
-      if (l === 'end_header') { headerEnd = i + 1; break; }
-    }
-    const verts = [];
-    for (let i = 0; i < vertexCount; i++) {
-      const parts = lines[headerEnd + i].trim().split(/\s+/);
-      verts.push(parseFloat(parts[0]), parseFloat(parts[1]), parseFloat(parts[2]));
-    }
-    const positions = [];
-    for (let i = 0; i < faceCount; i++) {
-      const parts = lines[headerEnd + vertexCount + i].trim().split(/\s+/);
-      const n = parseInt(parts[0]);
-      const idx = parts.slice(1).map(Number);
-      for (let j = 1; j < n - 1; j++) {
-        [idx[0], idx[j], idx[j+1]].forEach(k => {
-          positions.push(verts[k*3], verts[k*3+1], verts[k*3+2]);
-        });
-      }
-    }
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    geo.computeVertexNormals();
-    return { geo, triangles: Math.floor(positions.length / 9) };
-  }
-
-  function parseOBJ(text) {
-    const verts = [], positions = [];
-    const lines = text.split('\n');
-    for (const line of lines) {
-      const parts = line.trim().split(/\s+/);
-      if (parts[0] === 'v') verts.push(parseFloat(parts[1]), parseFloat(parts[2]), parseFloat(parts[3]));
-      if (parts[0] === 'f') {
-        const idx = parts.slice(1).map(p => parseInt(p.split('/')[0]) - 1);
-        for (let j = 1; j < idx.length - 1; j++) {
-          [idx[0], idx[j], idx[j+1]].forEach(k => {
-            positions.push(verts[k*3], verts[k*3+1], verts[k*3+2]);
-          });
-        }
-      }
-    }
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    geo.computeVertexNormals();
-    return { geo, triangles: Math.floor(positions.length / 9) };
-  }
-
-  // ── Three.js Modal Scene ──
-  let renderer, scene, camera, mesh, animId;
-  let isDragging = false, isRightDrag = false;
-  let prevMouse = { x: 0, y: 0 };
-  let rotX = 0, rotY = 0;
-  let panX = 0, panY = 0;
-  let zoom = 1;
-  let meshColor = 0x8fb4cc;
-  let wireframeMode = false;
-  let currentGeo = null;
-  let projectData = {};
-
-  function initRenderer() {
-    const canvas = document.getElementById('modalCanvas');
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setClearColor(0x060a0f);
-
-    scene = new THREE.Scene();
-
-    // Grid helper
-    const grid = new THREE.GridHelper(20, 20, 0x1e2d3d, 0x111820);
-    grid.position.y = -3;
-    scene.add(grid);
-
-    camera = new THREE.PerspectiveCamera(50, 1, 0.01, 10000);
-    camera.position.set(0, 0, 5);
-
-    // Lights
-    const ambient = new THREE.AmbientLight(0xffffff, 0.4);
-    scene.add(ambient);
-    const dir1 = new THREE.DirectionalLight(0x00d4ff, 0.9);
-    dir1.position.set(5, 10, 7);
-    scene.add(dir1);
-    const dir2 = new THREE.DirectionalLight(0xffffff, 0.5);
-    dir2.position.set(-5, -3, -5);
-    scene.add(dir2);
-    const hemi = new THREE.HemisphereLight(0x0d1117, 0x060a0f, 0.3);
-    scene.add(hemi);
-
-    resizeRenderer();
-    window.addEventListener('resize', resizeRenderer);
-    attachCanvasEvents(canvas);
-
-    animate();
-  }
-
-  function resizeRenderer() {
-    if (!renderer) return;
-    const canvas = document.getElementById('modalCanvas');
-    const parent = canvas.parentElement;
-    const w = parent.offsetWidth - 260;
-    const h = parent.offsetHeight;
-    renderer.setSize(w, h);
-    if (camera) { camera.aspect = w / h; camera.updateProjectionMatrix(); }
-  }
-
-  function animate() {
-    animId = requestAnimationFrame(animate);
-    if (mesh) {
-      mesh.rotation.y += 0.002;
-    }
-    renderer.render(scene, camera);
-  }
-
-  function loadGeometry(geo, triangles, filename, filesize, format) {
-    if (mesh) { scene.remove(mesh); mesh.geometry.dispose(); mesh.material.dispose(); mesh = null; }
-    currentGeo = geo;
-
-    geo.center();
-    geo.computeBoundingSphere();
-    const r = geo.boundingSphere.radius;
-    const s = 3 / r;
-    geo.scale(s, s, s);
-
-    const mat = new THREE.MeshPhongMaterial({
-      color: meshColor, specular: 0x333333, shininess: 40,
-      side: THREE.DoubleSide
-    });
-    mesh = new THREE.Mesh(geo, mat);
-    scene.add(mesh);
-    resetView();
-
-    // Info
-    document.getElementById('infoFilename').textContent = filename.length > 18 ? filename.slice(0, 15) + '…' : filename;
-    document.getElementById('infoSize').textContent = (filesize / 1024).toFixed(1) + ' KB';
-    document.getElementById('infoFormat').textContent = format.toUpperCase();
-    document.getElementById('infoTris').textContent = triangles.toLocaleString();
-    document.getElementById('modalTitle').textContent = filename.replace(/\.[^.]+$/, '').toUpperCase();
-    document.getElementById('projectName').value = filename.replace(/\.[^.]+$/, '');
-  }
-
-  function resetView() {
-    rotX = 0.3; rotY = -0.5; panX = 0; panY = 0; zoom = 1;
-    applyTransform();
-  }
-
-  function applyTransform() {
-    if (!mesh) return;
-    mesh.rotation.x = rotX;
-    mesh.rotation.y = rotY;
-    camera.zoom = zoom;
-    camera.updateProjectionMatrix();
-  }
-
-  function attachCanvasEvents(canvas) {
-    canvas.addEventListener('mousedown', e => {
-      isDragging = true;
-      isRightDrag = e.button === 2;
-      prevMouse = { x: e.clientX, y: e.clientY };
-      if (mesh) cancelAnimationFrame(animId), animId = null;
-    });
-    canvas.addEventListener('mousemove', e => {
-      if (!isDragging || !mesh) return;
-      const dx = e.clientX - prevMouse.x;
-      const dy = e.clientY - prevMouse.y;
-      if (isRightDrag) {
-        mesh.position.x += dx * 0.005;
-        mesh.position.y -= dy * 0.005;
+  function teeth(cx,cy,N,Ra,Rd,angle,internal){
+    const tw=0.42*Math.PI/N;
+    ctx.beginPath();
+    for(let i=0;i<N;i++){
+      const tc=angle+i*2*Math.PI/N;
+      const t0=tc-Math.PI/N,t1=tc-tw,t2=tc+tw,t3=tc+Math.PI/N;
+      if(internal){
+        if(i===0)ctx.moveTo(cx+Ra*Math.cos(t0),cy+Ra*Math.sin(t0));
+        ctx.arc(cx,cy,Ra,t0,t1);ctx.lineTo(cx+Rd*Math.cos(t1),cy+Rd*Math.sin(t1));
+        ctx.arc(cx,cy,Rd,t1,t2);ctx.lineTo(cx+Ra*Math.cos(t2),cy+Ra*Math.sin(t2));
+        ctx.arc(cx,cy,Ra,t2,t3);
       } else {
-        rotY += dx * 0.008;
-        rotX += dy * 0.008;
-        mesh.rotation.x = rotX;
-        mesh.rotation.y = rotY;
+        if(i===0)ctx.moveTo(cx+Rd*Math.cos(t0),cy+Rd*Math.sin(t0));
+        ctx.arc(cx,cy,Rd,t0,t1);ctx.lineTo(cx+Ra*Math.cos(t1),cy+Ra*Math.sin(t1));
+        ctx.arc(cx,cy,Ra,t1,t2);ctx.lineTo(cx+Rd*Math.cos(t2),cy+Rd*Math.sin(t2));
+        ctx.arc(cx,cy,Rd,t2,t3);
       }
-      prevMouse = { x: e.clientX, y: e.clientY };
-      renderer.render(scene, camera);
-    });
-    canvas.addEventListener('mouseup', () => { isDragging = false; startAutoRotate(); });
-    canvas.addEventListener('mouseleave', () => { isDragging = false; });
-    canvas.addEventListener('wheel', e => {
-      if (!mesh) return;
-      e.preventDefault();
-      zoom = Math.max(0.2, Math.min(10, zoom - e.deltaY * 0.001));
-      camera.zoom = zoom;
-      camera.updateProjectionMatrix();
-      renderer.render(scene, camera);
-    }, { passive: false });
-    canvas.addEventListener('dblclick', resetView);
-    canvas.addEventListener('contextmenu', e => e.preventDefault());
-  }
-
-  function startAutoRotate() {
-    if (!animId) animate();
-  }
-
-  // Modal open/close
-  function openModal(filename, filesize, format, geo, triangles) {
-    const overlay = document.getElementById('modalOverlay');
-    overlay.classList.add('active');
-
-    if (!renderer) {
-      initRenderer();
-    } else {
-      resizeRenderer();
     }
-
-    loadGeometry(geo, triangles, filename, filesize, format);
+    ctx.closePath();
   }
 
-  document.getElementById('modalClose').addEventListener('click', () => {
-    document.getElementById('modalOverlay').classList.remove('active');
-    if (animId) { cancelAnimationFrame(animId); animId = null; }
-  });
-
-  document.getElementById('btnReset').addEventListener('click', resetView);
-
-  document.getElementById('btnWireframe').addEventListener('click', () => {
-    if (!mesh) return;
-    wireframeMode = !wireframeMode;
-    mesh.material.wireframe = wireframeMode;
-    document.getElementById('btnWireframe').textContent = wireframeMode ? 'Solid' : 'Wireframe';
-  });
-
-  document.getElementById('btnFlat').addEventListener('click', () => {
-    if (!mesh) return;
-    mesh.material.flatShading = !mesh.material.flatShading;
-    mesh.material.needsUpdate = true;
-  });
-
-  // Color swatches
-  document.getElementById('colorSwatches').addEventListener('click', e => {
-    const sw = e.target.closest('.swatch');
-    if (!sw) return;
-    document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
-    sw.classList.add('active');
-    const hex = sw.dataset.color;
-    meshColor = parseInt(hex.replace('#', ''), 16);
-    if (mesh) mesh.material.color.setHex(meshColor);
-  });
-
-  // Save details
-  document.getElementById('saveDetails').addEventListener('click', () => {
-    const name = document.getElementById('projectName').value;
-    const desc = document.getElementById('projectDesc').value;
-    const filename = document.getElementById('infoFilename').textContent;
-    projectData[filename] = { name, desc };
-    document.getElementById('saveDetails').textContent = 'Saved ✓';
-    setTimeout(() => document.getElementById('saveDetails').textContent = 'Save Details', 2000);
-  });
-
-  // ── File Upload ──
-  const uploadZone = document.getElementById('uploadZone');
-  const fileInput = document.getElementById('fileInput');
-  const projectsGrid = document.getElementById('projectsGrid');
-
-  uploadZone.addEventListener('click', () => fileInput.click());
-
-  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
-  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
-  uploadZone.addEventListener('drop', e => {
-    e.preventDefault(); uploadZone.classList.remove('dragover');
-    handleFiles(e.dataTransfer.files);
-  });
-
-  fileInput.addEventListener('change', () => handleFiles(fileInput.files));
-
-  function handleFiles(files) {
-    Array.from(files).forEach(file => {
-      const ext = file.name.split('.').pop().toLowerCase();
-      if (!['stl', 'obj', 'ply'].includes(ext)) {
-        alert(`Unsupported format: .${ext}\nPlease use STL, OBJ, or PLY files.`);
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        let result;
-        try {
-          if (ext === 'stl') result = parseSTL(e.target.result);
-          else if (ext === 'ply') result = parsePLY(e.target.result);
-          else if (ext === 'obj') result = parseOBJ(new TextDecoder().decode(e.target.result));
-        } catch(err) {
-          alert('Could not parse file: ' + err.message); return;
-        }
-        addProjectCard(file.name, file.size, ext, result.geo, result.triangles);
-      };
-      reader.readAsArrayBuffer(file);
-    });
-  }
-
-  function formatSize(bytes) {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
-    return (bytes/1024/1024).toFixed(1) + ' MB';
-  }
-
-  function addProjectCard(filename, filesize, format, geo, triangles) {
-    const card = document.createElement('div');
-    card.className = 'project-card reveal visible';
-
-    // Thumbnail using Three.js
-    const canvas = document.createElement('canvas');
-    canvas.width = 320; canvas.height = 240;
-    const thumbRenderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    thumbRenderer.setPixelRatio(1);
-    thumbRenderer.setSize(320, 240);
-    thumbRenderer.setClearColor(0x060a0f);
-
-    const thumbScene = new THREE.Scene();
-    const thumbCam = new THREE.PerspectiveCamera(50, 320/240, 0.01, 10000);
-    thumbCam.position.set(0, 0, 5);
-
-    const ambient = new THREE.AmbientLight(0xffffff, 0.5);
-    thumbScene.add(ambient);
-    const dir = new THREE.DirectionalLight(0x00d4ff, 1);
-    dir.position.set(5, 10, 7);
-    thumbScene.add(dir);
-
-    // Clone geometry for thumbnail
-    const cloneGeo = geo.clone();
-    cloneGeo.center();
-    cloneGeo.computeBoundingSphere();
-    const r = cloneGeo.boundingSphere.radius;
-    const s = 3 / r;
-    cloneGeo.scale(s, s, s);
-    cloneGeo.rotateX(0.3); cloneGeo.rotateY(-0.5);
-
-    const mat = new THREE.MeshPhongMaterial({ color: meshColor, specular: 0x222222, shininess: 30, side: THREE.DoubleSide });
-    const thumbMesh = new THREE.Mesh(cloneGeo, mat);
-    thumbScene.add(thumbMesh);
-    thumbRenderer.render(thumbScene, thumbCam);
-
-    const imgData = canvas.toDataURL();
-    thumbRenderer.dispose();
-
-    card.innerHTML = `
-      <div class="card-viewer" style="background:url('${imgData}') center/cover no-repeat"></div>
-      <div class="card-body">
-        <div class="card-tag">${format.toUpperCase()} · ${formatSize(filesize)}</div>
-        <div class="card-title">${filename.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ')}</div>
-        <div class="card-desc">${triangles.toLocaleString()} triangles · Click "View 3D" to explore interactively</div>
-        <div class="card-meta">
-          <span class="card-size">${(triangles).toLocaleString()} tris</span>
-          <button class="card-btn view-btn">View 3D →</button>
-        </div>
-      </div>
-    `;
-
-    card.querySelector('.view-btn').addEventListener('click', () => {
-      openModal(filename, filesize, format, geo.clone(), triangles);
-    });
-
-    projectsGrid.appendChild(card);
-
-    // Scroll to card
-    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-
-  // Modal resize on window resize
-  window.addEventListener('resize', () => { if (renderer) resizeRenderer(); });
-
-  // Keyboard close
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      document.getElementById('modalOverlay').classList.remove('active');
-      if (animId) { cancelAnimationFrame(animId); animId = null; }
+  function frame(){
+    ctx.fillStyle=BG;ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(0,170,255,0.038)';ctx.lineWidth=0.5;
+    for(let x=0;x<=W;x+=16){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<=H;y+=16){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    ctx.strokeStyle='rgba(0,200,255,0.07)';ctx.setLineDash([5,5]);
+    ctx.beginPath();ctx.moveTo(0,CY);ctx.lineTo(W,CY);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(CX,0);ctx.lineTo(CX,H);ctx.stroke();
+    for(let i=0;i<3;i++){
+      const a=carA+i*2*Math.PI/3;
+      ctx.beginPath();ctx.moveTo(CX,CY);ctx.lineTo(CX+(Rr+14)*Math.cos(a),CY+(Rr+14)*Math.sin(a));ctx.stroke();
     }
+    ctx.setLineDash([]);
+    teeth(CX,CY,Nr,RiR,RoR,0,true);
+    ctx.fillStyle='rgba(0,35,90,0.6)';ctx.fill();
+    ctx.strokeStyle='rgba(0,115,195,0.65)';ctx.lineWidth=1.2;ctx.stroke();
+    ctx.beginPath();ctx.arc(CX,CY,RoR+5,0,2*Math.PI);
+    ctx.strokeStyle='rgba(0,110,200,0.3)';ctx.lineWidth=2.5;ctx.stroke();
+    ctx.strokeStyle='rgba(0,150,220,0.2)';ctx.lineWidth=1.2;
+    for(let i=0;i<3;i++){
+      const a=carA+i*2*Math.PI/3,pcx=CX+orbit*Math.cos(a),pcy=CY+orbit*Math.sin(a);
+      ctx.beginPath();ctx.moveTo(CX,CY);ctx.lineTo(pcx,pcy);ctx.stroke();
+      ctx.beginPath();ctx.arc(pcx,pcy,2.5,0,2*Math.PI);
+      ctx.fillStyle='rgba(0,170,220,0.4)';ctx.fill();
+    }
+    for(let i=0;i<3;i++){
+      const a=carA+i*2*Math.PI/3,pcx=CX+orbit*Math.cos(a),pcy=CY+orbit*Math.sin(a);
+      teeth(pcx,pcy,Np,RaP,RdP,planA+i*2*Math.PI/3,false);
+      ctx.fillStyle='rgba(0,25,75,0.75)';ctx.fill();
+      ctx.strokeStyle='rgba(0,150,220,0.72)';ctx.lineWidth=1;ctx.stroke();
+      ctx.beginPath();ctx.arc(pcx,pcy,Rp*0.22,0,2*Math.PI);
+      ctx.fillStyle='rgba(0,90,190,0.55)';ctx.fill();
+      ctx.strokeStyle='rgba(0,140,210,0.5)';ctx.lineWidth=0.7;ctx.stroke();
+    }
+    teeth(CX,CY,Ns,RaS,RdS,sunA,false);
+    const gr=ctx.createRadialGradient(CX,CY,0,CX,CY,RaS);
+    gr.addColorStop(0,'rgba(0,95,205,0.55)');gr.addColorStop(1,'rgba(0,45,140,0.28)');
+    ctx.fillStyle=gr;ctx.fill();
+    ctx.strokeStyle=CYAN;ctx.lineWidth=1.4;ctx.stroke();
+    ctx.beginPath();ctx.arc(CX,CY,Rs*0.3,0,2*Math.PI);
+    ctx.fillStyle='rgba(0,195,255,0.75)';ctx.fill();
+    const pulse=0.5+0.5*Math.abs(Math.sin(Date.now()/1000*3));
+    ctx.strokeStyle=`rgba(0,212,255,${pulse*0.35})`;ctx.lineWidth=0.7;ctx.setLineDash([3,5]);
+    ctx.beginPath();ctx.arc(CX,CY,Rs,0,2*Math.PI);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=CYAN;ctx.font='bold 9px monospace';ctx.textAlign='center';
+    ctx.fillText('SUN  INPUT',CX,CY-RaS-7);
+    ctx.font='7px monospace';ctx.fillStyle='rgba(0,165,215,0.65)';
+    ctx.fillText('Z = '+Ns,CX,CY-RaS-16);
+    ctx.fillStyle='rgba(0,160,215,0.7)';ctx.font='bold 8px monospace';
+    ctx.fillText('RING — FIXED  Z = '+Nr,CX,CY+RoR+13);
+    ctx.fillStyle=CYAN;ctx.font='bold 12px monospace';
+    ctx.fillText('8 : 1',CX,15);
+    ctx.font='6.5px monospace';ctx.fillStyle='rgba(0,185,240,0.5)';
+    ctx.fillText('PLANETARY REDUCTION',CX,25);
+    progress=(progress+0.0012)%1;
+    const bW=140,bX=CX-bW/2,bY=H-10;
+    ctx.fillStyle='rgba(0,55,115,0.4)';ctx.fillRect(bX,bY,bW,2);
+    ctx.fillStyle=CYAN;ctx.fillRect(bX,bY,bW*progress,2);
+  }
+
+  function loop(ts){
+    if(!lastT)lastT=ts;
+    const dt=Math.min((ts-lastT)/1000,0.05);lastT=ts;
+    sunA+=Wsun*dt;carA+=Wcar*dt;planA+=Wplan*dt;
+    frame();
+    gearRAF=requestAnimationFrame(loop);
+  }
+  gearRAF=requestAnimationFrame(loop);
+  window.addEventListener('load',()=>{
+    setTimeout(()=>{
+      document.getElementById('loader').classList.add('hidden');
+      cancelAnimationFrame(gearRAF);
+    },2600);
   });
-  </script>
+})();
+
+// Scroll reveal
+const obs=new IntersectionObserver((entries)=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);obs.unobserve(e.target);}});},{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// Carousels
+document.querySelectorAll('.cgal').forEach(g=>{
+  const imgs=g.querySelectorAll('img'),dots=g.querySelectorAll('.gdot');
+  const prev=g.querySelector('.gnav.prev'),next=g.querySelector('.gnav.next');
+  let cur=0;
+  function go(n){imgs[cur].classList.remove('active');dots[cur].classList.remove('active');cur=(n+imgs.length)%imgs.length;imgs[cur].classList.add('active');dots[cur].classList.add('active');}
+  if(prev)prev.addEventListener('click',e=>{e.stopPropagation();go(cur-1);});
+  if(next)next.addEventListener('click',e=>{e.stopPropagation();go(cur+1);});
+  dots.forEach((d,i)=>d.addEventListener('click',()=>go(i)));
+  let t=setInterval(()=>go(cur+1),3800);
+  g.addEventListener('mouseenter',()=>clearInterval(t));
+  g.addEventListener('mouseleave',()=>{t=setInterval(()=>go(cur+1),3800);});
+});
+
+// Lightbox
+const lb=document.getElementById('lightbox'),lbI=document.getElementById('lbImg'),lbC=document.getElementById('lbCap');
+let lbArr=[],lbIdx=0;
+function openLB(src,cap,arr){lbI.src=src;lbC.textContent=cap;lb.classList.add('active');document.body.style.overflow='hidden';lbArr=arr||[{src,cap}];lbIdx=lbArr.findIndex(x=>x.src===src);if(lbIdx<0)lbIdx=0;}
+function closeLB(){lb.classList.remove('active');document.body.style.overflow='';lbI.src='';}
+function navLB(d){if(lbArr.length<=1)return;lbIdx=(lbIdx+d+lbArr.length)%lbArr.length;lbI.src=lbArr[lbIdx].src;lbC.textContent=lbArr[lbIdx].cap;}
+document.getElementById('lbClose').addEventListener('click',closeLB);
+document.getElementById('lbPrev').addEventListener('click',()=>navLB(-1));
+document.getElementById('lbNext').addEventListener('click',()=>navLB(1));
+lb.addEventListener('click',e=>{if(e.target===lb)closeLB();});
+document.addEventListener('keydown',e=>{if(!lb.classList.contains('active'))return;if(e.key==='Escape')closeLB();if(e.key==='ArrowLeft')navLB(-1);if(e.key==='ArrowRight')navLB(1);});
+
+// Expand buttons
+const galData={
+  torso:[{src:'https://drive.google.com/thumbnail?id=1cpRkTL-VJMtKJicEqtMnHLMl-nQ5jphY&sz=w1200',cap:'Quadruped TORSO'},{src:'https://drive.google.com/thumbnail?id=1fdaIc7G5pA7f_DGPlRJhNqCjE1LcIVI3&sz=w1200',cap:'Isometric CAD View 1'},{src:'https://drive.google.com/thumbnail?id=13AVhwlPg2QVwWfaX_w_gGegpryzytEbJ&sz=w1200',cap:'Isometric CAD View 2'}],
+  arm:[{src:'https://drive.google.com/thumbnail?id=18w7mXf6gTsp9s00U-lhj7BdX2VoU9oNZ&sz=w1200',cap:'Arm on Quadruped'},{src:'https://drive.google.com/thumbnail?id=1bxHHrGlRVhEsFQU_wScVoKgPk5IG4lLH&sz=w1200',cap:'CAD of Manipulator'},{src:'https://drive.google.com/thumbnail?id=1bon-V5-s1R_ckRYHykCJk6jXie29ascI&sz=w1200',cap:'3D Printed Gearbox'},{src:'https://drive.google.com/thumbnail?id=1hKZuKFle9dDY-NfO5nb7PUE4Q23EMqUo&sz=w1200',cap:'Actuator Cross-Section'},{src:'https://drive.google.com/thumbnail?id=1Tme33sFVBgGSi_FaHt9BithD8ULrVmC6&sz=w1200',cap:'Team with Manipulator'}],
+  fea:[{src:'https://drive.google.com/thumbnail?id=1HeYvs7SvzzxQ3TlXpRHM4GvIj5gtXej_&sz=w1200',cap:'Implant Stress Analysis'},{src:'https://drive.google.com/thumbnail?id=1wAEmNStcqYrudogLLXyoOdS70iNP1hoQ&sz=w1200',cap:'CAD of Lower Human Jaw'}]
+};
+document.querySelectorAll('.cxbtn').forEach(btn=>{btn.addEventListener('click',()=>{const g=galData[btn.dataset.group];if(g)openLB(g[0].src,g[0].cap,g);});});
+
+// Award items
+document.querySelectorAll('.aitem[data-src]').forEach(item=>{item.addEventListener('click',()=>openLB(item.dataset.src,item.dataset.caption,[{src:item.dataset.src,cap:item.dataset.caption}]));});
+
+// Timeline photos
+document.querySelectorAll('.tl-photo').forEach(p=>{
+  p.addEventListener('click',()=>{
+    const siblings=Array.from(p.parentElement.querySelectorAll('.tl-photo'));
+    const arr=siblings.map(s=>({src:s.dataset.src,cap:s.dataset.caption}));
+    openLB(p.dataset.src,p.dataset.caption,arr);
+  });
+});
+
+// CAD Upload
+const uz=document.getElementById('uploadZone'),fi=document.getElementById('fileInput'),pg=document.querySelector('.pgrid');
+uz.addEventListener('click',()=>fi.click());
+uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('dragover');});
+uz.addEventListener('dragleave',()=>uz.classList.remove('dragover'));
+uz.addEventListener('drop',e=>{e.preventDefault();uz.classList.remove('dragover');handleFiles(e.dataTransfer.files);});
+fi.addEventListener('change',()=>handleFiles(fi.files));
+
+function handleFiles(files){Array.from(files).forEach(f=>{const ext=f.name.split('.').pop().toLowerCase();if(!['stl','obj','ply'].includes(ext)){alert('Unsupported: .'+ext);return;}const r=new FileReader();r.onload=e=>{try{let res;if(ext==='stl')res=parseSTL(e.target.result);else if(ext==='ply')res=parsePLY(e.target.result);else res=parseOBJ(new TextDecoder().decode(e.target.result));addCADCard(f.name,f.size,ext,res.geo,res.triangles);}catch(err){alert('Parse error: '+err.message);}};r.readAsArrayBuffer(f);});}
+
+function parseSTL(buf){const v=new DataView(buf);const n=v.getUint32(80,true);if(buf.byteLength===84+n*50){const p=[],nor=[];let o=84;for(let i=0;i<n;i++){const nx=v.getFloat32(o,true);o+=4;const ny=v.getFloat32(o,true);o+=4;const nz=v.getFloat32(o,true);o+=4;for(let j=0;j<3;j++){p.push(v.getFloat32(o,true));o+=4;p.push(v.getFloat32(o,true));o+=4;p.push(v.getFloat32(o,true));o+=4;nor.push(nx,ny,nz);}o+=2;}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));g.setAttribute('normal',new THREE.Float32BufferAttribute(nor,3));return{geo:g,triangles:n};}const t=new TextDecoder().decode(buf);const p=[];const re=/vertex\s+([\d.eE+\-]+)\s+([\d.eE+\-]+)\s+([\d.eE+\-]+)/g;let m;while((m=re.exec(t)))p.push(parseFloat(m[1]),parseFloat(m[2]),parseFloat(m[3]));const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));g.computeVertexNormals();return{geo:g,triangles:p.length/9};}
+
+function parsePLY(buf){const t=new TextDecoder().decode(buf);const ls=t.split('\n');let vc=0,fc=0,he=0;for(let i=0;i<ls.length;i++){const l=ls[i].trim();if(l.startsWith('element vertex'))vc=parseInt(l.split(' ')[2]);if(l.startsWith('element face'))fc=parseInt(l.split(' ')[2]);if(l==='end_header'){he=i+1;break;}}const vt=[];for(let i=0;i<vc;i++){const p=ls[he+i].trim().split(/\s+/);vt.push(parseFloat(p[0]),parseFloat(p[1]),parseFloat(p[2]));}const pos=[];for(let i=0;i<fc;i++){const p=ls[he+vc+i].trim().split(/\s+/);const n=parseInt(p[0]),idx=p.slice(1).map(Number);for(let j=1;j<n-1;j++)[idx[0],idx[j],idx[j+1]].forEach(k=>pos.push(vt[k*3],vt[k*3+1],vt[k*3+2]));}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.computeVertexNormals();return{geo:g,triangles:Math.floor(pos.length/9)};}
+
+function parseOBJ(t){const vt=[],pos=[];for(const l of t.split('\n')){const p=l.trim().split(/\s+/);if(p[0]==='v')vt.push(parseFloat(p[1]),parseFloat(p[2]),parseFloat(p[3]));if(p[0]==='f'){const idx=p.slice(1).map(x=>parseInt(x.split('/')[0])-1);for(let j=1;j<idx.length-1;j++)[idx[0],idx[j],idx[j+1]].forEach(k=>pos.push(vt[k*3],vt[k*3+1],vt[k*3+2]));}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.computeVertexNormals();return{geo:g,triangles:Math.floor(pos.length/9)};}
+
+function thumb(geo){const c=document.createElement('canvas');c.width=640;c.height=480;const r=new THREE.WebGLRenderer({canvas:c,antialias:true});r.setSize(640,480);r.setClearColor(0x060a0f);const sc=new THREE.Scene();const cam=new THREE.PerspectiveCamera(50,640/480,.01,10000);cam.position.set(0,0,5);sc.add(new THREE.AmbientLight(0xffffff,.5));const d=new THREE.DirectionalLight(0x00d4ff,1);d.position.set(5,10,7);sc.add(d);const g=geo.clone();g.center();g.computeBoundingSphere();const s=3/g.boundingSphere.radius;g.scale(s,s,s);g.rotateX(.3);g.rotateY(-.5);sc.add(new THREE.Mesh(g,new THREE.MeshPhongMaterial({color:0x8fb4cc,side:THREE.DoubleSide})));r.render(sc,cam);const u=c.toDataURL();r.dispose();return u;}
+
+function addCADCard(fn,fs,fmt,geo,tris){const t=thumb(geo);const nm=fn.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');const card=document.createElement('div');card.className='pcard reveal visible';card.innerHTML=`<div class="cgal" style="background:url('${t}') center/cover no-repeat;cursor:default;height:240px;"></div><div class="cbody"><div class="ctag">${fmt.toUpperCase()} · ${(fs/1024).toFixed(1)} KB</div><div class="cttl">${nm}</div><div class="cdesc">${tris.toLocaleString()} triangles</div></div>`;const uc=uz.closest('.pcard');pg.insertBefore(card,uc);card.scrollIntoView({behavior:'smooth',block:'center'});}
+</script>
 </body>
 </html>
