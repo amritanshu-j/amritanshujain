@@ -21,14 +21,8 @@
     "name": "Amritanshu Jain",
     "jobTitle": "Lead Hardware Engineer",
     "url": "https://amritanshu-j.github.io/amritanshujain/",
-    "sameAs": [
-      "https://linkedin.com/in/amritanshu-jain"
-    ],
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Bengaluru",
-      "addressCountry": "IN"
-    }
+    "sameAs": ["https://linkedin.com/in/amritanshu-jain"],
+    "address": {"@type":"PostalAddress","addressLocality":"Bengaluru","addressCountry":"IN"}
   }
   </script>
   <!-- Inline SVG favicon: AJ. monogram on black rounded square -->
@@ -44,13 +38,14 @@
       --steel:#8fb4cc; --accent:#00d4ff; --accent2:#ff6b35;
       --text:#c9d8e8; --text-dim:#5a7a94; --white:#eef4f9;
       --grid-col:rgba(0,212,255,0.07);
+      --skew:3deg;
     }
 
     /* ── Reset & base ── */
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{scroll-behavior:smooth;}
     body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:16px;overflow-x:hidden;}
-    /* Subtle blueprint grid overlaid on the whole page via a fixed pseudo-element */
+    /* Blueprint grid — fixed pseudo-element behind everything */
     body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-col) 1px,transparent 1px),linear-gradient(90deg,var(--grid-col) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
     /* Blueprint arm SVG — fixed behind everything, fades into the dark bg */
     .bp-layer{position:fixed;inset:0;z-index:0;pointer-events:none;user-select:none;display:flex;align-items:center;justify-content:center;overflow:hidden;}
@@ -58,32 +53,35 @@
 
     /* ── Navigation: fixed glassmorphism bar ── */
     nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 4rem;height:64px;background:rgba(8,11,16,0.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
-    /* Logo animates from "AJ." → full name on scroll (toggled via JS .scrolled class) */
+    /* Logo animates from "AJ." → full name on scroll */
     .nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.12em;color:var(--white);position:relative;display:flex;align-items:center;overflow:hidden;white-space:nowrap;}
     .logo-short{display:inline-flex;align-items:center;transition:opacity .45s ease,transform .45s ease;position:relative;}
     .logo-full{position:absolute;left:0;opacity:0;transform:translateY(10px);transition:opacity .45s ease,transform .45s ease;letter-spacing:.06em;pointer-events:none;}
-    /* Single rule covers the accent dot in both logo variants */
     .nav-logo em{color:var(--accent);font-style:normal;}
     nav.scrolled .logo-short{opacity:0;transform:translateY(-10px);position:absolute;}
     nav.scrolled .logo-full{opacity:1;transform:translateY(0);position:relative;pointer-events:auto;}
-    .nav-links{display:flex;gap:2.5rem;}
-    .nav-links a{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color .2s;}
+    .nav-links{display:flex;gap:2.5rem;align-items:center;}
+    .nav-links a{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color .25s;position:relative;padding-bottom:2px;}
+    .nav-links a::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;background:var(--accent);border-radius:1px;transform:scaleX(0);transform-origin:center;transition:transform .3s ease;}
+    /* Active nav link — driven by IntersectionObserver in JS */
+    .nav-links a.active{color:var(--accent);}
+    .nav-links a.active::after{transform:scaleX(1);}
     .nav-links a:hover{color:var(--accent);}
 
     /* ── Hero section ── */
     #hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:0 4rem;overflow:hidden;}
-    /* Mobile-only faint CAD render as background texture (desktop shows the portrait instead) */
+    /* Mobile-only faint CAD render as background texture */
     .hero-bg-cad{display:none;position:absolute;inset:0;z-index:0;pointer-events:none;user-select:none;}
     .hero-bg-cad img{width:100%;height:100%;object-fit:cover;object-position:center;opacity:0.07;mix-blend-mode:screen;filter:blur(0.6px);}
     .hero-content{position:relative;z-index:1;max-width:760px;}
-    /* Staggered fade-up entrance animations for each hero element */
+    /* Staggered fade-up entrance animations */
     .hero-tag{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;opacity:0;animation:fadeUp .7s .2s forwards;}
     .hero-tag::before{content:'';display:block;width:40px;height:1px;background:var(--accent);}
     .hero-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,9vw,8.5rem);line-height:.92;color:var(--white);letter-spacing:.02em;opacity:0;animation:fadeUp .8s .35s forwards;}
     .hero-name .ac{color:var(--accent);}
     .hero-role{font-size:1.05rem;color:var(--steel);font-weight:300;margin-top:1.5rem;max-width:520px;line-height:1.7;opacity:0;animation:fadeUp .8s .5s forwards;}
     .hero-cta{display:flex;gap:1rem;margin-top:2.5rem;opacity:0;animation:fadeUp .8s .65s forwards;}
-    /* Shared button base — .btn-p (primary/filled) and .btn-g (ghost/outline) extend it */
+    /* Shared button base */
     .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.75rem;font-family:'DM Mono',monospace;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border-radius:2px;cursor:pointer;border:none;transition:all .2s;}
     .btn-p{background:var(--accent);color:var(--bg);font-weight:500;}
     .btn-p:hover{background:#33ddff;transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,212,255,.3);}
@@ -94,61 +92,49 @@
     .stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--white);line-height:1;}
     .stat-label{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);margin-top:.2rem;}
 
-    /* ── Shared section layout ── */
-    section{position:relative;z-index:1;padding:7rem 4rem;}
+    /* ── Section layout & diagonal transitions ── */
+    section{position:relative;z-index:1;padding:8rem 4rem;}
     .sec-hdr{display:flex;align-items:center;gap:1.5rem;margin-bottom:4rem;}
     .sec-num{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--accent);letter-spacing:.2em;}
     .sec-ttl{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,4vw,3.5rem);letter-spacing:.05em;color:var(--white);}
     .sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);}
-
-    /* ── Projects: auto-fill card grid with image carousels ── */
-    #projects{background:var(--bg2);}
-    .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.5rem;}
-    .pcard{background:var(--bg3);border:1px solid var(--line);border-radius:4px;overflow:hidden;transition:border-color .25s,transform .25s,box-shadow .25s;}
-    .pcard:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,212,255,.1);}
-    /* Image carousel inside each card */
-    .cgal{position:relative;width:100%;height:240px;overflow:hidden;background:#060a0f;cursor:pointer;}
-    .cgal img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s;}
-    .cgal img.active{opacity:1;}
-    .gdots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:2;}
-    .gdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:background .2s;}
-    .gdot.active{background:var(--accent);}
-    .gnav{position:absolute;top:50%;transform:translateY(-50%);z-index:3;background:rgba(0,0,0,.5);border:none;color:var(--accent);width:30px;height:30px;border-radius:50%;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
-    .cgal:hover .gnav{opacity:1;}
-    .gnav.prev{left:10px;}.gnav.next{right:10px;}
-    .cbody{padding:1.25rem 1.5rem 1.5rem;}
-    .ctag{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem;}
-    .cttl{font-size:1.05rem;font-weight:600;color:var(--white);margin-bottom:.5rem;}
-    .cdesc{font-size:.82rem;color:var(--text-dim);line-height:1.65;margin-bottom:1.1rem;}
-    .cftr{display:flex;align-items:center;justify-content:space-between;}
-    .ccnt{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--text-dim);}
-    .cxbtn{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:.35rem .85rem;border-radius:2px;cursor:pointer;transition:all .2s;}
-    .cxbtn:hover{background:rgba(0,212,255,.18);}
+    /* Diagonal cuts: alternating sections clip into each other with an angled edge */
+    #experience{background:var(--bg2);clip-path:polygon(0 2.5rem,100% 0,100% 100%,0 100%);margin-top:-2.5rem;padding-top:10rem;}
+    #skills{background:var(--bg);clip-path:polygon(0 0,100% 2.5rem,100% 100%,0 100%);margin-top:-2.5rem;padding-top:10rem;}
+    #about{background:var(--bg2);clip-path:polygon(0 2.5rem,100% 0,100% 100%,0 100%);margin-top:-2.5rem;padding-top:10rem;}
+    #contact{background:var(--bg);clip-path:polygon(0 0,100% 2.5rem,100% 100%,0 100%);margin-top:-2.5rem;padding-top:10rem;text-align:center;}
 
     /* ── Experience: vertical timeline ── */
-    #experience{background:var(--bg);}
     .timeline{position:relative;padding-left:2rem;}
-    /* Fading vertical accent line running down the left edge */
+    /* Fading vertical accent line running down the left */
     .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--accent),var(--line),transparent);}
-    .tl-item{position:relative;margin-bottom:3.5rem;padding-left:2rem;}
+    .tl-item{position:relative;margin-bottom:4rem;padding-left:2rem;}
     .tl-item::before{content:'';position:absolute;left:-2rem;top:8px;width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px rgba(0,212,255,.6);}
     .tl-date{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.35rem;}
     .tl-role{font-size:1.15rem;font-weight:600;color:var(--white);margin-bottom:.25rem;}
     .tl-co{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--steel);margin-bottom:1rem;}
-    .tl-pts{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.25rem;}
+    .tl-pts{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.5rem;}
     .tl-pts li{font-size:.87rem;color:var(--text-dim);line-height:1.65;padding-left:1.2rem;position:relative;}
     .tl-pts li::before{content:'›';position:absolute;left:0;color:var(--accent);}
-    /* Horizontal scroll strip of clickable photo thumbnails */
-    .tl-photos{display:flex;gap:.75rem;overflow-x:auto;padding-bottom:.5rem;}
-    .tl-photos::-webkit-scrollbar{height:3px;}
-    .tl-photos::-webkit-scrollbar-thumb{background:var(--line);}
-    .tl-photo{flex-shrink:0;width:140px;height:90px;border-radius:2px;overflow:hidden;border:1px solid var(--line);cursor:pointer;transition:border-color .2s;}
-    .tl-photo:hover{border-color:var(--accent);}
-    .tl-photo img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
-    .tl-photo:hover img{transform:scale(1.05);}
+    /* Inline CAD carousel — sits inside each timeline entry */
+    .tl-gal{position:relative;width:100%;max-width:680px;height:220px;overflow:hidden;background:#060a0f;border:1px solid var(--line);border-radius:3px;cursor:pointer;margin-top:.5rem;}
+    .tl-gal img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s ease;}
+    .tl-gal img.active{opacity:1;}
+    /* Overlay gradient so dots stay readable over bright images */
+    .tl-gal::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(6,10,15,.7) 0%,transparent 50%);pointer-events:none;z-index:1;}
+    .tl-gal-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:3;}
+    .tl-gal-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:background .2s;}
+    .tl-gal-dot.active{background:var(--accent);}
+    .tl-gnav{position:absolute;top:50%;transform:translateY(-50%);z-index:3;background:rgba(0,0,0,.45);border:none;color:var(--accent);width:28px;height:28px;border-radius:50%;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
+    .tl-gal:hover .tl-gnav{opacity:1;}
+    .tl-gnav.prev{left:8px;}.tl-gnav.next{right:8px;}
+    /* Expand button overlaid bottom-right of the carousel */
+    .tl-expand{position:absolute;bottom:10px;right:10px;z-index:3;font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.25);padding:.25rem .65rem;border-radius:2px;cursor:pointer;transition:all .2s;}
+    .tl-expand:hover{background:rgba(0,212,255,.22);}
+    /* Caption strip inside carousel */
+    .tl-gal-cap{position:absolute;bottom:10px;left:12px;z-index:3;font-family:'DM Mono',monospace;font-size:.6rem;color:rgba(200,220,240,.7);letter-spacing:.07em;}
 
     /* ── Skills: tag cloud blocks ── */
-    #skills{background:var(--bg2);}
     .sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;}
     .sblk{background:var(--bg3);border:1px solid var(--line);border-radius:4px;padding:1.5rem;transition:border-color .2s;}
     .sblk:hover{border-color:var(--steel);}
@@ -158,18 +144,17 @@
     .stag:hover{border-color:var(--steel);color:var(--white);}
 
     /* ── About: bio + awards grid ── */
-    #about{background:var(--bg);}
     .agrid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
     .atext p{font-size:.95rem;color:var(--text-dim);line-height:1.9;margin-bottom:1.25rem;}
     .atext p strong{color:var(--text);font-weight:600;}
-    /* Certification / education card with left accent border */
+    /* Certification card with left accent border */
     .acert{background:var(--bg3);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:2px;padding:1.25rem 1.5rem;margin-top:1.5rem;}
     .acert.orange{border-left-color:var(--accent2);}
     .acert-ttl{font-size:.9rem;font-weight:600;color:var(--white);margin-bottom:.3rem;}
     .acert-sub{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text-dim);letter-spacing:.08em;}
     .acert-id{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--accent);margin-top:.5rem;}
     .alist{display:flex;flex-direction:column;gap:1rem;}
-    /* Award row — clicking opens the photo in the lightbox */
+    /* Award row — clicking opens photo in lightbox */
     .aitem{display:flex;gap:1rem;align-items:flex-start;background:var(--bg3);border:1px solid var(--line);border-radius:4px;overflow:hidden;transition:border-color .2s;cursor:pointer;}
     .aitem:hover{border-color:var(--accent2);}
     .aphoto{flex-shrink:0;width:90px;height:75px;overflow:hidden;background:#060a0f;}
@@ -192,7 +177,6 @@
     .lb-nav.prev{left:1.5rem;}.lb-nav.next{right:1.5rem;}
 
     /* ── Contact ── */
-    #contact{background:var(--bg2);text-align:center;}
     .ci{max-width:600px;margin:0 auto;}
     .ch{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);color:var(--white);letter-spacing:.05em;line-height:1;margin-bottom:1.25rem;}
     .ch span{color:var(--accent);}
@@ -203,14 +187,13 @@
 
     /* ── Footer ── */
     footer{position:relative;z-index:1;padding:2rem 4rem;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
-    /* Shared mono style for both footer text blocks */
     .fl,.fr{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-dim);}
     .fl{letter-spacing:.12em;}
 
     /* ── Animations ── */
     @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-    /* .reveal elements animate in when they enter the viewport (driven by IntersectionObserver) */
-    .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s;}
+    /* .reveal: animates in when entering viewport (IntersectionObserver) */
+    .reveal{opacity:0;transform:translateY(28px);transition:opacity .75s ease,transform .75s ease;}
     .reveal.visible{opacity:1;transform:none;}
 
     /* ── Loader: animated planetary gearbox splash screen ── */
@@ -221,19 +204,20 @@
     .loader-sub{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(0,180,255,.5);margin-top:.35rem;opacity:0;animation:lnFade .8s 1s forwards;}
     @keyframes lnFade{to{opacity:1;}}
 
-    /* ── Responsive breakpoints ── */
+    /* ── Responsive ── */
     @media(max-width:900px){
       nav{padding:0 1.5rem;}
       section{padding:5rem 1.5rem;}
       #hero{padding:0 1.5rem;}
+      #experience,#skills,#about,#contact{clip-path:none;margin-top:0;padding-top:5rem;}
       .agrid{grid-template-columns:1fr;gap:2.5rem;}
       .hero-stats{gap:1.5rem;}
       footer{padding:2rem 1.5rem;flex-direction:column;gap:.5rem;text-align:center;}
       .hero-bg-cad{display:block;}
+      .tl-gal{height:180px;}
     }
     @media(max-width:640px){
       .nav-links{display:none;}
-      .pgrid{grid-template-columns:1fr;}
       .sgrid{grid-template-columns:1fr;}
     }
   </style>
@@ -257,8 +241,10 @@
     <span class="logo-full">Amritanshu <em>Jain</em></span>
   </div>
   <div class="nav-links">
-    <a href="#projects">Projects</a><a href="#experience">Experience</a>
-    <a href="#skills">Skills</a><a href="#about">About</a><a href="#contact">Contact</a>
+    <a href="#experience" data-section="experience">Experience</a>
+    <a href="#skills" data-section="skills">Skills</a>
+    <a href="#about" data-section="about">About</a>
+    <a href="#contact" data-section="contact">Contact</a>
   </div>
 </nav>
 
@@ -272,7 +258,7 @@
     <h1 class="hero-name">AMRITANSHU<br><span class="ac">JAIN</span></h1>
     <p class="hero-role">Creating robots that interact and adapt with humans — deploying general-purpose robotics hardware that seamlessly blends into the environment.</p>
     <div class="hero-cta">
-      <a href="#projects" class="btn btn-p">View Projects</a>
+      <a href="#experience" class="btn btn-p">View Work</a>
       <a href="#contact" class="btn btn-g">Get In Touch</a>
     </div>
     <div class="hero-stats">
@@ -281,71 +267,12 @@
   </div>
 </section>
 
-<!-- PROJECTS -->
-<section id="projects">
-  <div class="sec-hdr reveal"><span class="sec-num">01 /</span><h2 class="sec-ttl">Projects & CAD Work</h2><div class="sec-line"></div></div>
-  <div class="pgrid">
-
-    <!-- Chirathe Robotics — TORSO -->
-    <div class="pcard reveal">
-      <div class="cgal" data-group="torso">
-        <img class="active" src="https://drive.google.com/thumbnail?id=1cpRkTL-VJMtKJicEqtMnHLMl-nQ5jphY&sz=w800" alt="Quadruped TORSO"/>
-        <img src="https://drive.google.com/thumbnail?id=1fdaIc7G5pA7f_DGPlRJhNqCjE1LcIVI3&sz=w800" alt="Isometric CAD View 1"/>
-        <img src="https://drive.google.com/thumbnail?id=13AVhwlPg2QVwWfaX_w_gGegpryzytEbJ&sz=w800" alt="Isometric CAD View 2"/>
-        <button class="gnav prev">‹</button><button class="gnav next">›</button>
-        <div class="gdots"><div class="gdot active"></div><div class="gdot"></div><div class="gdot"></div></div>
-      </div>
-      <div class="cbody">
-        <div class="ctag">Strider Robotics · Aug 2023 – Feb 2024</div>
-        <div class="cttl">Quadruped TORSO Assembly</div>
-        <div class="cdesc">Protective chassis housing electronics for the quadruped robot, designed for optimal center-of-gravity balance and high TRL Indian robotics applications.</div>
-        <div class="cftr"><span class="ccnt">3 renders</span><button class="cxbtn" data-group="torso">Expand →</button></div>
-      </div>
-    </div>
-
-    <!-- IISc RBCCPS — 4DOF Arm -->
-    <div class="pcard reveal">
-      <div class="cgal" data-group="arm">
-        <img class="active" src="https://drive.google.com/thumbnail?id=18w7mXf6gTsp9s00U-lhj7BdX2VoU9oNZ&sz=w800" alt="Robotic Arm on Quadruped"/>
-        <img src="https://drive.google.com/thumbnail?id=1bxHHrGlRVhEsFQU_wScVoKgPk5IG4lLH&sz=w800" alt="CAD of Manipulator on Quadruped"/>
-        <img src="https://drive.google.com/thumbnail?id=1bon-V5-s1R_ckRYHykCJk6jXie29ascI&sz=w800" alt="3D Printed Gearbox"/>
-        <img src="https://drive.google.com/thumbnail?id=1hKZuKFle9dDY-NfO5nb7PUE4Q23EMqUo&sz=w800" alt="Actuator Cross-Section"/>
-        <img src="https://drive.google.com/thumbnail?id=1Tme33sFVBgGSi_FaHt9BithD8ULrVmC6&sz=w800" alt="Team with Manipulator"/>
-        <button class="gnav prev">‹</button><button class="gnav next">›</button>
-        <div class="gdots"><div class="gdot active"></div><div class="gdot"></div><div class="gdot"></div><div class="gdot"></div><div class="gdot"></div></div>
-      </div>
-      <div class="cbody">
-        <div class="ctag">IISc RBCCPS · Dec 2022 – Jul 2023</div>
-        <div class="cttl">4DOF Robotic Arm for STOCH Quadruped</div>
-        <div class="cdesc">Cost-effective pesticide spraying arm with custom 8:1 planetary gearbox and high-performance BLDC motors for precise torque and velocity control.</div>
-        <div class="cftr"><span class="ccnt">5 renders</span><button class="cxbtn" data-group="arm">Expand →</button></div>
-      </div>
-    </div>
-
-    <!-- Curiouz TechLabs — FEA -->
-    <div class="pcard reveal">
-      <div class="cgal" data-group="fea">
-        <img class="active" src="https://drive.google.com/thumbnail?id=1HeYvs7SvzzxQ3TlXpRHM4GvIj5gtXej_&sz=w800" alt="Implant Stress Analysis"/>
-        <img src="https://drive.google.com/thumbnail?id=1wAEmNStcqYrudogLLXyoOdS70iNP1hoQ&sz=w800" alt="CAD of Lower Human Jaw"/>
-        <button class="gnav prev">‹</button><button class="gnav next">›</button>
-        <div class="gdots"><div class="gdot active"></div><div class="gdot"></div></div>
-      </div>
-      <div class="cbody">
-        <div class="ctag">Curiouz TechLabs · May – Dec 2022</div>
-        <div class="cttl">Mandibular Implant FEA Analysis</div>
-        <div class="cdesc">3D Finite Element Analysis of biomechanical behavior in mandibular overdentures. Published in the Journal of Composites Science, December 2022.</div>
-        <div class="cftr"><span class="ccnt">2 renders</span><button class="cxbtn" data-group="fea">Expand →</button></div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- EXPERIENCE -->
+<!-- EXPERIENCE — CAD galleries embedded per role -->
 <section id="experience">
-  <div class="sec-hdr reveal"><span class="sec-num">02 /</span><h2 class="sec-ttl">Work Experience</h2><div class="sec-line"></div></div>
+  <div class="sec-hdr reveal"><span class="sec-num">01 /</span><h2 class="sec-ttl">Work Experience</h2><div class="sec-line"></div></div>
   <div class="timeline">
 
+    <!-- KinesthetIQ -->
     <div class="tl-item reveal">
       <div class="tl-date">May 2024 — Present</div>
       <div class="tl-role">Lead Hardware Engineer · Founding Engineer</div>
@@ -359,6 +286,7 @@
       </ul>
     </div>
 
+    <!-- Chirathe Robotics + CAD gallery -->
     <div class="tl-item reveal">
       <div class="tl-date">Aug 2023 — Feb 2024</div>
       <div class="tl-role">Mechanical Design Engineer</div>
@@ -368,13 +296,19 @@
         <li>Contributed to quadruped at high TRL for Indian robotics applications</li>
         <li>Maintained comprehensive CAD documentation, drawings, and test results</li>
       </ul>
-      <div class="tl-photos">
-        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=1cpRkTL-VJMtKJicEqtMnHLMl-nQ5jphY&sz=w1200" data-caption="Quadruped TORSO"><img src="https://drive.google.com/thumbnail?id=1cpRkTL-VJMtKJicEqtMnHLMl-nQ5jphY&sz=w400" loading="lazy" alt="TORSO"/></div>
-        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=1fdaIc7G5pA7f_DGPlRJhNqCjE1LcIVI3&sz=w1200" data-caption="Isometric CAD View 1"><img src="https://drive.google.com/thumbnail?id=1fdaIc7G5pA7f_DGPlRJhNqCjE1LcIVI3&sz=w400" loading="lazy" alt="CAD 1"/></div>
-        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=13AVhwlPg2QVwWfaX_w_gGegpryzytEbJ&sz=w1200" data-caption="Isometric CAD View 2"><img src="https://drive.google.com/thumbnail?id=13AVhwlPg2QVwWfaX_w_gGegpryzytEbJ&sz=w400" loading="lazy" alt="CAD 2"/></div>
+      <!-- Inline carousel for Chirathe CAD work -->
+      <div class="tl-gal" id="gal-torso">
+        <img class="active" src="https://drive.google.com/thumbnail?id=1cpRkTL-VJMtKJicEqtMnHLMl-nQ5jphY&sz=w800" alt="Quadruped TORSO" data-full="https://drive.google.com/thumbnail?id=1cpRkTL-VJMtKJicEqtMnHLMl-nQ5jphY&sz=w1200" data-cap="Quadruped TORSO"/>
+        <img src="https://drive.google.com/thumbnail?id=1fdaIc7G5pA7f_DGPlRJhNqCjE1LcIVI3&sz=w800" alt="Isometric CAD View 1" data-full="https://drive.google.com/thumbnail?id=1fdaIc7G5pA7f_DGPlRJhNqCjE1LcIVI3&sz=w1200" data-cap="Isometric CAD View 1"/>
+        <img src="https://drive.google.com/thumbnail?id=13AVhwlPg2QVwWfaX_w_gGegpryzytEbJ&sz=w800" alt="Isometric CAD View 2" data-full="https://drive.google.com/thumbnail?id=13AVhwlPg2QVwWfaX_w_gGegpryzytEbJ&sz=w1200" data-cap="Isometric CAD View 2"/>
+        <button class="tl-gnav prev">‹</button><button class="tl-gnav next">›</button>
+        <div class="tl-gal-dots"><div class="tl-gal-dot active"></div><div class="tl-gal-dot"></div><div class="tl-gal-dot"></div></div>
+        <div class="tl-gal-cap">Quadruped TORSO</div>
+        <button class="tl-expand">Expand ↗</button>
       </div>
     </div>
 
+    <!-- IISc RBCCPS + CAD gallery -->
     <div class="tl-item reveal">
       <div class="tl-date">Dec 2022 — Jul 2023</div>
       <div class="tl-role">Research Intern</div>
@@ -384,15 +318,21 @@
         <li>Custom 8:1 planetary gearbox with BLDC motors for torque control</li>
         <li>Collaborated with cross-functional teams on design requirements</li>
       </ul>
-      <div class="tl-photos">
-        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=1Tme33sFVBgGSi_FaHt9BithD8ULrVmC6&sz=w1200" data-caption="Team with Manipulator"><img src="https://drive.google.com/thumbnail?id=1Tme33sFVBgGSi_FaHt9BithD8ULrVmC6&sz=w400" loading="lazy" alt="Team"/></div>
-        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=18w7mXf6gTsp9s00U-lhj7BdX2VoU9oNZ&sz=w1200" data-caption="Arm on Quadruped"><img src="https://drive.google.com/thumbnail?id=18w7mXf6gTsp9s00U-lhj7BdX2VoU9oNZ&sz=w400" loading="lazy" alt="Arm"/></div>
-        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=1bxHHrGlRVhEsFQU_wScVoKgPk5IG4lLH&sz=w1200" data-caption="CAD of Manipulator"><img src="https://drive.google.com/thumbnail?id=1bxHHrGlRVhEsFQU_wScVoKgPk5IG4lLH&sz=w400" loading="lazy" alt="CAD"/></div>
-        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=1bon-V5-s1R_ckRYHykCJk6jXie29ascI&sz=w1200" data-caption="3D Printed Gearbox"><img src="https://drive.google.com/thumbnail?id=1bon-V5-s1R_ckRYHykCJk6jXie29ascI&sz=w400" loading="lazy" alt="Gearbox"/></div>
-        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=1hKZuKFle9dDY-NfO5nb7PUE4Q23EMqUo&sz=w1200" data-caption="Actuator Cross-Section"><img src="https://drive.google.com/thumbnail?id=1hKZuKFle9dDY-NfO5nb7PUE4Q23EMqUo&sz=w400" loading="lazy" alt="Actuator"/></div>
+      <!-- Inline carousel for IISc arm CAD work -->
+      <div class="tl-gal" id="gal-arm">
+        <img class="active" src="https://drive.google.com/thumbnail?id=18w7mXf6gTsp9s00U-lhj7BdX2VoU9oNZ&sz=w800" alt="Arm on Quadruped" data-full="https://drive.google.com/thumbnail?id=18w7mXf6gTsp9s00U-lhj7BdX2VoU9oNZ&sz=w1200" data-cap="Arm on Quadruped"/>
+        <img src="https://drive.google.com/thumbnail?id=1bxHHrGlRVhEsFQU_wScVoKgPk5IG4lLH&sz=w800" alt="CAD of Manipulator" data-full="https://drive.google.com/thumbnail?id=1bxHHrGlRVhEsFQU_wScVoKgPk5IG4lLH&sz=w1200" data-cap="CAD of Manipulator"/>
+        <img src="https://drive.google.com/thumbnail?id=1bon-V5-s1R_ckRYHykCJk6jXie29ascI&sz=w800" alt="3D Printed Gearbox" data-full="https://drive.google.com/thumbnail?id=1bon-V5-s1R_ckRYHykCJk6jXie29ascI&sz=w1200" data-cap="3D Printed Gearbox"/>
+        <img src="https://drive.google.com/thumbnail?id=1hKZuKFle9dDY-NfO5nb7PUE4Q23EMqUo&sz=w800" alt="Actuator Cross-Section" data-full="https://drive.google.com/thumbnail?id=1hKZuKFle9dDY-NfO5nb7PUE4Q23EMqUo&sz=w1200" data-cap="Actuator Cross-Section"/>
+        <img src="https://drive.google.com/thumbnail?id=1Tme33sFVBgGSi_FaHt9BithD8ULrVmC6&sz=w800" alt="Team with Manipulator" data-full="https://drive.google.com/thumbnail?id=1Tme33sFVBgGSi_FaHt9BithD8ULrVmC6&sz=w1200" data-cap="Team with Manipulator"/>
+        <button class="tl-gnav prev">‹</button><button class="tl-gnav next">›</button>
+        <div class="tl-gal-dots"><div class="tl-gal-dot active"></div><div class="tl-gal-dot"></div><div class="tl-gal-dot"></div><div class="tl-gal-dot"></div><div class="tl-gal-dot"></div></div>
+        <div class="tl-gal-cap">Arm on Quadruped</div>
+        <button class="tl-expand">Expand ↗</button>
       </div>
     </div>
 
+    <!-- Curiouz TechLabs + CAD gallery -->
     <div class="tl-item reveal">
       <div class="tl-date">May 2022 — Dec 2022</div>
       <div class="tl-role">Research Intern</div>
@@ -402,12 +342,18 @@
         <li>Supported PhD research on stress distribution in implant retained overdentures</li>
         <li>Published in the Journal of Composites Science (Dec 2022)</li>
       </ul>
-      <div class="tl-photos">
-        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=1HeYvs7SvzzxQ3TlXpRHM4GvIj5gtXej_&sz=w1200" data-caption="Implant Stress Analysis"><img src="https://drive.google.com/thumbnail?id=1HeYvs7SvzzxQ3TlXpRHM4GvIj5gtXej_&sz=w400" loading="lazy" alt="FEA"/></div>
-        <div class="tl-photo" data-src="https://drive.google.com/thumbnail?id=1wAEmNStcqYrudogLLXyoOdS70iNP1hoQ&sz=w1200" data-caption="CAD — Lower Human Jaw"><img src="https://drive.google.com/thumbnail?id=1wAEmNStcqYrudogLLXyoOdS70iNP1hoQ&sz=w400" loading="lazy" alt="Jaw"/></div>
+      <!-- Inline carousel for FEA work -->
+      <div class="tl-gal" id="gal-fea">
+        <img class="active" src="https://drive.google.com/thumbnail?id=1HeYvs7SvzzxQ3TlXpRHM4GvIj5gtXej_&sz=w800" alt="Implant Stress Analysis" data-full="https://drive.google.com/thumbnail?id=1HeYvs7SvzzxQ3TlXpRHM4GvIj5gtXej_&sz=w1200" data-cap="Implant Stress Analysis"/>
+        <img src="https://drive.google.com/thumbnail?id=1wAEmNStcqYrudogLLXyoOdS70iNP1hoQ&sz=w800" alt="CAD of Lower Human Jaw" data-full="https://drive.google.com/thumbnail?id=1wAEmNStcqYrudogLLXyoOdS70iNP1hoQ&sz=w1200" data-cap="CAD — Lower Human Jaw"/>
+        <button class="tl-gnav prev">‹</button><button class="tl-gnav next">›</button>
+        <div class="tl-gal-dots"><div class="tl-gal-dot active"></div><div class="tl-gal-dot"></div></div>
+        <div class="tl-gal-cap">Implant Stress Analysis</div>
+        <button class="tl-expand">Expand ↗</button>
       </div>
     </div>
 
+    <!-- Mars Rover Manipal -->
     <div class="tl-item reveal">
       <div class="tl-date">Jul 2022 — Sep 2023</div>
       <div class="tl-role">Mechanical Head</div>
@@ -424,7 +370,7 @@
 
 <!-- SKILLS -->
 <section id="skills">
-  <div class="sec-hdr reveal"><span class="sec-num">03 /</span><h2 class="sec-ttl">Skills & Tools</h2><div class="sec-line"></div></div>
+  <div class="sec-hdr reveal"><span class="sec-num">02 /</span><h2 class="sec-ttl">Skills & Tools</h2><div class="sec-line"></div></div>
   <div class="sgrid">
     <div class="sblk reveal"><div class="sblk-ttl">CAD / Simulation</div><div class="stags"><span class="stag">SolidWorks</span><span class="stag">Motion Study</span><span class="stag">SolidWorks Visualize</span><span class="stag">ANSYS Space Claim</span><span class="stag">ANSYS Static Structural</span><span class="stag">Explicit Dynamics</span></div></div>
     <div class="sblk reveal"><div class="sblk-ttl">Manufacturing</div><div class="stags"><span class="stag">FDM 3D Printing</span><span class="stag">Ultimaker CURA</span><span class="stag">DFMA · DFM · DFR · DFC</span><span class="stag">Power & Hand Tools</span><span class="stag">Post-processing</span></div></div>
@@ -435,7 +381,7 @@
 
 <!-- ABOUT -->
 <section id="about">
-  <div class="sec-hdr reveal"><span class="sec-num">04 /</span><h2 class="sec-ttl">About</h2><div class="sec-line"></div></div>
+  <div class="sec-hdr reveal"><span class="sec-num">03 /</span><h2 class="sec-ttl">About</h2><div class="sec-line"></div></div>
   <div class="agrid">
     <div class="atext reveal">
       <p>Driven by <strong>iterative development</strong>, I embrace structured problem-solving to tackle complex engineering challenges across the full hardware stack.</p>
@@ -480,13 +426,13 @@
     <div class="clinks reveal">
       <a href="tel:+919849565839" class="clink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.64A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>+91 98495 65839</a>
       <a href="mailto:amritj2002@gmail.com" class="clink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>amritj2002@gmail.com</a>
-      <a href="https://linkedin.com/in/amritanshu-jain" target="_blank" rel="noopener noreferrer" class="clink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+      <a href="https://www.linkedin.com/in/amritanshujain/" target="_blank" rel="noopener noreferrer" class="clink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
     </div>
   </div>
 </section>
 
 <footer>
-  <div class="fl">© 2025 AMRITANSHU JAIN — MECHANICAL DESIGN ENGINEER</div>
+  <div class="fl">© 2025 AMRITANSHU JAIN — LEAD HARDWARE ENGINEER</div>
   <div class="fr">BENGALURU, KARNATAKA · INDIA</div>
 </footer>
 
@@ -498,6 +444,7 @@
   <button class="lb-close" id="lbClose">✕</button>
   <div class="lb-cap" id="lbCap"></div>
 </div>
+
 <script>
 // ── Planetary Gearbox Loader ──
 (function(){
@@ -611,32 +558,90 @@
   });
 })();
 
-// ── Nav logo scroll transition
+// ── Nav: logo scroll transition + active section highlighting ──
 const navEl=document.querySelector('nav');
+const navLinks=document.querySelectorAll('.nav-links a[data-section]');
+const sections=document.querySelectorAll('section[id]');
+const NAV_H=64; // fixed nav height in px
+
+// Intercept all anchor clicks (nav + hero buttons) and scroll precisely,
+// accounting for the fixed nav bar and clip-path visual offsets
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const id=a.getAttribute('href').slice(1);
+    const target=document.getElementById(id);
+    if(!target)return;
+    e.preventDefault();
+    const top=target.getBoundingClientRect().top+window.scrollY-NAV_H;
+    window.scrollTo({top,behavior:'smooth'});
+  });
+});
+
+function updateActiveNav(){
+  const trigger=window.scrollY+window.innerHeight/3;
+  let active=null;
+  sections.forEach(s=>{if(s.offsetTop<=trigger)active=s.id;});
+  navLinks.forEach(a=>a.classList.toggle('active',a.dataset.section===active));
+}
+
 window.addEventListener('scroll',()=>{
   navEl.classList.toggle('scrolled',window.scrollY>60);
+  updateActiveNav();
 },{passive:true});
+updateActiveNav();
 
-// ── Scroll reveal: add .visible when each .reveal element enters viewport ──
-const obs=new IntersectionObserver((entries)=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);obs.unobserve(e.target);}});},{threshold:.08});
-document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+// ── Scroll reveal: fade-up when elements enter viewport ──
+const revObs=new IntersectionObserver((entries)=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);revObs.unobserve(e.target);}
+  });
+},{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
 
-// ── Carousels: auto-advances every 3.8s, pauses on hover ──
-const SLIDE_INTERVAL=3800;
-document.querySelectorAll('.cgal').forEach(g=>{
-  const imgs=g.querySelectorAll('img'),dots=g.querySelectorAll('.gdot');
-  const prev=g.querySelector('.gnav.prev'),next=g.querySelector('.gnav.next');
+// ── Inline timeline carousels: auto-advance, pause on hover, sync caption ──
+const SLIDE_INTERVAL=4000;
+document.querySelectorAll('.tl-gal').forEach(g=>{
+  const imgs=Array.from(g.querySelectorAll('img'));
+  const dots=g.querySelectorAll('.tl-gal-dot');
+  const cap=g.querySelector('.tl-gal-cap');
+  const prev=g.querySelector('.tl-gnav.prev');
+  const next=g.querySelector('.tl-gnav.next');
   let cur=0;
-  function go(n){imgs[cur].classList.remove('active');dots[cur].classList.remove('active');cur=(n+imgs.length)%imgs.length;imgs[cur].classList.add('active');dots[cur].classList.add('active');}
-  if(prev)prev.addEventListener('click',e=>{e.stopPropagation();go(cur-1);});
-  if(next)next.addEventListener('click',e=>{e.stopPropagation();go(cur+1);});
-  dots.forEach((d,i)=>d.addEventListener('click',()=>go(i)));
+
+  function go(n){
+    imgs[cur].classList.remove('active');
+    dots[cur].classList.remove('active');
+    cur=(n+imgs.length)%imgs.length;
+    imgs[cur].classList.add('active');
+    dots[cur].classList.add('active');
+    if(cap)cap.textContent=imgs[cur].dataset.cap||'';
+  }
+
+  prev.addEventListener('click',e=>{e.stopPropagation();go(cur-1);});
+  next.addEventListener('click',e=>{e.stopPropagation();go(cur+1);});
+  dots.forEach((d,i)=>d.addEventListener('click',e=>{e.stopPropagation();go(i);}));
+
   let t=setInterval(()=>go(cur+1),SLIDE_INTERVAL);
   g.addEventListener('mouseenter',()=>clearInterval(t));
   g.addEventListener('mouseleave',()=>{t=setInterval(()=>go(cur+1),SLIDE_INTERVAL);});
+
+  // Click on image area opens lightbox with full-res gallery
+  g.addEventListener('click',e=>{
+    if(e.target.classList.contains('tl-gnav')||e.target.classList.contains('tl-gal-dot')||e.target.classList.contains('tl-expand'))return;
+    const arr=imgs.map(im=>({src:im.dataset.full||im.src,cap:im.dataset.cap||im.alt}));
+    openLB(arr[cur].src,arr[cur].cap,arr);
+  });
+
+  // Expand button opens lightbox from first image
+  const xbtn=g.querySelector('.tl-expand');
+  if(xbtn)xbtn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const arr=imgs.map(im=>({src:im.dataset.full||im.src,cap:im.dataset.cap||im.alt}));
+    openLB(arr[cur].src,arr[cur].cap,arr);
+  });
 });
 
-// ── Lightbox: fullscreen image viewer with prev/next navigation ──
+// ── Lightbox: fullscreen image viewer with prev/next and keyboard nav ──
 const lb=document.getElementById('lightbox'),lbI=document.getElementById('lbImg'),lbC=document.getElementById('lbCap');
 let lbArr=[],lbIdx=0;
 function openLB(src,cap,arr){lbI.src=src;lbC.textContent=cap;lb.classList.add('active');document.body.style.overflow='hidden';lbArr=arr||[{src,cap}];lbIdx=lbArr.findIndex(x=>x.src===src);if(lbIdx<0)lbIdx=0;}
@@ -648,21 +653,9 @@ document.getElementById('lbNext').addEventListener('click',()=>navLB(1));
 lb.addEventListener('click',e=>{if(e.target===lb)closeLB();});
 document.addEventListener('keydown',e=>{if(!lb.classList.contains('active'))return;if(e.key==='Escape')closeLB();if(e.key==='ArrowLeft')navLB(-1);if(e.key==='ArrowRight')navLB(1);});
 
-// ── Expand buttons: open full gallery in lightbox from project card ──
-const galData={
-  torso:[{src:'https://drive.google.com/thumbnail?id=1cpRkTL-VJMtKJicEqtMnHLMl-nQ5jphY&sz=w1200',cap:'Quadruped TORSO'},{src:'https://drive.google.com/thumbnail?id=1fdaIc7G5pA7f_DGPlRJhNqCjE1LcIVI3&sz=w1200',cap:'Isometric CAD View 1'},{src:'https://drive.google.com/thumbnail?id=13AVhwlPg2QVwWfaX_w_gGegpryzytEbJ&sz=w1200',cap:'Isometric CAD View 2'}],
-  arm:[{src:'https://drive.google.com/thumbnail?id=18w7mXf6gTsp9s00U-lhj7BdX2VoU9oNZ&sz=w1200',cap:'Arm on Quadruped'},{src:'https://drive.google.com/thumbnail?id=1bxHHrGlRVhEsFQU_wScVoKgPk5IG4lLH&sz=w1200',cap:'CAD of Manipulator'},{src:'https://drive.google.com/thumbnail?id=1bon-V5-s1R_ckRYHykCJk6jXie29ascI&sz=w1200',cap:'3D Printed Gearbox'},{src:'https://drive.google.com/thumbnail?id=1hKZuKFle9dDY-NfO5nb7PUE4Q23EMqUo&sz=w1200',cap:'Actuator Cross-Section'},{src:'https://drive.google.com/thumbnail?id=1Tme33sFVBgGSi_FaHt9BithD8ULrVmC6&sz=w1200',cap:'Team with Manipulator'}],
-  fea:[{src:'https://drive.google.com/thumbnail?id=1HeYvs7SvzzxQ3TlXpRHM4GvIj5gtXej_&sz=w1200',cap:'Implant Stress Analysis'},{src:'https://drive.google.com/thumbnail?id=1wAEmNStcqYrudogLLXyoOdS70iNP1hoQ&sz=w1200',cap:'CAD of Lower Human Jaw'}]
-};
-document.querySelectorAll('.cxbtn').forEach(btn=>{btn.addEventListener('click',()=>{const g=galData[btn.dataset.group];if(g)openLB(g[0].src,g[0].cap,g);});});
-
-// Award items and timeline photos: delegate lightbox open to data attributes
-document.querySelectorAll('.aitem[data-src]').forEach(item=>{item.addEventListener('click',()=>openLB(item.dataset.src,item.dataset.caption,[{src:item.dataset.src,cap:item.dataset.caption}]));});
-document.querySelectorAll('.tl-photo').forEach(p=>{
-  p.addEventListener('click',()=>{
-    const arr=Array.from(p.parentElement.querySelectorAll('.tl-photo')).map(s=>({src:s.dataset.src,cap:s.dataset.caption}));
-    openLB(p.dataset.src,p.dataset.caption,arr);
-  });
+// ── Awards: click to open in lightbox ──
+document.querySelectorAll('.aitem[data-src]').forEach(item=>{
+  item.addEventListener('click',()=>openLB(item.dataset.src,item.dataset.caption,[{src:item.dataset.src,cap:item.dataset.caption}]));
 });
 </script>
 </body>
