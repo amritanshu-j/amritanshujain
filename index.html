@@ -1,50 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='12' fill='%23000'/><text x='50' y='68' font-family='Georgia,serif' font-size='42' font-weight='bold' fill='white' text-anchor='middle'>AJ.</text></svg>">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Page identity & viewport -->
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="description" content="Amritanshu Jain — Lead Hardware Engineer specialising in robotics, actuator systems, and embodied AI hardware. Based in Bengaluru, India."/>
   <title>Amritanshu Jain — Lead Hardware Engineer</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <!-- Inline SVG favicon: AJ. monogram on black rounded square -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='12' fill='%23000'/><text x='50' y='68' font-family='Georgia,serif' font-size='42' font-weight='bold' fill='white' text-anchor='middle'>AJ.</text></svg>">
+  <!-- Google Fonts: Bebas Neue (headings), DM Mono (labels/code), Outfit (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet"/>
   <style>
-    :root {
+    /* ── Design tokens: all colours live here — edit once, applies everywhere ── */
+    :root{
       --bg:#080b10; --bg2:#0d1117; --bg3:#111820; --line:#1e2d3d;
       --steel:#8fb4cc; --accent:#00d4ff; --accent2:#ff6b35;
       --text:#c9d8e8; --text-dim:#5a7a94; --white:#eef4f9;
       --grid-col:rgba(0,212,255,0.04);
     }
+
+    /* ── Reset & base ── */
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{scroll-behavior:smooth;}
     body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:16px;overflow-x:hidden;}
+    /* Subtle blueprint grid overlaid on the whole page via a fixed pseudo-element */
     body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-col) 1px,transparent 1px),linear-gradient(90deg,var(--grid-col) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
 
+    /* ── Navigation: fixed glassmorphism bar ── */
     nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 4rem;height:64px;background:rgba(8,11,16,0.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
+    /* Logo animates from "AJ." → full name on scroll (toggled via JS .scrolled class) */
     .nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.12em;color:var(--white);position:relative;display:flex;align-items:center;overflow:hidden;white-space:nowrap;}
     .logo-short{display:inline-flex;align-items:center;transition:opacity .45s ease,transform .45s ease;position:relative;}
-    .logo-short em{color:var(--accent);font-style:normal;}
     .logo-full{position:absolute;left:0;opacity:0;transform:translateY(10px);transition:opacity .45s ease,transform .45s ease;letter-spacing:.06em;pointer-events:none;}
-    .logo-full em{color:var(--accent);font-style:normal;}
-    nav.scrolled .logo-short{opacity:0;transform:translateY(-10px);}
+    /* Single rule covers the accent dot in both logo variants */
+    .nav-logo em{color:var(--accent);font-style:normal;}
+    nav.scrolled .logo-short{opacity:0;transform:translateY(-10px);position:absolute;}
     nav.scrolled .logo-full{opacity:1;transform:translateY(0);position:relative;pointer-events:auto;}
-    nav.scrolled .logo-short{position:absolute;}
     .nav-links{display:flex;gap:2.5rem;}
     .nav-links a{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color .2s;}
     .nav-links a:hover{color:var(--accent);}
 
+    /* ── Hero section ── */
     #hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:0 4rem;overflow:hidden;}
+    /* Right-side portrait photo — hidden on mobile, gradient fades it into the dark bg */
     .hero-photo{position:absolute;right:0;top:0;height:100%;width:52%;max-width:720px;z-index:0;overflow:hidden;}
     .hero-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;}
     .hero-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(285deg,rgba(8,11,16,0.97) 0%,rgba(8,11,16,0.88) 38%,rgba(8,11,16,0.52) 65%,rgba(8,11,16,0.15) 100%);}
+    /* Mobile-only faint CAD render as background texture (desktop shows the portrait instead) */
     .hero-bg-cad{display:none;position:absolute;inset:0;z-index:0;pointer-events:none;user-select:none;}
     .hero-bg-cad img{width:100%;height:100%;object-fit:cover;object-position:center;opacity:0.07;mix-blend-mode:screen;filter:blur(0.6px);}
     .hero-content{position:relative;z-index:1;max-width:760px;}
+    /* Staggered fade-up entrance animations for each hero element */
     .hero-tag{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;opacity:0;animation:fadeUp .7s .2s forwards;}
     .hero-tag::before{content:'';display:block;width:40px;height:1px;background:var(--accent);}
     .hero-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,9vw,8.5rem);line-height:.92;color:var(--white);letter-spacing:.02em;opacity:0;animation:fadeUp .8s .35s forwards;}
     .hero-name .ac{color:var(--accent);}
     .hero-role{font-size:1.05rem;color:var(--steel);font-weight:300;margin-top:1.5rem;max-width:520px;line-height:1.7;opacity:0;animation:fadeUp .8s .5s forwards;}
     .hero-cta{display:flex;gap:1rem;margin-top:2.5rem;opacity:0;animation:fadeUp .8s .65s forwards;}
+    /* Shared button base — .btn-p (primary/filled) and .btn-g (ghost/outline) extend it */
     .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.75rem;font-family:'DM Mono',monospace;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border-radius:2px;cursor:pointer;border:none;transition:all .2s;}
     .btn-p{background:var(--accent);color:var(--bg);font-weight:500;}
     .btn-p:hover{background:#33ddff;transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,212,255,.3);}
@@ -55,18 +70,19 @@
     .stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--white);line-height:1;}
     .stat-label{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);margin-top:.2rem;}
 
+    /* ── Shared section layout ── */
     section{position:relative;z-index:1;padding:7rem 4rem;}
     .sec-hdr{display:flex;align-items:center;gap:1.5rem;margin-bottom:4rem;}
     .sec-num{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--accent);letter-spacing:.2em;}
     .sec-ttl{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,4vw,3.5rem);letter-spacing:.05em;color:var(--white);}
     .sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);}
 
-    /* PROJECTS */
+    /* ── Projects: auto-fill card grid with image carousels ── */
     #projects{background:var(--bg2);}
     .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.5rem;}
     .pcard{background:var(--bg3);border:1px solid var(--line);border-radius:4px;overflow:hidden;transition:border-color .25s,transform .25s,box-shadow .25s;}
     .pcard:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,212,255,.1);}
-
+    /* Image carousel inside each card */
     .cgal{position:relative;width:100%;height:240px;overflow:hidden;background:#060a0f;cursor:pointer;}
     .cgal img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s;}
     .cgal img.active{opacity:1;}
@@ -75,8 +91,7 @@
     .gdot.active{background:var(--accent);}
     .gnav{position:absolute;top:50%;transform:translateY(-50%);z-index:3;background:rgba(0,0,0,.5);border:none;color:var(--accent);width:30px;height:30px;border-radius:50%;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
     .cgal:hover .gnav{opacity:1;}
-    .gnav.prev{left:10px;} .gnav.next{right:10px;}
-
+    .gnav.prev{left:10px;}.gnav.next{right:10px;}
     .cbody{padding:1.25rem 1.5rem 1.5rem;}
     .ctag{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem;}
     .cttl{font-size:1.05rem;font-weight:600;color:var(--white);margin-bottom:.5rem;}
@@ -85,8 +100,8 @@
     .ccnt{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--text-dim);}
     .cxbtn{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:.35rem .85rem;border-radius:2px;cursor:pointer;transition:all .2s;}
     .cxbtn:hover{background:rgba(0,212,255,.18);}
-
-    .upload-zone{border:1px dashed rgba(0,212,255,.4);border-radius:4px;padding:2rem;text-align:center;cursor:pointer;margin:0;background:rgba(0,212,255,.02);transition:all .25s;display:flex;align-items:center;gap:1.5rem;height:240px;border-radius:0;border:none;justify-content:center;flex-direction:column;}
+    /* CAD upload drop-zone card */
+    .upload-zone{border:none;border-radius:0;padding:2rem;text-align:center;cursor:pointer;margin:0;background:rgba(0,212,255,.02);transition:all .25s;display:flex;align-items:center;gap:1.5rem;height:240px;justify-content:center;flex-direction:column;}
     .upload-zone:hover,.upload-zone.dragover{background:rgba(0,212,255,.06);}
     .uico{font-size:2rem;color:var(--accent);}
     .uttl{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.1em;color:var(--white);margin-bottom:.2rem;}
@@ -94,9 +109,10 @@
     .usub span{color:var(--accent);}
     #fileInput{display:none;}
 
-    /* EXPERIENCE */
+    /* ── Experience: vertical timeline ── */
     #experience{background:var(--bg);}
     .timeline{position:relative;padding-left:2rem;}
+    /* Fading vertical accent line running down the left edge */
     .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--accent),var(--line),transparent);}
     .tl-item{position:relative;margin-bottom:3.5rem;padding-left:2rem;}
     .tl-item::before{content:'';position:absolute;left:-2rem;top:8px;width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px rgba(0,212,255,.6);}
@@ -106,6 +122,7 @@
     .tl-pts{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.25rem;}
     .tl-pts li{font-size:.87rem;color:var(--text-dim);line-height:1.65;padding-left:1.2rem;position:relative;}
     .tl-pts li::before{content:'›';position:absolute;left:0;color:var(--accent);}
+    /* Horizontal scroll strip of clickable photo thumbnails */
     .tl-photos{display:flex;gap:.75rem;overflow-x:auto;padding-bottom:.5rem;}
     .tl-photos::-webkit-scrollbar{height:3px;}
     .tl-photos::-webkit-scrollbar-thumb{background:var(--line);}
@@ -114,7 +131,7 @@
     .tl-photo img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
     .tl-photo:hover img{transform:scale(1.05);}
 
-    /* SKILLS */
+    /* ── Skills: tag cloud blocks ── */
     #skills{background:var(--bg2);}
     .sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;}
     .sblk{background:var(--bg3);border:1px solid var(--line);border-radius:4px;padding:1.5rem;transition:border-color .2s;}
@@ -124,16 +141,19 @@
     .stag{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--text);background:rgba(255,255,255,.04);border:1px solid var(--line);padding:.3rem .75rem;border-radius:2px;transition:all .2s;}
     .stag:hover{border-color:var(--steel);color:var(--white);}
 
-    /* ABOUT */
+    /* ── About: bio + awards grid ── */
     #about{background:var(--bg);}
     .agrid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
     .atext p{font-size:.95rem;color:var(--text-dim);line-height:1.9;margin-bottom:1.25rem;}
     .atext p strong{color:var(--text);font-weight:600;}
+    /* Certification / education card with left accent border */
     .acert{background:var(--bg3);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:2px;padding:1.25rem 1.5rem;margin-top:1.5rem;}
+    .acert.orange{border-left-color:var(--accent2);}
     .acert-ttl{font-size:.9rem;font-weight:600;color:var(--white);margin-bottom:.3rem;}
     .acert-sub{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text-dim);letter-spacing:.08em;}
     .acert-id{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--accent);margin-top:.5rem;}
     .alist{display:flex;flex-direction:column;gap:1rem;}
+    /* Award row — clicking opens the photo in the lightbox */
     .aitem{display:flex;gap:1rem;align-items:flex-start;background:var(--bg3);border:1px solid var(--line);border-radius:4px;overflow:hidden;transition:border-color .2s;cursor:pointer;}
     .aitem:hover{border-color:var(--accent2);}
     .aphoto{flex-shrink:0;width:90px;height:75px;overflow:hidden;background:#060a0f;}
@@ -144,7 +164,7 @@
     .attl{font-size:.88rem;font-weight:600;color:var(--white);margin-bottom:.2rem;}
     .asub{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--text-dim);}
 
-    /* LIGHTBOX */
+    /* ── Lightbox: fullscreen image overlay ── */
     .lightbox{position:fixed;inset:0;z-index:500;background:rgba(4,7,12,.97);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
     .lightbox.active{opacity:1;pointer-events:all;}
     .lb-img{max-width:90vw;max-height:85vh;object-fit:contain;border-radius:2px;border:1px solid var(--line);}
@@ -153,9 +173,9 @@
     .lb-cap{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;}
     .lb-nav{position:fixed;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.5);border:1px solid var(--line);color:var(--accent);width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all .2s;}
     .lb-nav:hover{border-color:var(--accent);background:rgba(0,212,255,.1);}
-    .lb-nav.prev{left:1.5rem;} .lb-nav.next{right:1.5rem;}
+    .lb-nav.prev{left:1.5rem;}.lb-nav.next{right:1.5rem;}
 
-    /* CONTACT */
+    /* ── Contact ── */
     #contact{background:var(--bg2);text-align:center;}
     .ci{max-width:600px;margin:0 auto;}
     .ch{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);color:var(--white);letter-spacing:.05em;line-height:1;margin-bottom:1.25rem;}
@@ -165,14 +185,19 @@
     .clink{display:flex;align-items:center;gap:.6rem;font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;color:var(--text);padding:.8rem 1.5rem;border:1px solid var(--line);border-radius:2px;transition:all .2s;}
     .clink:hover{color:var(--accent);border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,212,255,.12);}
 
+    /* ── Footer ── */
     footer{position:relative;z-index:1;padding:2rem 4rem;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
-    .fl{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;color:var(--text-dim);}
-    .fr{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-dim);}
+    /* Shared mono style for both footer text blocks */
+    .fl,.fr{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-dim);}
+    .fl{letter-spacing:.12em;}
 
+    /* ── Animations ── */
     @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    /* .reveal elements animate in when they enter the viewport (driven by IntersectionObserver) */
     .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s;}
     .reveal.visible{opacity:1;transform:none;}
 
+    /* ── Loader: animated planetary gearbox splash screen ── */
     .loader{position:fixed;inset:0;background:#060d18;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;z-index:9999;transition:opacity .9s,visibility .9s;}
     .loader.hidden{opacity:0;visibility:hidden;pointer-events:none;}
     .loader canvas{display:block;}
@@ -180,8 +205,22 @@
     .loader-sub{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(0,180,255,.5);margin-top:.35rem;opacity:0;animation:lnFade .8s 1s forwards;}
     @keyframes lnFade{to{opacity:1;}}
 
-    @media(max-width:900px){nav{padding:0 1.5rem;}section{padding:5rem 1.5rem;}#hero{padding:0 1.5rem;}.agrid{grid-template-columns:1fr;gap:2.5rem;}.hero-stats{gap:1.5rem;}footer{padding:2rem 1.5rem;flex-direction:column;gap:.5rem;text-align:center;}.hero-photo{display:none;}.hero-bg-cad{display:block;}}
-    @media(max-width:640px){.nav-links{display:none;}.pgrid{grid-template-columns:1fr;}.sgrid{grid-template-columns:1fr;}}
+    /* ── Responsive breakpoints ── */
+    @media(max-width:900px){
+      nav{padding:0 1.5rem;}
+      section{padding:5rem 1.5rem;}
+      #hero{padding:0 1.5rem;}
+      .agrid{grid-template-columns:1fr;gap:2.5rem;}
+      .hero-stats{gap:1.5rem;}
+      footer{padding:2rem 1.5rem;flex-direction:column;gap:.5rem;text-align:center;}
+      .hero-photo{display:none;}       /* portrait hidden → CAD bg shown instead */
+      .hero-bg-cad{display:block;}
+    }
+    @media(max-width:640px){
+      .nav-links{display:none;}
+      .pgrid{grid-template-columns:1fr;}
+      .sgrid{grid-template-columns:1fr;}
+    }
   </style>
 </head>
 <body>
@@ -209,7 +248,7 @@
     <img src="images/ARM ON QUADRUPED.webp" alt="" width="1200" height="1200" loading="lazy" decoding="async">
   </div>
   <div class="hero-photo">
-    <img src="images/landing-page-photo.webp" alt="Amritanshu Jain" width="540" height="720" loading="eager" decoding="async">
+    <img src="images/landing-page-photo.webp" alt="Amritanshu Jain" width="540" height="720" loading="eager" fetchpriority="high" decoding="async">
   </div>
   <div class="hero-content">
     <div class="hero-tag">Lead Hardware Engineer</div>
@@ -400,7 +439,7 @@
       <p>My long-term goal is to <strong>deploy general-purpose robotics hardware</strong> that seamlessly blends into the environment — from custom gearboxes to full system integration.</p>
       <p>With real-world experience spanning the entire supply chain, I believe <strong>resilience is key</strong> to building exceptional products.</p>
       <div class="acert"><div class="acert-ttl">SolidWorks CSWP Certified Professional</div><div class="acert-sub">Mechanical Design — Dassault Systèmes</div><div class="acert-id">Credential ID: VR7JPXUA2T</div></div>
-      <div class="acert" style="margin-top:1rem;border-left-color:var(--accent2);"><div class="acert-ttl">B.Tech — Mechanical Engineering</div><div class="acert-sub">Manipal Institute of Technology, Manipal · 2020–2024</div></div>
+      <div class="acert orange"><div class="acert-ttl">B.Tech — Mechanical Engineering</div><div class="acert-sub">Manipal Institute of Technology, Manipal · 2020–2024</div></div>
     </div>
     <div class="reveal">
       <div class="sec-num" style="display:block;margin-bottom:1.25rem;">Honors & Awards</div>
@@ -438,7 +477,7 @@
     <div class="clinks reveal">
       <a href="tel:+919849565839" class="clink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.64A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>+91 98495 65839</a>
       <a href="mailto:amritj2002@gmail.com" class="clink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>amritj2002@gmail.com</a>
-      <a href="https://linkedin.com/in/amritanshu-jain" target="_blank" class="clink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+      <a href="https://linkedin.com/in/amritanshu-jain" target="_blank" rel="noopener noreferrer" class="clink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
     </div>
   </div>
 </section>
@@ -571,17 +610,18 @@
   });
 })();
 
-// Nav logo scroll transition
+// ── Nav logo scroll transition
 const navEl=document.querySelector('nav');
 window.addEventListener('scroll',()=>{
   navEl.classList.toggle('scrolled',window.scrollY>60);
 },{passive:true});
 
-// Scroll reveal
+// ── Scroll reveal: add .visible when each .reveal element enters viewport ──
 const obs=new IntersectionObserver((entries)=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);obs.unobserve(e.target);}});},{threshold:.08});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-// Carousels
+// ── Carousels: auto-advances every 3.8s, pauses on hover ──
+const SLIDE_INTERVAL=3800;
 document.querySelectorAll('.cgal').forEach(g=>{
   const imgs=g.querySelectorAll('img'),dots=g.querySelectorAll('.gdot');
   const prev=g.querySelector('.gnav.prev'),next=g.querySelector('.gnav.next');
@@ -590,12 +630,12 @@ document.querySelectorAll('.cgal').forEach(g=>{
   if(prev)prev.addEventListener('click',e=>{e.stopPropagation();go(cur-1);});
   if(next)next.addEventListener('click',e=>{e.stopPropagation();go(cur+1);});
   dots.forEach((d,i)=>d.addEventListener('click',()=>go(i)));
-  let t=setInterval(()=>go(cur+1),3800);
+  let t=setInterval(()=>go(cur+1),SLIDE_INTERVAL);
   g.addEventListener('mouseenter',()=>clearInterval(t));
-  g.addEventListener('mouseleave',()=>{t=setInterval(()=>go(cur+1),3800);});
+  g.addEventListener('mouseleave',()=>{t=setInterval(()=>go(cur+1),SLIDE_INTERVAL);});
 });
 
-// Lightbox
+// ── Lightbox: fullscreen image viewer with prev/next navigation ──
 const lb=document.getElementById('lightbox'),lbI=document.getElementById('lbImg'),lbC=document.getElementById('lbCap');
 let lbArr=[],lbIdx=0;
 function openLB(src,cap,arr){lbI.src=src;lbC.textContent=cap;lb.classList.add('active');document.body.style.overflow='hidden';lbArr=arr||[{src,cap}];lbIdx=lbArr.findIndex(x=>x.src===src);if(lbIdx<0)lbIdx=0;}
@@ -607,7 +647,7 @@ document.getElementById('lbNext').addEventListener('click',()=>navLB(1));
 lb.addEventListener('click',e=>{if(e.target===lb)closeLB();});
 document.addEventListener('keydown',e=>{if(!lb.classList.contains('active'))return;if(e.key==='Escape')closeLB();if(e.key==='ArrowLeft')navLB(-1);if(e.key==='ArrowRight')navLB(1);});
 
-// Expand buttons
+// ── Expand buttons: open full gallery in lightbox from project card ──
 const galData={
   torso:[{src:'https://drive.google.com/thumbnail?id=1cpRkTL-VJMtKJicEqtMnHLMl-nQ5jphY&sz=w1200',cap:'Quadruped TORSO'},{src:'https://drive.google.com/thumbnail?id=1fdaIc7G5pA7f_DGPlRJhNqCjE1LcIVI3&sz=w1200',cap:'Isometric CAD View 1'},{src:'https://drive.google.com/thumbnail?id=13AVhwlPg2QVwWfaX_w_gGegpryzytEbJ&sz=w1200',cap:'Isometric CAD View 2'}],
   arm:[{src:'https://drive.google.com/thumbnail?id=18w7mXf6gTsp9s00U-lhj7BdX2VoU9oNZ&sz=w1200',cap:'Arm on Quadruped'},{src:'https://drive.google.com/thumbnail?id=1bxHHrGlRVhEsFQU_wScVoKgPk5IG4lLH&sz=w1200',cap:'CAD of Manipulator'},{src:'https://drive.google.com/thumbnail?id=1bon-V5-s1R_ckRYHykCJk6jXie29ascI&sz=w1200',cap:'3D Printed Gearbox'},{src:'https://drive.google.com/thumbnail?id=1hKZuKFle9dDY-NfO5nb7PUE4Q23EMqUo&sz=w1200',cap:'Actuator Cross-Section'},{src:'https://drive.google.com/thumbnail?id=1Tme33sFVBgGSi_FaHt9BithD8ULrVmC6&sz=w1200',cap:'Team with Manipulator'}],
@@ -615,19 +655,16 @@ const galData={
 };
 document.querySelectorAll('.cxbtn').forEach(btn=>{btn.addEventListener('click',()=>{const g=galData[btn.dataset.group];if(g)openLB(g[0].src,g[0].cap,g);});});
 
-// Award items
+// Award items and timeline photos: delegate lightbox open to data attributes
 document.querySelectorAll('.aitem[data-src]').forEach(item=>{item.addEventListener('click',()=>openLB(item.dataset.src,item.dataset.caption,[{src:item.dataset.src,cap:item.dataset.caption}]));});
-
-// Timeline photos
 document.querySelectorAll('.tl-photo').forEach(p=>{
   p.addEventListener('click',()=>{
-    const siblings=Array.from(p.parentElement.querySelectorAll('.tl-photo'));
-    const arr=siblings.map(s=>({src:s.dataset.src,cap:s.dataset.caption}));
+    const arr=Array.from(p.parentElement.querySelectorAll('.tl-photo')).map(s=>({src:s.dataset.src,cap:s.dataset.caption}));
     openLB(p.dataset.src,p.dataset.caption,arr);
   });
 });
 
-// CAD Upload
+// ── CAD Upload: handles drag-drop or click, parses STL/OBJ/PLY in-browser ──
 const uz=document.getElementById('uploadZone'),fi=document.getElementById('fileInput'),pg=document.querySelector('.pgrid');
 uz.addEventListener('click',()=>fi.click());
 uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('dragover');});
