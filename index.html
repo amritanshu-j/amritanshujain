@@ -47,9 +47,9 @@
     body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:16px;overflow-x:hidden;}
     /* Blueprint grid — fixed pseudo-element behind everything */
     body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-col) 1px,transparent 1px),linear-gradient(90deg,var(--grid-col) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
-    /* Blueprint arm SVG — fixed behind everything, fades into the dark bg */
-    .bp-layer{position:fixed;inset:0;z-index:0;pointer-events:none;user-select:none;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-    .bp-layer img{width:100%;height:100%;object-fit:contain;object-position:center;mix-blend-mode:screen;opacity:0.55;}
+    /* Blueprint arm — sits in the right half of the hero, scrolls away with it */
+    .bp-layer{position:absolute;top:50%;right:-2%;transform:translateY(-50%);width:62%;height:90%;z-index:0;pointer-events:none;user-select:none;overflow:visible;}
+    .bp-layer img{width:100%;height:100%;object-fit:contain;object-position:center right;mix-blend-mode:screen;opacity:0.28;}
 
     /* ── Navigation: liquid glass bar ── */
     nav{
@@ -263,11 +263,6 @@
   <div class="loader-sub">Lead Hardware Engineer</div>
 </div>
 
-<!-- Blueprint arm — fixed background layer, sits above the CSS grid, below all content -->
-<div class="bp-layer" aria-hidden="true">
-  <img src="images/arm-blueprint.svg" alt="" loading="lazy" decoding="async">
-</div>
-
 <nav>
   <div class="nav-logo">
     <span class="logo-short">AJ<em>.</em></span>
@@ -283,6 +278,10 @@
 
 <!-- HERO -->
 <section id="hero">
+  <!-- Blueprint arm wireframe — right half, scrolls with the section -->
+  <div class="bp-layer" aria-hidden="true">
+    <img src="images/arm-blueprint.svg" alt="" loading="eager" decoding="async">
+  </div>
   <div class="hero-bg-cad" aria-hidden="true">
     <img src="images/ARM ON QUADRUPED.webp" alt="" width="1200" height="1200" loading="lazy" decoding="async">
   </div>
@@ -296,7 +295,7 @@
     </div>
     <!-- Current employer logo with link -->
     <div class="hero-employer">
-      <span class="hero-employer-label">working with</span>
+      <span class="hero-employer-label">Now working with</span>
       <a href="https://www.kinesthetiq.com/" target="_blank" rel="noopener noreferrer" class="hero-employer-logo">
         <img src="images/kinesthetiq-logo.svg" alt="KinesthetIQ Robotics Studio" height="78" width="auto" loading="eager" decoding="async">
       </a>
