@@ -43,7 +43,7 @@
       --bg:#080b10; --bg2:#0d1117; --bg3:#111820; --line:#1e2d3d;
       --steel:#8fb4cc; --accent:#00d4ff; --accent2:#ff6b35;
       --text:#c9d8e8; --text-dim:#5a7a94; --white:#eef4f9;
-      --grid-col:rgba(0,212,255,0.04);
+      --grid-col:rgba(0,212,255,0.07);
     }
 
     /* ── Reset & base ── */
@@ -52,6 +52,9 @@
     body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:16px;overflow-x:hidden;}
     /* Subtle blueprint grid overlaid on the whole page via a fixed pseudo-element */
     body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-col) 1px,transparent 1px),linear-gradient(90deg,var(--grid-col) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
+    /* Blueprint arm SVG — fixed behind everything, fades into the dark bg */
+    .bp-layer{position:fixed;inset:0;z-index:0;pointer-events:none;user-select:none;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+    .bp-layer img{width:100%;height:100%;object-fit:contain;object-position:center;mix-blend-mode:screen;opacity:0.55;}
 
     /* ── Navigation: fixed glassmorphism bar ── */
     nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 4rem;height:64px;background:rgba(8,11,16,0.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
@@ -246,6 +249,11 @@
   <canvas id="gearCanvas" width="340" height="340"></canvas>
   <div class="loader-name">AMRITANSHU JAIN</div>
   <div class="loader-sub">Lead Hardware Engineer</div>
+</div>
+
+<!-- Blueprint arm — fixed background layer, sits above the CSS grid, below all content -->
+<div class="bp-layer" aria-hidden="true">
+  <img src="images/arm-blueprint.svg" alt="" loading="lazy" decoding="async">
 </div>
 
 <nav>
