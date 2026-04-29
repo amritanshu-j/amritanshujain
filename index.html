@@ -49,7 +49,7 @@
     body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-col) 1px,transparent 1px),linear-gradient(90deg,var(--grid-col) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
     /* Blueprint arm — sits in the right half of the hero, scrolls away with it */
     .bp-layer{position:absolute;top:50%;right:-2%;transform:translateY(-50%);width:62%;height:90%;z-index:0;pointer-events:none;user-select:none;overflow:visible;}
-    .bp-layer img{width:100%;height:100%;object-fit:contain;object-position:center right;mix-blend-mode:screen;opacity:1.8;}
+    .bp-layer img{width:100%;height:100%;object-fit:contain;object-position:center right;mix-blend-mode:screen;opacity:0.28;}
 
     /* ── Navigation: liquid glass bar ── */
     nav{
@@ -138,35 +138,58 @@
     #about{background:var(--bg2);clip-path:polygon(0 2.5rem,100% 0,100% 100%,0 100%);margin-top:-2.5rem;padding-top:10rem;}
     #contact{background:var(--bg);clip-path:polygon(0 0,100% 2.5rem,100% 100%,0 100%);margin-top:-2.5rem;padding-top:10rem;text-align:center;}
 
-    /* ── Experience: vertical timeline ── */
-    .timeline{position:relative;padding-left:2rem;}
-    /* Fading vertical accent line running down the left */
-    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--accent),var(--line),transparent);}
-    .tl-item{position:relative;margin-bottom:4rem;padding-left:2rem;}
-    .tl-item::before{content:'';position:absolute;left:-2rem;top:8px;width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px rgba(0,212,255,.6);}
-    .tl-date{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.35rem;}
-    .tl-role{font-size:1.15rem;font-weight:600;color:var(--white);margin-bottom:.25rem;}
-    .tl-co{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--steel);margin-bottom:1rem;}
-    .tl-pts{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.5rem;}
-    .tl-pts li{font-size:.87rem;color:var(--text-dim);line-height:1.65;padding-left:1.2rem;position:relative;}
-    .tl-pts li::before{content:'›';position:absolute;left:0;color:var(--accent);}
-    /* Inline CAD carousel — sits inside each timeline entry */
-    .tl-gal{position:relative;width:100%;max-width:680px;height:220px;overflow:hidden;background:#060a0f;border:1px solid var(--line);border-radius:3px;cursor:pointer;margin-top:.5rem;}
-    .tl-gal img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s ease;}
-    .tl-gal img.active{opacity:1;}
-    /* Overlay gradient so dots stay readable over bright images */
-    .tl-gal::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(6,10,15,.7) 0%,transparent 50%);pointer-events:none;z-index:1;}
-    .tl-gal-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:3;}
-    .tl-gal-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:background .2s;}
-    .tl-gal-dot.active{background:var(--accent);}
-    .tl-gnav{position:absolute;top:50%;transform:translateY(-50%);z-index:3;background:rgba(0,0,0,.45);border:none;color:var(--accent);width:28px;height:28px;border-radius:50%;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
-    .tl-gal:hover .tl-gnav{opacity:1;}
-    .tl-gnav.prev{left:8px;}.tl-gnav.next{right:8px;}
-    /* Expand button overlaid bottom-right of the carousel */
-    .tl-expand{position:absolute;bottom:10px;right:10px;z-index:3;font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.25);padding:.25rem .65rem;border-radius:2px;cursor:pointer;transition:all .2s;}
-    .tl-expand:hover{background:rgba(0,212,255,.22);}
-    /* Caption strip inside carousel */
-    .tl-gal-cap{position:absolute;bottom:10px;left:12px;z-index:3;font-family:'DM Mono',monospace;font-size:.6rem;color:rgba(200,220,240,.7);letter-spacing:.07em;}
+    /* ── Experience: standardised cards ── */
+    /* Vertical connector line */
+    .xp-list{display:flex;flex-direction:column;gap:2rem;position:relative;padding-left:1.5rem;}
+    .xp-list::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--accent),var(--line),transparent);}
+    /* Each card */
+    .xp-card{position:relative;background:var(--bg3);border:1px solid var(--line);border-radius:6px;overflow:hidden;transition:border-color .25s;}
+    .xp-card::before{content:'';position:absolute;left:-1.5rem;top:1.6rem;width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(0,212,255,.5);z-index:1;}
+    .xp-card:hover{border-color:rgba(0,212,255,.35);}
+    /* Top meta row */
+    .xp-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1.5rem 1.5rem 0;}
+    .xp-meta{flex:1;}
+    .xp-date{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--accent);letter-spacing:.16em;text-transform:uppercase;margin-bottom:.3rem;}
+    .xp-role{font-size:1.05rem;font-weight:600;color:var(--white);margin-bottom:.2rem;}
+    .xp-co{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--steel);}
+    /* One-line summary */
+    .xp-summary{font-size:.875rem;color:var(--text-dim);line-height:1.7;padding:.75rem 1.5rem 1rem;border-bottom:1px solid var(--line);}
+    /* Two-column body: bullet points left, media right */
+    .xp-body{display:grid;grid-template-columns:1fr 1.4fr;gap:0;}
+    .xp-pts{padding:1.25rem 1.5rem;list-style:none;display:flex;flex-direction:column;gap:.45rem;border-right:1px solid var(--line);}
+    .xp-pts li{font-size:.82rem;color:var(--text-dim);line-height:1.6;padding-left:1rem;position:relative;}
+    .xp-pts li::before{content:'›';position:absolute;left:0;color:var(--accent);}
+    /* Media panel: tabs + viewer */
+    .xp-media{display:flex;flex-direction:column;}
+    .xp-tabs{display:flex;border-bottom:1px solid var(--line);}
+    .xp-tab{flex:1;font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);background:none;border:none;padding:.85rem 1rem;cursor:pointer;transition:color .2s,background .2s;text-align:center;}
+    .xp-tab.active{color:var(--accent);background:rgba(0,212,255,.05);border-bottom:2px solid var(--accent);margin-bottom:-1px;}
+    .xp-tab:hover:not(.active){color:var(--text);}
+    /* Carousel viewer */
+    .xp-viewer{position:relative;height:210px;background:#060a0f;overflow:hidden;}
+    .xp-viewer img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s ease;}
+    .xp-viewer img.active{opacity:1;}
+    .xp-viewer::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(6,10,15,.65) 0%,transparent 55%);pointer-events:none;z-index:1;}
+    /* No-media placeholder */
+    .xp-viewer.empty{display:flex;align-items:center;justify-content:center;}
+    .xp-viewer.empty span{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-dim);letter-spacing:.1em;opacity:.5;}
+    /* Carousel controls */
+    .xp-dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:4px;z-index:3;}
+    .xp-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25);cursor:pointer;transition:background .2s;border:none;padding:0;}
+    .xp-dot.active{background:var(--accent);}
+    .xp-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:3;background:rgba(0,0,0,.4);border:none;color:var(--accent);width:26px;height:26px;border-radius:50%;font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
+    .xp-viewer:hover .xp-nav{opacity:1;}
+    .xp-nav.prev{left:7px;}.xp-nav.next{right:7px;}
+    /* Caption + expand row */
+    .xp-caprow{position:absolute;bottom:8px;left:10px;right:10px;z-index:3;display:flex;align-items:flex-end;justify-content:space-between;}
+    .xp-cap{font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(200,220,240,.65);letter-spacing:.06em;}
+    .xp-expand{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:rgba(0,212,255,.09);border:1px solid rgba(0,212,255,.22);padding:.2rem .55rem;border-radius:2px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+    .xp-expand:hover{background:rgba(0,212,255,.2);}
+    /* No gallery = collapse media area */
+    @media(max-width:900px){
+      .xp-body{grid-template-columns:1fr;}
+      .xp-pts{border-right:none;border-bottom:1px solid var(--line);}
+    }
 
     /* ── Skills: tag cloud blocks ── */
     .sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;}
@@ -247,7 +270,7 @@
       .agrid{grid-template-columns:1fr;gap:2.5rem;}
       footer{padding:2rem 1.5rem;flex-direction:column;gap:.5rem;text-align:center;}
       .hero-bg-cad{display:block;}
-      .tl-gal{height:180px;}
+      .xp-body{grid-template-columns:1fr;}
     }
     @media(max-width:640px){
       .nav-links{display:none;}
@@ -295,7 +318,7 @@
     </div>
     <!-- Current employer logo with link -->
     <div class="hero-employer">
-      <span class="hero-employer-label">working with</span>
+      <span class="hero-employer-label">Now working with</span>
       <a href="https://www.kinesthetiq.com/" target="_blank" rel="noopener noreferrer" class="hero-employer-logo">
         <img src="images/kinesthetiq-logo.svg" alt="KinesthetIQ Robotics Studio" height="78" width="auto" loading="eager" decoding="async">
       </a>
@@ -303,102 +326,198 @@
   </div>
 </section>
 
-<!-- EXPERIENCE — CAD galleries embedded per role -->
+<!-- EXPERIENCE -->
 <section id="experience">
   <div class="sec-hdr reveal"><span class="sec-num">01 /</span><h2 class="sec-ttl">Work Experience</h2><div class="sec-line"></div></div>
-  <div class="timeline">
+  <div class="xp-list">
 
-    <!-- KinesthetIQ -->
-    <div class="tl-item reveal">
-      <div class="tl-date">May 2024 — Present</div>
-      <div class="tl-role">Lead Hardware Engineer · Founding Engineer</div>
-      <div class="tl-co">KinesthetIQ Robotics Studio · Bengaluru</div>
-      <ul class="tl-pts">
-        <li>Developing Human-Robot interaction devices for bimanual teleoperation on generalist tasks</li>
-        <li>Designing cost-effective Robot Operating Devices (ROD) with indigenous components</li>
-        <li>Managing team of engineers developing low-cost hardware for embodied AI</li>
-        <li>Pioneering work cell standardization to scale data collection for Large Behaviour Models</li>
-        <li>Developing prismatic lift systems for Mobile Manipulation</li>
-      </ul>
-    </div>
-
-    <!-- Chirathe Robotics + CAD gallery -->
-    <div class="tl-item reveal">
-      <div class="tl-date">Aug 2023 — Feb 2024</div>
-      <div class="tl-role">Mechanical Design Engineer</div>
-      <div class="tl-co">ARTPARK · Chirathe Robotics (Strider Robotics) · Bengaluru</div>
-      <ul class="tl-pts">
-        <li>Designed and developed TORSO for quadruped robot at optimal COG</li>
-        <li>Contributed to quadruped at high TRL for Indian robotics applications</li>
-        <li>Maintained comprehensive CAD documentation, drawings, and test results</li>
-      </ul>
-      <!-- Inline carousel for Chirathe CAD work -->
-      <div class="tl-gal" id="gal-torso">
-        <img class="active" src="https://drive.google.com/thumbnail?id=1cpRkTL-VJMtKJicEqtMnHLMl-nQ5jphY&sz=w800" alt="Quadruped TORSO" data-full="https://drive.google.com/thumbnail?id=1cpRkTL-VJMtKJicEqtMnHLMl-nQ5jphY&sz=w1200" data-cap="Quadruped TORSO"/>
-        <img src="https://drive.google.com/thumbnail?id=1fdaIc7G5pA7f_DGPlRJhNqCjE1LcIVI3&sz=w800" alt="Isometric CAD View 1" data-full="https://drive.google.com/thumbnail?id=1fdaIc7G5pA7f_DGPlRJhNqCjE1LcIVI3&sz=w1200" data-cap="Isometric CAD View 1"/>
-        <img src="https://drive.google.com/thumbnail?id=13AVhwlPg2QVwWfaX_w_gGegpryzytEbJ&sz=w800" alt="Isometric CAD View 2" data-full="https://drive.google.com/thumbnail?id=13AVhwlPg2QVwWfaX_w_gGegpryzytEbJ&sz=w1200" data-cap="Isometric CAD View 2"/>
-        <button class="tl-gnav prev">‹</button><button class="tl-gnav next">›</button>
-        <div class="tl-gal-dots"><div class="tl-gal-dot active"></div><div class="tl-gal-dot"></div><div class="tl-gal-dot"></div></div>
-        <div class="tl-gal-cap">Quadruped TORSO</div>
-        <button class="tl-expand">Expand ↗</button>
+    <!-- ── KinesthetIQ ── -->
+    <div class="xp-card reveal">
+      <div class="xp-head">
+        <div class="xp-meta">
+          <div class="xp-date">May 2024 — Present</div>
+          <div class="xp-role">Lead Hardware Engineer · Founding Engineer</div>
+          <div class="xp-co">KinesthetIQ Robotics Studio · Bengaluru</div>
+        </div>
+      </div>
+      <div class="xp-body">
+        <ul class="xp-pts">
+          <li>Developing Human-Robot interaction devices for bimanual teleoperation</li>
+          <li>Designing cost-effective Robot Operating Devices (ROD) with indigenous components</li>
+          <li>Managing a team building low-cost hardware for embodied AI</li>
+          <li>Pioneering work cell standardisation to scale data collection for Large Behaviour Models</li>
+          <li>Developing prismatic lift systems for Mobile Manipulation</li>
+        </ul>
+        <div class="xp-media">
+          <div class="xp-viewer empty"><span>Media coming soon</span></div>
+        </div>
       </div>
     </div>
 
-    <!-- IISc RBCCPS + CAD gallery -->
-    <div class="tl-item reveal">
-      <div class="tl-date">Dec 2022 — Jul 2023</div>
-      <div class="tl-role">Research Intern</div>
-      <div class="tl-co">Robert Bosch Centre for Cyber-Physical Systems · IISc · Bengaluru</div>
-      <ul class="tl-pts">
-        <li>Designed 4DOF articulated arm for STOCH quadruped pesticide spraying</li>
-        <li>Custom 8:1 planetary gearbox with BLDC motors for torque control</li>
-        <li>Collaborated with cross-functional teams on design requirements</li>
-      </ul>
-      <!-- Inline carousel for IISc arm CAD work -->
-      <div class="tl-gal" id="gal-arm">
-        <img class="active" src="https://drive.google.com/thumbnail?id=18w7mXf6gTsp9s00U-lhj7BdX2VoU9oNZ&sz=w800" alt="Arm on Quadruped" data-full="https://drive.google.com/thumbnail?id=18w7mXf6gTsp9s00U-lhj7BdX2VoU9oNZ&sz=w1200" data-cap="Arm on Quadruped"/>
-        <img src="https://drive.google.com/thumbnail?id=1bxHHrGlRVhEsFQU_wScVoKgPk5IG4lLH&sz=w800" alt="CAD of Manipulator" data-full="https://drive.google.com/thumbnail?id=1bxHHrGlRVhEsFQU_wScVoKgPk5IG4lLH&sz=w1200" data-cap="CAD of Manipulator"/>
-        <img src="https://drive.google.com/thumbnail?id=1bon-V5-s1R_ckRYHykCJk6jXie29ascI&sz=w800" alt="3D Printed Gearbox" data-full="https://drive.google.com/thumbnail?id=1bon-V5-s1R_ckRYHykCJk6jXie29ascI&sz=w1200" data-cap="3D Printed Gearbox"/>
-        <img src="https://drive.google.com/thumbnail?id=1hKZuKFle9dDY-NfO5nb7PUE4Q23EMqUo&sz=w800" alt="Actuator Cross-Section" data-full="https://drive.google.com/thumbnail?id=1hKZuKFle9dDY-NfO5nb7PUE4Q23EMqUo&sz=w1200" data-cap="Actuator Cross-Section"/>
-        <img src="https://drive.google.com/thumbnail?id=1Tme33sFVBgGSi_FaHt9BithD8ULrVmC6&sz=w800" alt="Team with Manipulator" data-full="https://drive.google.com/thumbnail?id=1Tme33sFVBgGSi_FaHt9BithD8ULrVmC6&sz=w1200" data-cap="Team with Manipulator"/>
-        <button class="tl-gnav prev">‹</button><button class="tl-gnav next">›</button>
-        <div class="tl-gal-dots"><div class="tl-gal-dot active"></div><div class="tl-gal-dot"></div><div class="tl-gal-dot"></div><div class="tl-gal-dot"></div><div class="tl-gal-dot"></div></div>
-        <div class="tl-gal-cap">Arm on Quadruped</div>
-        <button class="tl-expand">Expand ↗</button>
+    <!-- ── Chirathe Robotics ── -->
+    <div class="xp-card reveal">
+      <div class="xp-head">
+        <div class="xp-meta">
+          <div class="xp-date">Aug 2023 — Feb 2024</div>
+          <div class="xp-role">Mechanical Design Engineer</div>
+          <div class="xp-co">ARTPARK · Chirathe Robotics (Strider Robotics) · Bengaluru</div>
+        </div>
+      </div>
+      <div class="xp-body">
+        <ul class="xp-pts">
+          <li>Designed and developed TORSO for quadruped robot at optimal COG</li>
+          <li>Contributed to quadruped at high TRL for Indian robotics applications</li>
+          <li>Maintained comprehensive CAD documentation, drawings, and test results</li>
+        </ul>
+        <div class="xp-media">
+          <div class="xp-tabs">
+            <button class="xp-tab active" data-tab="photos">Photos</button>
+            <button class="xp-tab" data-tab="cad">CAD</button>
+          </div>
+          <div class="xp-viewer" data-active-tab="photos">
+            <!-- Photos -->
+            <img class="active" data-tab="photos" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1cpRkTL-VJMtKJicEqtMnHLMl-nQ5jphY&sz=w800"
+              data-full="https://drive.google.com/thumbnail?id=1cpRkTL-VJMtKJicEqtMnHLMl-nQ5jphY&sz=w1200"
+              data-cap="Quadruped TORSO" alt="Quadruped TORSO"/>
+            <img data-tab="photos" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1fdaIc7G5pA7f_DGPlRJhNqCjE1LcIVI3&sz=w800"
+              data-full="https://drive.google.com/thumbnail?id=1fdaIc7G5pA7f_DGPlRJhNqCjE1LcIVI3&sz=w1200"
+              data-cap="Isometric CAD View 1" alt="Isometric CAD View 1"/>
+            <!-- CAD -->
+            <img data-tab="cad" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=13AVhwlPg2QVwWfaX_w_gGegpryzytEbJ&sz=w800"
+              data-full="https://drive.google.com/thumbnail?id=13AVhwlPg2QVwWfaX_w_gGegpryzytEbJ&sz=w1200"
+              data-cap="Isometric CAD View 2" alt="Isometric CAD View 2"/>
+            <button class="xp-nav prev">‹</button>
+            <button class="xp-nav next">›</button>
+            <div class="xp-dots"></div>
+            <div class="xp-caprow">
+              <span class="xp-cap"></span>
+              <button class="xp-expand">Expand ↗</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Curiouz TechLabs + CAD gallery -->
-    <div class="tl-item reveal">
-      <div class="tl-date">May 2022 — Dec 2022</div>
-      <div class="tl-role">Research Intern</div>
-      <div class="tl-co">Curiouz TechLabs · Udupi</div>
-      <ul class="tl-pts">
-        <li>Biomechanical FEA of mandibular overdenture implants and loading conditions</li>
-        <li>Supported PhD research on stress distribution in implant retained overdentures</li>
-        <li>Published in the Journal of Composites Science (Dec 2022)</li>
-      </ul>
-      <!-- Inline carousel for FEA work -->
-      <div class="tl-gal" id="gal-fea">
-        <img class="active" src="https://drive.google.com/thumbnail?id=1HeYvs7SvzzxQ3TlXpRHM4GvIj5gtXej_&sz=w800" alt="Implant Stress Analysis" data-full="https://drive.google.com/thumbnail?id=1HeYvs7SvzzxQ3TlXpRHM4GvIj5gtXej_&sz=w1200" data-cap="Implant Stress Analysis"/>
-        <img src="https://drive.google.com/thumbnail?id=1wAEmNStcqYrudogLLXyoOdS70iNP1hoQ&sz=w800" alt="CAD of Lower Human Jaw" data-full="https://drive.google.com/thumbnail?id=1wAEmNStcqYrudogLLXyoOdS70iNP1hoQ&sz=w1200" data-cap="CAD — Lower Human Jaw"/>
-        <button class="tl-gnav prev">‹</button><button class="tl-gnav next">›</button>
-        <div class="tl-gal-dots"><div class="tl-gal-dot active"></div><div class="tl-gal-dot"></div></div>
-        <div class="tl-gal-cap">Implant Stress Analysis</div>
-        <button class="tl-expand">Expand ↗</button>
+    <!-- ── IISc RBCCPS ── -->
+    <div class="xp-card reveal">
+      <div class="xp-head">
+        <div class="xp-meta">
+          <div class="xp-date">Dec 2022 — Jul 2023</div>
+          <div class="xp-role">Research Intern</div>
+          <div class="xp-co">Robert Bosch Centre for Cyber-Physical Systems · IISc · Bengaluru</div>
+        </div>
+      </div>
+      <div class="xp-body">
+        <ul class="xp-pts">
+          <li>Designed 4-DOF articulated arm for STOCH quadruped pesticide spraying</li>
+          <li>Custom 8:1 planetary gearbox with BLDC motors for torque control</li>
+          <li>Collaborated with cross-functional teams on design requirements and integration</li>
+        </ul>
+        <div class="xp-media">
+          <div class="xp-tabs">
+            <button class="xp-tab active" data-tab="photos">Photos</button>
+            <button class="xp-tab" data-tab="cad">CAD</button>
+          </div>
+          <div class="xp-viewer" data-active-tab="photos">
+            <!-- Photos -->
+            <img class="active" data-tab="photos" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=18w7mXf6gTsp9s00U-lhj7BdX2VoU9oNZ&sz=w800"
+              data-full="https://drive.google.com/thumbnail?id=18w7mXf6gTsp9s00U-lhj7BdX2VoU9oNZ&sz=w1200"
+              data-cap="Arm on Quadruped" alt="Arm on Quadruped"/>
+            <img data-tab="photos" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1Tme33sFVBgGSi_FaHt9BithD8ULrVmC6&sz=w800"
+              data-full="https://drive.google.com/thumbnail?id=1Tme33sFVBgGSi_FaHt9BithD8ULrVmC6&sz=w1200"
+              data-cap="Team with Manipulator" alt="Team with Manipulator"/>
+            <!-- CAD -->
+            <img data-tab="cad" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1bxHHrGlRVhEsFQU_wScVoKgPk5IG4lLH&sz=w800"
+              data-full="https://drive.google.com/thumbnail?id=1bxHHrGlRVhEsFQU_wScVoKgPk5IG4lLH&sz=w1200"
+              data-cap="CAD — Manipulator" alt="CAD of Manipulator"/>
+            <img data-tab="cad" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1bon-V5-s1R_ckRYHykCJk6jXie29ascI&sz=w800"
+              data-full="https://drive.google.com/thumbnail?id=1bon-V5-s1R_ckRYHykCJk6jXie29ascI&sz=w1200"
+              data-cap="3D Printed Gearbox" alt="3D Printed Gearbox"/>
+            <img data-tab="cad" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1hKZuKFle9dDY-NfO5nb7PUE4Q23EMqUo&sz=w800"
+              data-full="https://drive.google.com/thumbnail?id=1hKZuKFle9dDY-NfO5nb7PUE4Q23EMqUo&sz=w1200"
+              data-cap="Actuator Cross-Section" alt="Actuator Cross-Section"/>
+            <button class="xp-nav prev">‹</button>
+            <button class="xp-nav next">›</button>
+            <div class="xp-dots"></div>
+            <div class="xp-caprow">
+              <span class="xp-cap"></span>
+              <button class="xp-expand">Expand ↗</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Mars Rover Manipal -->
-    <div class="tl-item reveal">
-      <div class="tl-date">Jul 2022 — Sep 2023</div>
-      <div class="tl-role">Mechanical Head</div>
-      <div class="tl-co">Mars Rover Manipal · MIT Udupi</div>
-      <ul class="tl-pts">
-        <li>Led 10 engineers across Wheel, Suspension, Soil Module, and 6-DOF Arm subsystems</li>
-        <li>Managed budget, fundraising, recruitment, training and competition logistics</li>
-        <li>Determined design and manufacturing cycle for annual competition readiness</li>
-      </ul>
+    <!-- ── Curiouz TechLabs ── -->
+    <div class="xp-card reveal">
+      <div class="xp-head">
+        <div class="xp-meta">
+          <div class="xp-date">May 2022 — Dec 2022</div>
+          <div class="xp-role">Research Intern</div>
+          <div class="xp-co">Curiouz TechLabs · Udupi</div>
+        </div>
+      </div>
+      <div class="xp-body">
+        <ul class="xp-pts">
+          <li>Biomechanical FEA of mandibular overdenture implants and loading conditions</li>
+          <li>Supported PhD research on stress distribution in implant-retained overdentures</li>
+          <li>Published in the Journal of Composites Science (Dec 2022)</li>
+        </ul>
+        <div class="xp-media">
+          <div class="xp-tabs">
+            <button class="xp-tab active" data-tab="photos">Photos</button>
+            <button class="xp-tab" data-tab="cad">CAD</button>
+          </div>
+          <div class="xp-viewer" data-active-tab="photos">
+            <!-- Photos -->
+            <img class="active" data-tab="photos" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1HeYvs7SvzzxQ3TlXpRHM4GvIj5gtXej_&sz=w800"
+              data-full="https://drive.google.com/thumbnail?id=1HeYvs7SvzzxQ3TlXpRHM4GvIj5gtXej_&sz=w1200"
+              data-cap="Implant Stress Analysis" alt="Implant Stress Analysis"/>
+            <!-- CAD -->
+            <img data-tab="cad" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1wAEmNStcqYrudogLLXyoOdS70iNP1hoQ&sz=w800"
+              data-full="https://drive.google.com/thumbnail?id=1wAEmNStcqYrudogLLXyoOdS70iNP1hoQ&sz=w1200"
+              data-cap="CAD — Lower Human Jaw" alt="CAD of Lower Human Jaw"/>
+            <button class="xp-nav prev">‹</button>
+            <button class="xp-nav next">›</button>
+            <div class="xp-dots"></div>
+            <div class="xp-caprow">
+              <span class="xp-cap"></span>
+              <button class="xp-expand">Expand ↗</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Mars Rover Manipal ── -->
+    <div class="xp-card reveal">
+      <div class="xp-head">
+        <div class="xp-meta">
+          <div class="xp-date">Jul 2021 — Sep 2023</div>
+          <div class="xp-role">Mechanical Head</div>
+          <div class="xp-co">Mars Rover Manipal · MIT Udupi</div>
+        </div>
+      </div>
+      <div class="xp-body">
+        <ul class="xp-pts">
+          <li>Led 10 engineers across Wheel, Suspension, Soil Module, and 6-DOF Arm subsystems</li>
+          <li>Managed budget, fundraising, recruitment, training and competition logistics</li>
+          <li>Determined design and manufacturing cycle for annual competition readiness</li>
+        </ul>
+        <div class="xp-media">
+          <div class="xp-viewer empty"><span>Media coming soon</span></div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -634,47 +753,91 @@ const revObs=new IntersectionObserver((entries)=>{
 },{threshold:.08});
 document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
 
-// ── Inline timeline carousels: auto-advance, pause on hover, sync caption ──
-const SLIDE_INTERVAL=4000;
-document.querySelectorAll('.tl-gal').forEach(g=>{
-  const imgs=Array.from(g.querySelectorAll('img'));
-  const dots=g.querySelectorAll('.tl-gal-dot');
-  const cap=g.querySelector('.tl-gal-cap');
-  const prev=g.querySelector('.tl-gnav.prev');
-  const next=g.querySelector('.tl-gnav.next');
-  let cur=0;
+// ── Experience cards: Photos/CAD tabs + carousel ──
+document.querySelectorAll('.xp-card').forEach(card=>{
+  const viewer=card.querySelector('.xp-viewer');
+  if(!viewer||viewer.classList.contains('empty'))return;
 
-  function go(n){
-    imgs[cur].classList.remove('active');
-    dots[cur].classList.remove('active');
-    cur=(n+imgs.length)%imgs.length;
-    imgs[cur].classList.add('active');
-    dots[cur].classList.add('active');
-    if(cap)cap.textContent=imgs[cur].dataset.cap||'';
+  const tabs=card.querySelectorAll('.xp-tab');
+  const dotsEl=viewer.querySelector('.xp-dots');
+  const capEl=viewer.querySelector('.xp-cap');
+  let activeTab=viewer.dataset.activeTab||'photos';
+  let cur=0,timer=null;
+
+  // Return visible imgs for current tab
+  function tabImgs(){return Array.from(viewer.querySelectorAll(`img[data-tab="${activeTab}"]`));}
+
+  // Build dot indicators for current tab's images
+  function buildDots(imgs){
+    dotsEl.innerHTML='';
+    imgs.forEach((_,i)=>{
+      const d=document.createElement('button');
+      d.className='xp-dot'+(i===0?' active':'');
+      d.addEventListener('click',e=>{e.stopPropagation();go(i);});
+      dotsEl.appendChild(d);
+    });
   }
 
-  prev.addEventListener('click',e=>{e.stopPropagation();go(cur-1);});
-  next.addEventListener('click',e=>{e.stopPropagation();go(cur+1);});
-  dots.forEach((d,i)=>d.addEventListener('click',e=>{e.stopPropagation();go(i);}));
+  function go(n){
+    const imgs=tabImgs();
+    if(!imgs.length)return;
+    imgs[cur]?.classList.remove('active');
+    dotsEl.children[cur]?.classList.remove('active');
+    cur=(n+imgs.length)%imgs.length;
+    imgs[cur].classList.add('active');
+    dotsEl.children[cur]?.classList.add('active');
+    if(capEl)capEl.textContent=imgs[cur].dataset.cap||'';
+  }
 
-  let t=setInterval(()=>go(cur+1),SLIDE_INTERVAL);
-  g.addEventListener('mouseenter',()=>clearInterval(t));
-  g.addEventListener('mouseleave',()=>{t=setInterval(()=>go(cur+1),SLIDE_INTERVAL);});
+  function startTimer(){
+    clearInterval(timer);
+    timer=setInterval(()=>go(cur+1),4200);
+  }
 
-  // Click on image area opens lightbox with full-res gallery
-  g.addEventListener('click',e=>{
-    if(e.target.classList.contains('tl-gnav')||e.target.classList.contains('tl-gal-dot')||e.target.classList.contains('tl-expand'))return;
-    const arr=imgs.map(im=>({src:im.dataset.full||im.src,cap:im.dataset.cap||im.alt}));
-    openLB(arr[cur].src,arr[cur].cap,arr);
+  // Switch tab
+  tabs.forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      activeTab=tab.dataset.tab;
+      tabs.forEach(t=>t.classList.toggle('active',t===tab));
+      // Hide all, show tab's first image
+      viewer.querySelectorAll('img').forEach(i=>i.classList.remove('active'));
+      cur=0;
+      const imgs=tabImgs();
+      if(imgs.length)imgs[0].classList.add('active');
+      buildDots(imgs);
+      if(capEl)capEl.textContent=imgs[0]?.dataset.cap||'';
+      startTimer();
+    });
   });
 
-  // Expand button opens lightbox from first image
-  const xbtn=g.querySelector('.tl-expand');
-  if(xbtn)xbtn.addEventListener('click',e=>{
+  // Prev/next
+  viewer.querySelector('.xp-nav.prev')?.addEventListener('click',e=>{e.stopPropagation();go(cur-1);startTimer();});
+  viewer.querySelector('.xp-nav.next')?.addEventListener('click',e=>{e.stopPropagation();go(cur+1);startTimer();});
+
+  // Pause on hover
+  viewer.addEventListener('mouseenter',()=>clearInterval(timer));
+  viewer.addEventListener('mouseleave',startTimer);
+
+  // Click viewer → open lightbox
+  viewer.addEventListener('click',e=>{
+    if(e.target.classList.contains('xp-nav')||e.target.classList.contains('xp-dot')||e.target.classList.contains('xp-expand'))return;
+    const imgs=tabImgs();
+    const arr=imgs.map(i=>({src:i.dataset.full||i.src,cap:i.dataset.cap||i.alt}));
+    if(arr.length)openLB(arr[cur].src,arr[cur].cap,arr);
+  });
+
+  // Expand button → lightbox
+  viewer.querySelector('.xp-expand')?.addEventListener('click',e=>{
     e.stopPropagation();
-    const arr=imgs.map(im=>({src:im.dataset.full||im.src,cap:im.dataset.cap||im.alt}));
-    openLB(arr[cur].src,arr[cur].cap,arr);
+    const imgs=tabImgs();
+    const arr=imgs.map(i=>({src:i.dataset.full||i.src,cap:i.dataset.cap||i.alt}));
+    if(arr.length)openLB(arr[cur].src,arr[cur].cap,arr);
   });
+
+  // Init
+  buildDots(tabImgs());
+  if(capEl)capEl.textContent=tabImgs()[0]?.dataset.cap||'';
+  startTimer();
 });
 
 // ── Lightbox: fullscreen image viewer with prev/next and keyboard nav ──
