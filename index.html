@@ -21,9 +21,9 @@
     "name": "Amritanshu Jain",
     "jobTitle": "Lead Hardware Engineer",
     "url": "https://amritanshu-j.github.io/amritanshujain/",
-    "sameAs": ["https://linkedin.com/in/amritanshu-jain"],
-    "address": {"@type":"PostalAddress","addressLocality":"Bengaluru","addressCountry":"IN"}
-    "knowsAbout": [ "Hardware Engineering","Mechanical design engineering", "physical ai", "embodied ai", "Robotics design engineer", "robotics"],
+    "sameAs": ["https://www.linkedin.com/in/amritanshujain/"],
+    "address": {"@type":"PostalAddress","addressLocality":"Bengaluru","addressCountry":"IN"},
+    "knowsAbout": ["Hardware Engineering","Mechanical Design","Physical AI","Embodied AI","Robotics"]
   }
   </script>
   <!-- Inline SVG favicon: AJ. monogram on black rounded square -->
@@ -39,7 +39,6 @@
       --steel:#8fb4cc; --accent:#00d4ff; --accent2:#ff6b35;
       --text:#c9d8e8; --text-dim:#5a7a94; --white:#eef4f9;
       --grid-col:rgba(0,212,255,0.07);
-      --skew:3deg;
     }
 
     /* ── Reset & base ── */
@@ -50,7 +49,7 @@
     body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-col) 1px,transparent 1px),linear-gradient(90deg,var(--grid-col) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
     /* Blueprint arm — sits in the right half of the hero, scrolls away with it */
     .bp-layer{position:absolute;top:50%;right:-2%;transform:translateY(-50%);width:62%;height:90%;z-index:0;pointer-events:none;user-select:none;overflow:visible;}
-    .bp-layer img{width:100%;height:100%;object-fit:contain;object-position:center right;mix-blend-mode:screen;opacity:1.2}
+    .bp-layer img{width:100%;height:100%;object-fit:contain;object-position:center right;mix-blend-mode:screen;opacity:0.28;}
 
     /* ── Navigation: liquid glass bar ── */
     nav{
@@ -153,8 +152,6 @@
     .xp-date{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--accent);letter-spacing:.16em;text-transform:uppercase;margin-bottom:.3rem;}
     .xp-role{font-size:1.05rem;font-weight:600;color:var(--white);margin-bottom:.2rem;}
     .xp-co{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--steel);}
-    /* One-line summary */
-    .xp-summary{font-size:.875rem;color:var(--text-dim);line-height:1.7;padding:.75rem 1.5rem 1rem;border-bottom:1px solid var(--line);}
     /* Two-column body: bullet points left, media right */
     .xp-body{display:grid;grid-template-columns:1fr 1.4fr;gap:0;}
     .xp-pts{padding:1.25rem 1.5rem;list-style:none;display:flex;flex-direction:column;gap:.45rem;border-right:1px solid var(--line);}
@@ -304,7 +301,7 @@
 <section id="hero">
   <!-- Blueprint arm wireframe — right half, scrolls with the section -->
   <div class="bp-layer" aria-hidden="true">
-    <img src="images/arm-blueprint.svg" alt="" loading="eager" decoding="async">
+    <img src="images/arm-blueprint.svg" alt="" loading="lazy" decoding="async">
   </div>
   <div class="hero-bg-cad" aria-hidden="true">
     <img src="images/ARM ON QUADRUPED.webp" alt="" width="1200" height="1200" loading="lazy" decoding="async">
