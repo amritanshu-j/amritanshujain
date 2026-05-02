@@ -1019,15 +1019,19 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
 
   // Load URDF — meshes resolved via package:// URI against the repo root
   const loader=new URDFLoader();
-  loader.packages={urdf_manipulator_v2:'URDF/urdf_manipulator_v2'};
-
-  // Use STLLoader for each mesh file
+  // Resolve package:// paths manually — urdf-loader struggles with dots in package names
+  loader.packages={};
   loader.loadMeshCb=(path,manager,done)=>{
+    // Replace package://urdf_manipulator_v2.SLDASM/ with the actual repo path
+    const resolved=path.replace(
+      /^package:\/\/urdf_manipulator_v2\.SLDASM\//,
+      'URDF/urdf_manipulator_v2/'
+    );
     new THREE.STLLoader(manager).load(
-      path,
+      resolved,
       geo=>{geo.computeVertexNormals();done(new THREE.Mesh(geo,bpMat.clone()));},
       null,
-      err=>{console.warn('Mesh load failed:',path,err);done(null,err);}
+      err=>{console.warn('Mesh load failed:',resolved,err);done(null,err);}
     );
   };
 
