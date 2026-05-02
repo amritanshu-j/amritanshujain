@@ -1034,19 +1034,19 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
   loader.load(
     'URDF/urdf_manipulator_v2/urdf/urdf_manipulator_v2.SLDASM.urdf',
     robot=>{
+      if(!robot)return;
       // Centre and scale to fill the canvas nicely
       const box=new THREE.Box3().setFromObject(robot);
       const centre=box.getCenter(new THREE.Vector3());
       const size=box.getSize(new THREE.Vector3());
       robot.position.sub(centre);
       pivot.add(robot);
-
       // Position camera to frame the whole model
       const maxDim=Math.max(size.x,size.y,size.z);
       camera.position.set(0,maxDim*0.1,maxDim*1.8);
       camera.lookAt(0,0,0);
     },
-    xhr=>console.log('URDF loading:',Math.round(xhr.loaded/xhr.total*100)+'%'),
+    null,
     err=>console.error('URDF load error:',err)
   );
 
