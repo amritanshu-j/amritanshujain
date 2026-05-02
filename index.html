@@ -1019,8 +1019,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
 
   // Load URDF — meshes resolved via package:// URI against the repo root
   const loader=new URDFLoader();
-  // Resolve package:// paths manually — urdf-loader struggles with dots in package names
-  loader.packages={};
+  // packages as a function bypasses urdf-loader's dot-in-name lookup bug
+  loader.packages=()=>'URDF/urdf_manipulator_v2';
   loader.loadMeshCb=(path,manager,done)=>{
     // Replace package://urdf_manipulator_v2.SLDASM/ with the actual repo path
     const resolved=path.replace(
