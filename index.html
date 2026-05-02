@@ -45,7 +45,7 @@
       --bg:#080b10; --bg2:#0d1117; --bg3:#111820; --line:#1e2d3d;
       --steel:#8fb4cc; --accent:#00d4ff; --accent2:#ff6b35;
       --text:#c9d8e8; --text-dim:#5a7a94; --white:#eef4f9;
-      --grid-col:rgba(0,212,255,0.07);
+      --grid-col:rgba(0,212,255,0.12);
     }
 
     /* ── Reset & base ── */
@@ -56,7 +56,7 @@
     body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-col) 1px,transparent 1px),linear-gradient(90deg,var(--grid-col) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
     /* Blueprint arm — sits in the right half of the hero, scrolls away with it */
     .bp-layer{position:absolute;top:50%;right:-2%;transform:translateY(-50%);width:62%;height:90%;z-index:0;pointer-events:none;user-select:none;overflow:visible;}
-    .bp-layer img{width:100%;height:100%;object-fit:contain;object-position:center right;mix-blend-mode:normal;opacity:1;}
+    .bp-layer canvas{width:100%!important;height:100%!important;display:block;}
 
     /* ── Navigation: liquid glass bar ── */
     nav{
@@ -344,9 +344,9 @@
 
 <!-- HERO -->
 <section id="hero">
-  <!-- Blueprint arm wireframe — right half, scrolls with the section -->
+  <!-- URDF 3D viewer — right half, blueprint wireframe style -->
   <div class="bp-layer" aria-hidden="true">
-    <img src="images/arm-blueprint.svg" alt="" loading="lazy" decoding="async">
+    <canvas id="urdfCanvas"></canvas>
   </div>
   <div class="hero-bg-cad" aria-hidden="true">
     <img src="images/ARM ON QUADRUPED.webp" alt="" width="1200" height="1200" loading="lazy" decoding="async">
@@ -980,6 +980,105 @@ blogClose.addEventListener('click',closeBlog);
 // Click scrim (not panel) to close
 blogOverlay.addEventListener('click',e=>{if(e.target===blogOverlay)closeBlog();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classList.contains('active'))closeBlog();});
+</script>
+
+<!-- Three.js + loaders for URDF viewer -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/urdf-loader@0.12.2/umd/URDFLoader.js"></script>
+<script>
+// ── URDF 3D Viewer — blueprint wireframe style ──
+(function(){
+  const canvas=document.getElementById('urdfCanvas');
+  const container=canvas.parentElement;
+  if(!canvas||!container)return;
+
+  // Renderer — transparent background so page bg shows through
+  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setClearColor(0x000000,0);
+
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(40,1,0.001,1000);
+
+  // Blueprint-style lighting: cyan ambient + two directional fills
+  scene.add(new THREE.AmbientLight(0x00d4ff,0.6));
+  const d1=new THREE.DirectionalLight(0x00d4ff,1.2);
+  d1.position.set(2,3,4);scene.add(d1);
+  const d2=new THREE.DirectionalLight(0x0066aa,0.4);
+  d2.position.set(-2,-1,-3);scene.add(d2);
+
+  // Pivot group so auto-rotate spins the model around its centre
+  const pivot=new THREE.Group();
+  scene.add(pivot);
+
+  // Wireframe material matching the site's accent colour
+  const bpMat=new THREE.MeshBasicMaterial({
+    color:0x00d4ff,wireframe:true,transparent:true,opacity:0.75
+  });
+
+  // Load URDF — meshes resolved via package:// URI against the repo root
+  const loader=new URDFLoader();
+  loader.packages={urdf_manipulator_v2:'URDF/urdf_manipulator_v2'};
+
+  // Use STLLoader for each mesh file
+  loader.loadMeshCb=(path,manager,done)=>{
+    new THREE.STLLoader(manager).load(
+      path,
+      geo=>{geo.computeVertexNormals();done(new THREE.Mesh(geo,bpMat.clone()));},
+      null,
+      err=>{console.warn('Mesh load failed:',path,err);done(null,err);}
+    );
+  };
+
+  loader.load(
+    'URDF/urdf_manipulator_v2/urdf/urdf_manipulator_v2.SLDASM.urdf',
+    robot=>{
+      // Centre and scale to fill the canvas nicely
+      const box=new THREE.Box3().setFromObject(robot);
+      const centre=box.getCenter(new THREE.Vector3());
+      const size=box.getSize(new THREE.Vector3());
+      robot.position.sub(centre);
+      pivot.add(robot);
+
+      // Position camera to frame the whole model
+      const maxDim=Math.max(size.x,size.y,size.z);
+      camera.position.set(0,maxDim*0.1,maxDim*1.8);
+      camera.lookAt(0,0,0);
+    },
+    xhr=>console.log('URDF loading:',Math.round(xhr.loaded/xhr.total*100)+'%'),
+    err=>console.error('URDF load error:',err)
+  );
+
+  // Resize to match container on load and window resize
+  function resize(){
+    const w=container.clientWidth,h=container.clientHeight;
+    if(!w||!h)return;
+    renderer.setSize(w,h,false);
+    camera.aspect=w/h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize',resize,{passive:true});
+
+  // Auto-rotate — slow, continuous
+  let raf;
+  function animate(){
+    raf=requestAnimationFrame(animate);
+    pivot.rotation.y+=0.004;
+    renderer.render(scene,camera);
+  }
+  animate();
+
+  // Pause rotation when hero scrolls out of view (saves GPU)
+  const heroEl=document.getElementById('hero');
+  if(heroEl){
+    new IntersectionObserver(([e])=>{
+      if(e.isIntersecting){if(!raf)animate();}
+      else{cancelAnimationFrame(raf);raf=null;}
+    },{threshold:0.1}).observe(heroEl);
+  }
+})();
 </script>
 </body>
 </html>
