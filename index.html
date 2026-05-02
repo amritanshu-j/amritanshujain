@@ -1019,40 +1019,42 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
 
   // Load URDF — meshes resolved via package:// URI against the repo root
   const loader=new URDFLoader();
-  // packages as a function bypasses urdf-loader's dot-in-name lookup bug
-  loader.packages=()=>'URDF/urdf_manipulator_v2';
+  loader.packages={};
   loader.loadMeshCb=(path,manager,done)=>{
-    // Replace package://urdf_manipulator_v2.SLDASM/ with the actual repo path
-    const resolved=path.replace(
-      /^package:\/\/urdf_manipulator_v2\.SLDASM\//,
-      'URDF/urdf_manipulator_v2/'
-    );
     new THREE.STLLoader(manager).load(
-      resolved,
+      path,
       geo=>{geo.computeVertexNormals();done(new THREE.Mesh(geo,bpMat.clone()));},
       null,
-      err=>{console.warn('Mesh load failed:',resolved,err);done(null,err);}
+      err=>{console.warn('Mesh failed:',path,err);done(null,err);}
     );
   };
 
-  loader.load(
-    'URDF/urdf_manipulator_v2/urdf/urdf_manipulator_v2.SLDASM.urdf',
-    robot=>{
-      if(!robot)return;
-      // Centre and scale to fill the canvas nicely
-      const box=new THREE.Box3().setFromObject(robot);
-      const centre=box.getCenter(new THREE.Vector3());
-      const size=box.getSize(new THREE.Vector3());
-      robot.position.sub(centre);
-      pivot.add(robot);
-      // Position camera to frame the whole model
-      const maxDim=Math.max(size.x,size.y,size.z);
-      camera.position.set(0,maxDim*0.1,maxDim*1.8);
-      camera.lookAt(0,0,0);
-    },
-    null,
-    err=>console.error('URDF load error:',err)
-  );
+  // Fetch URDF as text, rewrite package:// paths, load via Blob URL
+  fetch('URDF/urdf_manipulator_v2/urdf/urdf_manipulator_v2.SLDASM.urdf')
+    .then(r=>r.text())
+    .then(text=>{
+      const fixed=text.replace(/package:\/\/urdf_manipulator_v2\.SLDASM\//g,'URDF/urdf_manipulator_v2/');
+      const blob=new Blob([fixed],{type:'application/xml'});
+      const url=URL.createObjectURL(blob);
+      loader.load(
+        url,
+        robot=>{
+          URL.revokeObjectURL(url);
+          if(!robot)return;
+          const box=new THREE.Box3().setFromObject(robot);
+          const centre=box.getCenter(new THREE.Vector3());
+          const size=box.getSize(new THREE.Vector3());
+          robot.position.sub(centre);
+          pivot.add(robot);
+          const maxDim=Math.max(size.x,size.y,size.z);
+          camera.position.set(0,maxDim*0.1,maxDim*1.8);
+          camera.lookAt(0,0,0);
+        },
+        null,
+        err=>{URL.revokeObjectURL(url);console.error('URDF load error:',err);}
+      );
+    })
+    .catch(err=>console.error('URDF fetch error:',err));
 
   // Resize to match container on load and window resize
   function resize(){
