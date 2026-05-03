@@ -1021,9 +1021,9 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
 
   // ── OrbitControls ──
   const controls=new THREE.OrbitControls(camera,canvas);
-  controls.enableRotate=false;
-  controls.enableZoom=false;
-  controls.enablePan=false;
+  controls.enableDamping=true;controls.dampingFactor=0.08;
+  controls.autoRotate=true;controls.autoRotateSpeed=0.6;
+  controls.addEventListener('start',()=>controls.autoRotate=false);
 
   // ── Gray material ──
   const grayMat=()=>new THREE.MeshPhongMaterial({color:0x999999,specular:0x444444,shininess:50,side:THREE.DoubleSide});
@@ -1130,7 +1130,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
     const sz=box.getSize(new THREE.Vector3());
     robotGroup.position.sub(ctr);
     const md=Math.max(sz.x,sz.y,sz.z);
-    camera.position.set(0,md*0.2,md*2);
+    camera.position.set(md*2,md*0.2,0);
     camera.lookAt(0,0,0);
     controls.target.set(0,0,0);
     controls.update();
