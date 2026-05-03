@@ -1021,9 +1021,9 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
 
   // ── OrbitControls ──
   const controls=new THREE.OrbitControls(camera,canvas);
-  controls.enableDamping=true;controls.dampingFactor=0.08;
-  controls.autoRotate=true;controls.autoRotateSpeed=0.6;
-  controls.addEventListener('start',()=>controls.autoRotate=false);
+  controls.enableRotate=false;
+  controls.enableZoom=false;
+  controls.enablePan=false;
 
   // ── Gray material ──
   const grayMat=()=>new THREE.MeshPhongMaterial({color:0x999999,specular:0x444444,shininess:50,side:THREE.DoubleSide});
