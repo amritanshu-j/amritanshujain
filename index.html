@@ -1031,6 +1031,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
   const BASE='URDF/urdf_manipulator_v2/';
   const stlLoader=new THREE.STLLoader();
   const robotGroup=new THREE.Group();
+  window._robotGroup = robotGroup;
   scene.add(robotGroup);
 
   // ── Parse URDF ──
