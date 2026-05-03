@@ -1031,7 +1031,6 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
   const BASE='URDF/urdf_manipulator_v2/';
   const stlLoader=new THREE.STLLoader();
   const robotGroup=new THREE.Group();
-  window._robotGroup=robotGroup;
   scene.add(robotGroup);
 
   // ── Parse URDF ──
@@ -1130,7 +1129,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
     const ctr=box.getCenter(new THREE.Vector3());
     const sz=box.getSize(new THREE.Vector3());
     robotGroup.position.sub(ctr);
-    robotGroup.rotation.y=Math.PI*0.55;
+    robotGroup.rotation.set(Math.PI*0.5, Math.PI*1, Math.PI*0.1);
     const md=Math.max(sz.x,sz.y,sz.z);
     camera.position.set(md*0.3,md*0.5,md*2);
     camera.lookAt(0,0,0);
