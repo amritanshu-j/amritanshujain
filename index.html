@@ -54,9 +54,19 @@
     body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:16px;overflow-x:hidden;}
     /* Blueprint grid — fixed pseudo-element behind everything */
     body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-col) 1px,transparent 1px),linear-gradient(90deg,var(--grid-col) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
-    /* Blueprint arm — sits in the right half of the hero, scrolls away with it */
-    .bp-layer{position:absolute;top:50%;right:-2%;transform:translateY(-50%);width:62%;height:90%;z-index:0;pointer-events:none;user-select:none;overflow:visible;}
-    .bp-layer canvas{width:100%!important;height:100%!important;display:block;}
+    /* URDF viewer — right half of hero, interactive */
+    .bp-layer{position:absolute;top:50%;right:-2%;transform:translateY(-50%);width:62%;height:90%;z-index:0;overflow:visible;user-select:none;}
+    .bp-layer canvas{width:100%!important;height:100%!important;display:block;cursor:grab;}
+    .bp-layer canvas:active{cursor:grabbing;}
+    /* Joint sliders panel — bottom-left corner of viewer */
+    #urdfControls{position:absolute;bottom:1rem;left:1rem;z-index:2;display:flex;flex-direction:column;gap:.35rem;max-height:55%;overflow-y:auto;pointer-events:all;}
+    #urdfControls::-webkit-scrollbar{width:2px;}
+    #urdfControls::-webkit-scrollbar-thumb{background:var(--line);}
+    .urdf-row{display:flex;align-items:center;gap:.5rem;background:rgba(8,11,16,.7);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:4px;padding:.25rem .5rem;}
+    .urdf-lbl{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--steel);letter-spacing:.08em;white-space:nowrap;min-width:80px;text-transform:uppercase;}
+    .urdf-slider{-webkit-appearance:none;width:110px;height:3px;background:var(--line);border-radius:2px;outline:none;cursor:pointer;}
+    .urdf-slider::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--accent);cursor:pointer;}
+    .urdf-val{font-family:'DM Mono',monospace;font-size:.52rem;color:var(--accent);min-width:32px;text-align:right;}
 
     /* ── Navigation: liquid glass bar ── */
     nav{
@@ -344,9 +354,10 @@
 
 <!-- HERO -->
 <section id="hero">
-  <!-- URDF 3D viewer — right half, blueprint wireframe style -->
-  <div class="bp-layer" aria-hidden="true">
+  <!-- URDF 3D viewer — right half, interactive -->
+  <div class="bp-layer" aria-hidden="false">
     <canvas id="urdfCanvas"></canvas>
+    <div id="urdfControls"></div>
   </div>
   <div class="hero-bg-cad" aria-hidden="true">
     <img src="images/ARM ON QUADRUPED.webp" alt="" width="1200" height="1200" loading="lazy" decoding="async">
@@ -982,59 +993,178 @@ blogOverlay.addEventListener('click',e=>{if(e.target===blogOverlay)closeBlog();}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classList.contains('active'))closeBlog();});
 </script>
 
-<!-- Three.js + STL loader only — no urdf-loader needed -->
+<!-- Three.js + STL loader + OrbitControls -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
-// ── STL Viewer — loads all 7 manipulator meshes directly ──
 (function(){
   const canvas=document.getElementById('urdfCanvas');
   const container=canvas.parentElement;
   if(!canvas||!container)return;
 
+  // ── Renderer ──
   const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
   renderer.setClearColor(0x000000,0);
+  renderer.shadowMap.enabled=true;
 
   const scene=new THREE.Scene();
-  const camera=new THREE.PerspectiveCamera(40,1,0.001,1000);
-  camera.position.set(0,0.3,1.2);
+  const camera=new THREE.PerspectiveCamera(40,1,0.0001,10000);
 
-  scene.add(new THREE.AmbientLight(0x00d4ff,0.7));
-  const d1=new THREE.DirectionalLight(0x00d4ff,1.4);
-  d1.position.set(2,3,4);scene.add(d1);
-  const d2=new THREE.DirectionalLight(0x004488,0.5);
-  d2.position.set(-2,-1,-3);scene.add(d2);
+  // ── Lighting for solid gray ──
+  scene.add(new THREE.AmbientLight(0xffffff,0.5));
+  const dl=new THREE.DirectionalLight(0xffffff,0.9);
+  dl.position.set(5,8,6);scene.add(dl);
+  const dl2=new THREE.DirectionalLight(0x8899bb,0.35);
+  dl2.position.set(-4,-3,-5);scene.add(dl2);
 
-  const group=new THREE.Group();
-  scene.add(group);
+  // ── OrbitControls ──
+  const controls=new THREE.OrbitControls(camera,canvas);
+  controls.enableDamping=true;controls.dampingFactor=0.08;
+  controls.autoRotate=true;controls.autoRotateSpeed=0.6;
+  controls.addEventListener('start',()=>controls.autoRotate=false);
 
-  const mat=new THREE.MeshBasicMaterial({color:0x00d4ff,wireframe:true,transparent:true,opacity:0.8});
-  const meshFiles=[
-    'base_link.STL','p1_manipulator.STL','p2_manipulator.STL',
-    'p3_manipulator.STL','r1_manipulator.STL','y1_manipulator.STL','y2_manipulator.STL'
-  ];
-  const base='URDF/urdf_manipulator_v2/meshes/';
-  const loader=new THREE.STLLoader();
-  let loaded=0;
+  // ── Gray material ──
+  const grayMat=()=>new THREE.MeshPhongMaterial({color:0x999999,specular:0x444444,shininess:50,side:THREE.DoubleSide});
 
-  meshFiles.forEach(f=>{
-    loader.load(base+f,geo=>{
-      geo.computeVertexNormals();
-      group.add(new THREE.Mesh(geo,mat.clone()));
-      if(++loaded===meshFiles.length){
-        // Centre group after all meshes loaded
-        const box=new THREE.Box3().setFromObject(group);
-        const c=box.getCenter(new THREE.Vector3());
-        group.position.sub(c);
-        const sz=box.getSize(new THREE.Vector3());
-        const maxD=Math.max(sz.x,sz.y,sz.z);
-        camera.position.set(0,maxD*0.1,maxD*1.8);
-        camera.lookAt(0,0,0);
+  const BASE='URDF/urdf_manipulator_v2/';
+  const stlLoader=new THREE.STLLoader();
+  const robotGroup=new THREE.Group();
+  scene.add(robotGroup);
+
+  // ── Parse URDF ──
+  async function buildRobot(){
+    const resp=await fetch(BASE+'urdf/urdf_manipulator_v2.SLDASM.urdf');
+    if(!resp.ok){console.error('URDF 404');return;}
+    const text=await resp.text();
+    const doc=new DOMParser().parseFromString(text,'text/xml');
+
+    // Parse links
+    const linkDefs={};
+    doc.querySelectorAll('link').forEach(el=>{
+      const name=el.getAttribute('name');
+      const meshEl=el.querySelector('visual mesh');
+      const filename=meshEl?.getAttribute('filename')?.replace(/package:\/\/urdf_manipulator_v2\.SLDASM\//,BASE)??null;
+      const scaleStr=meshEl?.getAttribute('scale');
+      const scale=scaleStr?scaleStr.split(' ').map(Number):[1,1,1];
+      const orig=el.querySelector('visual origin');
+      const xyz=orig?.getAttribute('xyz')?.split(' ').map(Number)??[0,0,0];
+      const rpy=orig?.getAttribute('rpy')?.split(' ').map(Number)??[0,0,0];
+      linkDefs[name]={name,filename,scale,xyz,rpy};
+    });
+
+    // Parse joints
+    const jointDefs=[];
+    doc.querySelectorAll('joint').forEach(el=>{
+      const type=el.getAttribute('type');
+      const name=el.getAttribute('name');
+      const parent=el.querySelector('parent')?.getAttribute('link');
+      const child=el.querySelector('child')?.getAttribute('link');
+      const orig=el.querySelector('origin');
+      const xyz=orig?.getAttribute('xyz')?.split(' ').map(Number)??[0,0,0];
+      const rpy=orig?.getAttribute('rpy')?.split(' ').map(Number)??[0,0,0];
+      const ax=el.querySelector('axis');
+      const axis=ax?.getAttribute('xyz')?.split(' ').map(Number)??[0,0,1];
+      const lim=el.querySelector('limit');
+      const lower=parseFloat(lim?.getAttribute('lower')??-Math.PI);
+      const upper=parseFloat(lim?.getAttribute('upper')??Math.PI);
+      jointDefs.push({name,type,parent,child,xyz,rpy,axis,lower,upper});
+    });
+
+    // Create link groups
+    const linkObjs={};
+    Object.keys(linkDefs).forEach(n=>{linkObjs[n]=new THREE.Group();linkObjs[n].name=n;});
+
+    // Build hierarchy via joint groups
+    const children=new Set();
+    const jointObjs={}; // movable joints only
+
+    jointDefs.forEach(j=>{
+      // originGroup: carries xyz+rpy offset
+      const og=new THREE.Group();og.name='orig_'+j.name;
+      og.position.set(...j.xyz);
+      og.setRotationFromEuler(new THREE.Euler(j.rpy[0],j.rpy[1],j.rpy[2]));
+
+      // jointGroup: child of originGroup, rotation applied here
+      const jg=new THREE.Group();jg.name='jnt_'+j.name;
+      og.add(jg);
+
+      if(linkObjs[j.parent])linkObjs[j.parent].add(og);
+      if(linkObjs[j.child])jg.add(linkObjs[j.child]);
+      children.add(j.child);
+
+      if(j.type==='revolute'||j.type==='continuous'||j.type==='prismatic'){
+        jointObjs[j.name]={
+          og,jg,
+          axis:new THREE.Vector3(...j.axis),
+          baseQuat:og.quaternion.clone(),
+          lower:j.lower,upper:j.upper,type:j.type
+        };
       }
-    },null,e=>console.warn('STL failed:',f,e));
-  });
+    });
 
+    // Find root and add to scene group
+    const root=Object.keys(linkDefs).find(n=>!children.has(n));
+    if(root&&linkObjs[root])robotGroup.add(linkObjs[root]);
+
+    // Load meshes concurrently
+    await Promise.all(Object.values(linkDefs).map(ld=>{
+      if(!ld.filename)return Promise.resolve();
+      return new Promise(res=>{
+        stlLoader.load(ld.filename,geo=>{
+          geo.computeVertexNormals();
+          const m=new THREE.Mesh(geo,grayMat());
+          m.position.set(...ld.xyz);
+          m.rotation.set(ld.rpy[0],ld.rpy[1],ld.rpy[2]);
+          m.scale.set(...ld.scale);
+          m.castShadow=true;m.receiveShadow=true;
+          linkObjs[ld.name].add(m);res();
+        },null,()=>res());
+      });
+    }));
+
+    // Frame camera
+    const box=new THREE.Box3().setFromObject(robotGroup);
+    const ctr=box.getCenter(new THREE.Vector3());
+    const sz=box.getSize(new THREE.Vector3());
+    robotGroup.position.sub(ctr);
+    const md=Math.max(sz.x,sz.y,sz.z);
+    camera.position.set(0,md*0.2,md*2);
+    camera.lookAt(0,0,0);
+    controls.target.set(0,0,0);
+    controls.update();
+
+    buildSliders(jointObjs);
+  }
+
+  // ── Slider panel ──
+  function buildSliders(joints){
+    const panel=document.getElementById('urdfControls');
+    if(!panel)return;
+    Object.entries(joints).forEach(([name,j])=>{
+      const row=document.createElement('div');row.className='urdf-row';
+      const lbl=document.createElement('span');lbl.className='urdf-lbl';
+      lbl.textContent=name.replace(/_/g,' ').toLowerCase();
+      const val=document.createElement('span');val.className='urdf-val';val.textContent='0.00';
+      const sl=document.createElement('input');sl.type='range';sl.className='urdf-slider';
+      sl.min=j.lower;sl.max=j.upper;sl.step=0.001;sl.value=0;
+      sl.addEventListener('input',()=>{
+        const v=parseFloat(sl.value);
+        val.textContent=v.toFixed(2);
+        if(j.type==='prismatic'){
+          j.jg.position.copy(j.axis.clone().multiplyScalar(v));
+        } else {
+          const q=new THREE.Quaternion().setFromAxisAngle(j.axis,v);
+          j.jg.quaternion.copy(q);
+        }
+      });
+      row.appendChild(lbl);row.appendChild(sl);row.appendChild(val);
+      panel.appendChild(row);
+    });
+  }
+
+  // ── Resize ──
   function resize(){
     const w=container.clientWidth,h=container.clientHeight;
     if(!w||!h)return;
@@ -1044,14 +1174,18 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
   resize();
   window.addEventListener('resize',resize,{passive:true});
 
+  // ── Render loop ──
   let raf;
-  function animate(){raf=requestAnimationFrame(animate);group.rotation.y+=0.004;renderer.render(scene,camera);}
+  function animate(){raf=requestAnimationFrame(animate);controls.update();renderer.render(scene,camera);}
   animate();
 
+  // Pause when off screen
   const hero=document.getElementById('hero');
   if(hero)new IntersectionObserver(([e])=>{
     if(e.isIntersecting){if(!raf)animate();}else{cancelAnimationFrame(raf);raf=null;}
   },{threshold:0.1}).observe(hero);
+
+  buildRobot().catch(e=>console.error('Build failed:',e));
 })();
 </script>
 </body>
