@@ -1012,12 +1012,16 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
   const scene=new THREE.Scene();
   const camera=new THREE.PerspectiveCamera(40,1,0.0001,10000);
 
-  // ── Lighting for solid gray ──
-  scene.add(new THREE.AmbientLight(0xffffff,0.5));
-  const dl=new THREE.DirectionalLight(0xffffff,0.9);
-  dl.position.set(5,8,6);scene.add(dl);
-  const dl2=new THREE.DirectionalLight(0x8899bb,0.35);
-  dl2.position.set(-4,-3,-5);scene.add(dl2);
+  // ── Lighting — 3-point rendered look ──
+  scene.add(new THREE.AmbientLight(0xdde8f0,0.25));          // soft cool ambient
+  const key=new THREE.DirectionalLight(0xffffff,1.4);        // key: top-front-right
+  key.position.set(6,10,7);scene.add(key);
+  const fill=new THREE.DirectionalLight(0x8aaabb,0.45);      // fill: opposite side
+  fill.position.set(-5,2,-4);scene.add(fill);
+  const rim=new THREE.DirectionalLight(0x00d4ff,0.35);       // rim: cyan accent from behind
+  rim.position.set(-3,4,-8);scene.add(rim);
+  const bot=new THREE.DirectionalLight(0x334455,0.2);        // subtle under-fill
+  bot.position.set(0,-6,0);scene.add(bot);
 
   // ── OrbitControls ──
   const controls=new THREE.OrbitControls(camera,canvas);
@@ -1026,7 +1030,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
   controls.enablePan=false;
 
   // ── Gray material ──
-  const grayMat=()=>new THREE.MeshPhongMaterial({color:0x999999,specular:0x444444,shininess:50,side:THREE.DoubleSide});
+  const grayMat=()=>new THREE.MeshStandardMaterial({color:0xb2bcc8,metalness:0.72,roughness:0.28,envMapIntensity:1.0,side:THREE.DoubleSide});
 
   const BASE='URDF/urdf_manipulator_v2/';
   const stlLoader=new THREE.STLLoader();
@@ -1129,7 +1133,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
     const ctr=box.getCenter(new THREE.Vector3());
     const sz=box.getSize(new THREE.Vector3());
     robotGroup.position.sub(ctr);
-    robotGroup.rotation.set(Math.PI*0.5, Math.PI*1, Math.PI*0.1);
+    robotGroup.rotation.set(Math.PI*0.5,Math.PI*1,Math.PI*0.1);
     const md=Math.max(sz.x,sz.y,sz.z);
     camera.position.set(md*0.3,md*0.5,md*2);
     camera.lookAt(0,0,0);
