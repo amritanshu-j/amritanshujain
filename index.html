@@ -328,6 +328,19 @@
     .blog-read-btn:disabled{opacity:.4;cursor:not-allowed;}
     @media(max-width:640px){.blog-panel{width:100vw;}.blog-panel-head{padding:1.5rem 1.25rem 1rem;}.blog-list{padding:1rem 1.25rem 2rem;}}
   </style>
+
+  <!-- ── Preload 3D assets — browser fetches these immediately on HTML parse ── -->
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" as="script" crossorigin>
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js" as="script" crossorigin>
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" as="script" crossorigin>
+  <link rel="preload" href="URDF/urdf_manipulator_v2/urdf/urdf_manipulator_v2.SLDASM.urdf" as="fetch" crossorigin>
+  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/base_link.STL" as="fetch" crossorigin>
+  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/p1_manipulator.STL" as="fetch" crossorigin>
+  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/p2_manipulator.STL" as="fetch" crossorigin>
+  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/p3_manipulator.STL" as="fetch" crossorigin>
+  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/r1_manipulator.STL" as="fetch" crossorigin>
+  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/y1_manipulator.STL" as="fetch" crossorigin>
+  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/y2_manipulator.STL" as="fetch" crossorigin>
 </head>
 <body>
 
