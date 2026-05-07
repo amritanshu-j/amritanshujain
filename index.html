@@ -55,7 +55,7 @@
     /* Blueprint grid — fixed pseudo-element behind everything */
     body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-col) 1px,transparent 1px),linear-gradient(90deg,var(--grid-col) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
     /* URDF viewer — right half of hero, interactive */
-    .bp-layer{position:absolute;top:calc(50% + 4rem);right:-2%;transform:translateY(-50%);width:62%;height:90%;z-index:0;overflow:visible;user-select:none;}
+    .bp-layer{position:absolute;top:calc(50% + 8rem);right:-2%;transform:translateY(-50%);width:62%;height:90%;z-index:0;overflow:visible;user-select:none;}
     .bp-layer canvas{width:100%!important;height:100%!important;display:block;cursor:grab;}
     .bp-layer canvas:active{cursor:grabbing;}
     /* Joint sliders panel — bottom-left corner of viewer */
