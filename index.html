@@ -1148,7 +1148,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
     robotGroup.position.sub(ctr);
     robotGroup.rotation.set(Math.PI*0.5,Math.PI*1,Math.PI*0.1);
     const md=Math.max(sz.x,sz.y,sz.z);
-    camera.position.set(md*0.3,md*0.5,md*4);
+    camera.position.set(md*0.3,md*0.5,md*3.5);
     camera.lookAt(0,0,0);
     controls.target.set(0,0,0);
     controls.update();
