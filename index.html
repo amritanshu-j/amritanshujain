@@ -1186,7 +1186,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
     let start=null;
     introAnim=function(ts){
       if(!start)start=ts;
-      let elapsed=((ts-start)/1000)%totalDur; // loop
+      let elapsed=(ts-start)/1000;
+      if(elapsed>=totalDur){introAnim=null;return;} // done — sliders take over
       // find surrounding keyframes
       let k0=keyframes[0],k1=keyframes[1];
       for(let k=0;k<keyframes.length-1;k++){
