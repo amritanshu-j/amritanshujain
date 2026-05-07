@@ -1140,45 +1140,57 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
     controls.target.set(0,0,0);
     controls.update();
 
+    // ── Apply joint limits ──
+    const limitMap={
+      'yaw 1':  {lower:-3.14, upper:3.14},
+      'pitch 1':{lower:-3.14, upper:0.30},
+      'pitch 2':{lower:0,     upper:3.14},
+      'pitch 3':{lower:-1,    upper:2.25},
+      'yaw 2':  {lower:-1.4,  upper:1.4},
+      'roll 1': {lower:-3.14, upper:3.14},
+    };
+    Object.entries(jointObjs).forEach(([name,j])=>{
+      const key=name.replace(/_/g,' ').toLowerCase();
+      if(limitMap[key]){j.lower=limitMap[key].lower;j.upper=limitMap[key].upper;}
+    });
+
     buildSliders(jointObjs);
     startIntroAnim(jointObjs);
   }
 
   // ── Intro animation ──
-  // Keyframes: each entry is {t: seconds, v: [0..1 normalised per joint]}
-  // Values are mapped onto each joint's [lower, upper] range automatically.
+  // Keyframes: actual radian values per joint [yaw1, pitch1, pitch2, pitch3, yaw2, roll1]
+  // Limits: yaw1(-3.14→3.14) pitch1(-3.14→0.30) pitch2(0→3.14) pitch3(-1→2.25) yaw2(-1.4→1.4) roll1(-3.14→3.14)
   let introAnim=null;
   function startIntroAnim(joints){
     const jArr=Object.values(joints);
     const n=jArr.length;
 
-    // Normalised keyframes (0 = lower limit, 1 = upper limit, 0.5 = centre)
     const keyframes=[
-      {t:0,    v:[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},  // rest / home
-      {t:2.0,  v:[0.65,0.75,0.5, 0.5, 0.5, 0.5]},  // yaw + first pitch up
-      {t:3.5,  v:[0.65,0.75,0.75,0.65,0.55,0.5]},  // extend middle links
-      {t:5.0,  v:[0.65,0.75,0.75,0.65,0.55,0.85]}, // roll wrist
-      {t:6.5,  v:[0.35,0.6, 0.6, 0.55,0.45,0.15]}, // sweep other side
-      {t:8.5,  v:[0.5, 0.5, 0.5, 0.5, 0.5, 0.5]},  // return home
+      {t:0,    v:[ 0,     0,    0,    0,     0,    0   ]},  // home
+      {t:2.0,  v:[ 1.0,  -0.5,  0,    0,     0,    0   ]},  // yaw + pitch1 lifts
+      {t:3.5,  v:[ 1.0,  -0.5,  1.5,  1.0,   0.5,  0   ]},  // extend arm
+      {t:5.0,  v:[ 1.0,  -0.5,  1.5,  1.0,   0.5,  2.0 ]},  // roll wrist
+      {t:6.5,  v:[-1.0,  -0.8,  0.8, -0.5,  -0.5, -2.0 ]},  // sweep other side
+      {t:8.5,  v:[ 0,     0,    0,    0,     0,    0   ]},  // return home
     ];
     const totalDur=keyframes[keyframes.length-1].t;
 
-    // Grab slider DOM elements in order
     const sliderEls=[...document.querySelectorAll('.urdf-slider')];
     const valEls=[...document.querySelectorAll('.urdf-val')];
 
-    function setJoint(i,norm){
+    function setJoint(i,v){
       const j=jArr[i];
       if(!j)return;
-      const lo=parseFloat(j.lower)||0,hi=parseFloat(j.upper)||0;
-      const v=lo+(hi-lo)*norm;
+      // clamp to limits
+      const val=Math.max(parseFloat(j.lower)||-Math.PI,Math.min(parseFloat(j.upper)||Math.PI,v));
       if(j.type==='prismatic'){
-        j.jg.position.copy(j.axis.clone().multiplyScalar(v));
+        j.jg.position.copy(j.axis.clone().multiplyScalar(val));
       } else {
-        j.jg.quaternion.setFromAxisAngle(j.axis,v);
+        j.jg.quaternion.setFromAxisAngle(j.axis,val);
       }
-      if(sliderEls[i]){sliderEls[i].value=v;}
-      if(valEls[i]){valEls[i].textContent=v.toFixed(2);}
+      if(sliderEls[i]){sliderEls[i].value=val;}
+      if(valEls[i]){valEls[i].textContent=val.toFixed(2);}
     }
 
     function easeInOut(t){return t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
@@ -1186,18 +1198,19 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
     let start=null;
     introAnim=function(ts){
       if(!start)start=ts;
-      let elapsed=(ts-start)/1000;
-      if(elapsed>=totalDur){introAnim=null;return;} // done — sliders take over
-      // find surrounding keyframes
+      const elapsed=(ts-start)/1000;
+      if(elapsed>=totalDur){
+        // snap to final home pose and hand off to sliders
+        for(let i=0;i<n;i++)setJoint(i,0);
+        introAnim=null;return;
+      }
       let k0=keyframes[0],k1=keyframes[1];
       for(let k=0;k<keyframes.length-1;k++){
         if(elapsed>=keyframes[k].t&&elapsed<keyframes[k+1].t){k0=keyframes[k];k1=keyframes[k+1];break;}
       }
-      const segDur=k1.t-k0.t;
-      const segT=easeInOut((elapsed-k0.t)/segDur);
+      const segT=easeInOut((elapsed-k0.t)/(k1.t-k0.t));
       for(let i=0;i<n;i++){
-        const v0=k0.v[i]!==undefined?k0.v[i]:0.5;
-        const v1=k1.v[i]!==undefined?k1.v[i]:0.5;
+        const v0=k0.v[i]??0, v1=k1.v[i]??0;
         setJoint(i,v0+(v1-v0)*segT);
       }
     };
