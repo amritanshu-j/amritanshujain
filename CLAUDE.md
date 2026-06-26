@@ -20,6 +20,7 @@ Single `index.html` — no frameworks, no build step. All CSS and JS inline.
 ```
 index.html
 sitemap.xml
+robots.txt
 CNAME
 CLAUDE.md
 images/
@@ -132,17 +133,22 @@ Uses `easeInOut` interpolation. After final frame, `introAnim = null` and slider
 ---
 
 ## SEO — Current State
-All of the following are implemented in `<head>` (fully live on amritanshujain.com as of 2026-06-26):
+All of the following are implemented (fully live on amritanshujain.com as of 2026-06-26):
 - `meta description`, `canonical`, `title` ✓
 - `meta robots` — index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1 ✓
 - `meta author` — Amritanshu Jain ✓
 - `meta keywords` — 14 targeted keywords ✓
 - `meta theme-color` — #00d4ff ✓
+- Geo tags — `geo.region` (IN-KA), `geo.placename` (Bengaluru), `geo.position`, `ICBM` ✓
 - Open Graph — title, description, type, url, site_name, locale, image, image:width (192), image:height (192), image:alt ✓
-- Twitter/X Card — card (summary), title, description, image, image:alt ✓
+- Twitter/X Card — card (summary), title, description, image, image:alt, site (@amritj2002), creator (@amritj2002) ✓
 - JSON-LD Person schema — name, url, image, jobTitle, description, worksFor (KinesthetIQ), alumniOf (MIT Manipal), address (Bengaluru, Karnataka, IN), sameAs (LinkedIn + GitHub), knowsAbout (10 topics), award (4 results), hasCredential (CSWP) ✓
+- JSON-LD WebSite schema — name, url, description, author ✓
+- `robots.txt` — allows all crawlers, points to sitemap ✓
+- Sitemap with `<lastmod>` (2026-06-26) — submitted to Google Search Console ✓
 - Favicons — SVG, 192px, 48px, 32px, apple-touch-icon ✓
-- Sitemap submitted to Google Search Console ✓
+- Hero image alt text fixed (`ARM ON QUADRUPED.webp`) ✓
+- Twitter handle: @amritj2002 (account exists but not active — tagged for attribution only) ✓
 
 **Pending:** Create a proper `1200×630px` OG preview image (`images/og-preview.jpg`) and update `og:image`, `og:image:width/height`, and `twitter:image` tags to point to it. Also change `twitter:card` from `summary` to `summary_large_image` once the image exists.
 
@@ -178,4 +184,8 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 - [ ] Test joint slider limits against URDF file (set `lower`/`upper` attributes in URDF to match JS limitMap)
 
 ## Completed
-- [x] SEO — all meta tags, OG, Twitter/X Card, JSON-LD fully implemented (2026-06-26)
+- [x] SEO — all meta tags, OG, Twitter/X Card, JSON-LD Person + WebSite schemas fully implemented (2026-06-26)
+- [x] robots.txt created (2026-06-26)
+- [x] Sitemap lastmod added (2026-06-26)
+- [x] Geo meta tags added — IN-KA / Bengaluru (2026-06-26)
+- [x] Hero image alt text fixed (2026-06-26)
