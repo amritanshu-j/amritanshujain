@@ -95,6 +95,8 @@
   <!-- Google Fonts: Bebas Neue (headings), DM Mono (labels/code), Outfit (body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com"/>
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net"/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet"/>
   <style>
     /* ── Design tokens: all colours live here — edit once, applies everywhere ── */
@@ -204,6 +206,7 @@
     section{position:relative;z-index:1;padding:8rem 4rem;}
     .sec-hdr{display:flex;align-items:center;gap:1.5rem;margin-bottom:4rem;}
     .sec-num{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--accent);letter-spacing:.2em;}
+    .sec-num--label{display:block;margin-bottom:1.25rem;}
     .sec-ttl{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,4vw,3.5rem);letter-spacing:.05em;color:var(--white);}
     .sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);}
     /* Diagonal cuts: alternating sections clip into each other with an angled edge */
@@ -257,11 +260,7 @@
     .xp-cap{font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(200,220,240,.65);letter-spacing:.06em;}
     .xp-expand{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:rgba(0,212,255,.09);border:1px solid rgba(0,212,255,.22);padding:.2rem .55rem;border-radius:2px;cursor:pointer;transition:all .2s;white-space:nowrap;}
     .xp-expand:hover{background:rgba(0,212,255,.2);}
-    /* No gallery = collapse media area */
-    @media(max-width:900px){
-      .xp-body{grid-template-columns:1fr;}
-      .xp-pts{border-right:none;border-bottom:1px solid var(--line);}
-    }
+    /* No gallery = collapse media area — see @media(max-width:900px) block below */
 
     /* ── Skills: tag cloud blocks ── */
     .sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;}
@@ -343,6 +342,7 @@
       footer{padding:2rem 1.5rem;flex-direction:column;gap:.5rem;text-align:center;}
       .hero-bg-cad{display:block;}
       .xp-body{grid-template-columns:1fr;}
+      .xp-pts{border-right:none;border-bottom:1px solid var(--line);}
     }
 
     /* ── Responsive: mobile ── */
@@ -432,6 +432,7 @@
 
     @media(max-width:640px){
       .nav-links{display:none;}
+      .blog-panel{width:100vw;}.blog-panel-head{padding:1.5rem 1.25rem 1rem;}.blog-list{padding:1rem 1.25rem 2rem;}
     }
 
     /* ── Light mode token overrides ── */
@@ -494,21 +495,20 @@
     .blog-read-btn{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.22);padding:.25rem .7rem;border-radius:2px;cursor:pointer;transition:all .2s;}
     .blog-read-btn:hover:not(:disabled){background:rgba(0,212,255,.2);}
     .blog-read-btn:disabled{opacity:.4;cursor:not-allowed;}
-    @media(max-width:640px){.blog-panel{width:100vw;}.blog-panel-head{padding:1.5rem 1.25rem 1rem;}.blog-list{padding:1rem 1.25rem 2rem;}}
   </style>
 
   <!-- ── Preload 3D assets — browser fetches these immediately on HTML parse ── -->
-  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" as="script" crossorigin>
-  <link rel="preload" href="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js" as="script" crossorigin>
-  <link rel="preload" href="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" as="script" crossorigin>
-  <link rel="preload" href="URDF/urdf_manipulator_v2/urdf/urdf_manipulator_v2.SLDASM.urdf" as="fetch" crossorigin>
-  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/base_link.STL" as="fetch" crossorigin>
-  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/p1_manipulator.STL" as="fetch" crossorigin>
-  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/p2_manipulator.STL" as="fetch" crossorigin>
-  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/p3_manipulator.STL" as="fetch" crossorigin>
-  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/r1_manipulator.STL" as="fetch" crossorigin>
-  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/y1_manipulator.STL" as="fetch" crossorigin>
-  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/y2_manipulator.STL" as="fetch" crossorigin>
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" as="script" crossorigin fetchpriority="high">
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js" as="script" crossorigin fetchpriority="high">
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" as="script" crossorigin fetchpriority="high">
+  <link rel="preload" href="URDF/urdf_manipulator_v2/urdf/urdf_manipulator_v2.SLDASM.urdf" as="fetch" crossorigin fetchpriority="high">
+  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/base_link.STL" as="fetch" crossorigin fetchpriority="low">
+  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/p1_manipulator.STL" as="fetch" crossorigin fetchpriority="low">
+  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/p2_manipulator.STL" as="fetch" crossorigin fetchpriority="low">
+  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/p3_manipulator.STL" as="fetch" crossorigin fetchpriority="low">
+  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/r1_manipulator.STL" as="fetch" crossorigin fetchpriority="low">
+  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/y1_manipulator.STL" as="fetch" crossorigin fetchpriority="low">
+  <link rel="preload" href="URDF/urdf_manipulator_v2/meshes/y2_manipulator.STL" as="fetch" crossorigin fetchpriority="low">
 </head>
 <body>
 
@@ -786,7 +786,7 @@
       <div class="acert orange"><div class="acert-ttl">B.Tech — Mechanical Engineering</div><div class="acert-sub">Manipal Institute of Technology, Manipal · 2020–2024</div></div>
     </div>
     <div class="reveal">
-      <div class="sec-num" style="display:block;margin-bottom:1.25rem;">Honors & Awards</div>
+      <div class="sec-num sec-num--label">Honors & Awards</div>
       <div class="alist">
         <div class="aitem" data-src="https://drive.google.com/thumbnail?id=1KEqwzAzX76T4JXQSu_sGCCLbyN4tSY8l&sz=w1200" data-caption="IRC 2023 — 3rd Prize">
           <div class="aphoto"><img src="https://drive.google.com/thumbnail?id=1KEqwzAzX76T4JXQSu_sGCCLbyN4tSY8l&sz=w300" loading="lazy" alt="IRC 2023"/></div>
