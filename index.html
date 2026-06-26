@@ -349,6 +349,32 @@
       .sgrid{grid-template-columns:1fr;}
     }
 
+    /* ── Light mode token overrides ── */
+    html[data-theme="light"]{
+      --bg:#f0f4f8; --bg2:#e6edf5; --bg3:#dce5ef;
+      --line:#b8cad8; --steel:#3d6080; --accent:#007aaa;
+      --accent2:#e05515; --text:#1a2a3c; --text-dim:#4a6a84;
+      --white:#0a1520; --grid-col:rgba(0,122,170,0.07);
+    }
+    html[data-theme="light"] nav{background:rgba(240,244,248,0.82);border-bottom:1px solid rgba(0,0,0,0.09);box-shadow:0 1px 0 rgba(255,255,255,0.7) inset,0 4px 24px rgba(0,0,0,0.07);}
+    html[data-theme="light"] .nav-links a:hover{background:rgba(0,0,0,0.04);box-shadow:0 4px 16px rgba(0,0,0,0.08),inset 0 1px 0 rgba(255,255,255,0.6);}
+    html[data-theme="light"] .urdf-row{background:rgba(240,244,248,0.88);}
+    html[data-theme="light"] .loader{background:#dce5ef;}
+    html[data-theme="light"] .loader-name{color:#0a1520;}
+    html[data-theme="light"] body::before{opacity:0.6;}
+    html[data-theme="light"] .btn-p{color:#f0f4f8;}
+    html[data-theme="light"] .btn-g{border-color:var(--line);color:var(--text);}
+    html[data-theme="light"] .blog-overlay::before{background:rgba(200,215,230,0.7);}
+
+    /* ── Theme toggle button ── */
+    .theme-toggle{background:none;border:1px solid var(--line);border-radius:8px;padding:5px 8px;cursor:pointer;color:var(--text-dim);display:flex;align-items:center;transition:all .25s;}
+    .theme-toggle:hover{border-color:var(--accent);color:var(--accent);}
+    .theme-toggle svg{display:block;}
+    .icon-moon{display:block;}
+    .icon-sun{display:none;}
+    html[data-theme="light"] .icon-moon{display:none;}
+    html[data-theme="light"] .icon-sun{display:block;}
+
     /* ── Blog toggle button in nav ── */
     .blog-toggle{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.3);padding:5px 14px;border-radius:8px;cursor:pointer;transition:all .25s;white-space:nowrap;}
     .blog-toggle:hover{background:rgba(0,212,255,.16);box-shadow:0 0 14px rgba(0,212,255,.2);}
@@ -419,6 +445,11 @@
     <a href="#contact" data-section="contact">Contact</a>
     <!-- Blog toggle — opens overlay, not part of scroll nav -->
     <button class="blog-toggle" id="blogToggle" aria-label="Open blog">Blog</button>
+    <!-- Theme toggle -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
+      <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
   </div>
 </nav>
 
@@ -1061,6 +1092,19 @@ blogClose.addEventListener('click',closeBlog);
 // Click scrim (not panel) to close
 blogOverlay.addEventListener('click',e=>{if(e.target===blogOverlay)closeBlog();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classList.contains('active'))closeBlog();});
+
+// ── Theme toggle: dark (default) ↔ light ──
+(function(){
+  const html=document.documentElement;
+  const btn=document.getElementById('themeToggle');
+  const saved=localStorage.getItem('theme');
+  if(saved==='light')html.setAttribute('data-theme','light');
+  btn.addEventListener('click',()=>{
+    const isLight=html.getAttribute('data-theme')==='light';
+    if(isLight){html.removeAttribute('data-theme');localStorage.setItem('theme','dark');}
+    else{html.setAttribute('data-theme','light');localStorage.setItem('theme','light');}
+  });
+})();
 </script>
 
 <!-- Three.js + STL loader + OrbitControls -->
