@@ -27,6 +27,7 @@ images/
   arm-blueprint.svg
   ARM ON QUADRUPED.webp
   kinesthetiq-logo.svg
+  og-preview.jpg          ← headshot, 413×531px, used as OG/Twitter/JSON-LD image
   favicon.svg
   favicon-192.png
   favicon-48.png
@@ -69,15 +70,31 @@ URDF/
 
 ## URDF Viewer — Current State
 
-### Canvas / Layout
-- Container: `.bp-layer` — `position:absolute; top:calc(50% + 20rem); right:-2%; transform:translateY(-50%); width:68%; height:125%; z-index:0; overflow:visible;`
-- `#urdfControls` is positioned **outside** `.bp-layer`, directly inside `#hero` — `position:absolute; bottom:1.5rem; left:70%; z-index:2;`
+### Canvas / Layout (desktop)
+- Container: `.bp-layer` — `position:absolute; top:calc(50% + 16rem); right:-2%; transform:translateY(-50%); width:68%; height:125%; z-index:0; overflow:visible;`
+- `#urdfControls` — `position:fixed; bottom:6rem; left:70%; z-index:2;` — scrollable with `max-height:calc(100vh - 6rem)`
 
-### Camera
+### Canvas / Layout (mobile ≤768px)
+- `.bp-layer` fills hero: `position:absolute; inset:0; width:100%; height:100%; opacity:0.45;`
+- `#urdfControls` hidden (`display:none!important`)
+- Camera auto-scaled to fit arm in frame based on canvas aspect ratio — adapts to any screen size
+- Camera X offset `dist*0.26` shifts arm left on mobile
+- Small phones (≤480px): opacity 0.37
+
+### Camera (desktop)
 ```js
 camera = new THREE.PerspectiveCamera(40, 1, 0.0001, 10000);
-camera.position.set(md*0.3, md*0.5, md*2);
+camera.position.set(md*0.3, md*0.5, md*3.5);
 controls.target.set(0, 0, 0);
+```
+
+### Camera (mobile — computed in resize())
+```js
+const tanHalfVFov = Math.tan(camera.fov/2 * Math.PI/180);
+const tanHalfHFov = tanHalfVFov * (w/h);
+const dist = robotMd * 0.8 / Math.min(tanHalfVFov, tanHalfHFov);
+camera.position.set(dist*0.26, robotMd*0.05, dist);
+// robotMd is hoisted from buildRobot() and available in resize()
 ```
 
 ### Controls (OrbitControls — fully locked)
@@ -140,9 +157,9 @@ All of the following are implemented (fully live on amritanshujain.com as of 202
 - `meta keywords` — 14 targeted keywords ✓
 - `meta theme-color` — #00d4ff ✓
 - Geo tags — `geo.region` (IN-KA), `geo.placename` (Bengaluru), `geo.position`, `ICBM` ✓
-- Open Graph — title, description, type, url, site_name, locale, image, image:width (192), image:height (192), image:alt ✓
-- Twitter/X Card — card (summary), title, description, image, image:alt, site (@amritj2002), creator (@amritj2002) ✓
-- JSON-LD Person schema — name, url, image, jobTitle, description, worksFor (KinesthetIQ), alumniOf (MIT Manipal), address (Bengaluru, Karnataka, IN), sameAs (LinkedIn + GitHub), knowsAbout (10 topics), award (4 results), hasCredential (CSWP) ✓
+- Open Graph — title, description, type, url, site_name, locale, image (`og-preview.jpg` 413×531px headshot), image:width, image:height, image:alt ✓
+- Twitter/X Card — card (summary), title, description, image (`og-preview.jpg`), image:alt, site (@amritj2002), creator (@amritj2002) ✓
+- JSON-LD Person schema — name, url, image (`og-preview.jpg` 413×531), jobTitle, description, worksFor (KinesthetIQ), alumniOf (MIT Manipal), address (Bengaluru, Karnataka, IN), sameAs (LinkedIn + GitHub), knowsAbout (10 topics), award (4 results), hasCredential (CSWP) ✓
 - JSON-LD WebSite schema — name, url, description, author ✓
 - `robots.txt` — allows all crawlers, points to sitemap ✓
 - Sitemap with `<lastmod>` (2026-06-26) — submitted to Google Search Console ✓
@@ -150,7 +167,7 @@ All of the following are implemented (fully live on amritanshujain.com as of 202
 - Hero image alt text fixed (`ARM ON QUADRUPED.webp`) ✓
 - Twitter handle: @amritj2002 (account exists but not active — tagged for attribution only) ✓
 
-**Pending:** Create a proper `1200×630px` OG preview image (`images/og-preview.jpg`) and update `og:image`, `og:image:width/height`, and `twitter:image` tags to point to it. Also change `twitter:card` from `summary` to `summary_large_image` once the image exists.
+**Pending:** If a proper landscape `1200×630px` OG image is created, update `og:image`, dimensions, `twitter:image`, and switch `twitter:card` to `summary_large_image`. Current headshot (`og-preview.jpg`) is portrait 413×531 — works for `summary` card.
 
 ---
 
@@ -188,7 +205,7 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 - [ ] Mars Rover Manipal experience card — add photos
 - [ ] Blog — 3 draft posts exist; remove `data-draft="true"` to publish
 - [ ] SolidWorks animation — export as video, integrate in hero
-- [ ] Create `1200×630px` OG preview image (`images/og-preview.jpg`) — update og:image, twitter:image tags, and switch twitter:card to `summary_large_image`
+- [ ] Create landscape `1200×630px` OG image — update og:image, dimensions, twitter:image, switch twitter:card to `summary_large_image`
 - [ ] Decimate STL meshes for faster load
 - [ ] Make repo private
 - [ ] Test joint slider limits against URDF file (set `lower`/`upper` attributes in URDF to match JS limitMap)
@@ -201,3 +218,9 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 - [x] Hero image alt text fixed (2026-06-26)
 - [x] Dark/light mode toggle added with localStorage persistence (2026-06-26)
 - [x] Footer copyright updated to 2026 (2026-06-26)
+- [x] OG/Twitter/JSON-LD image updated to headshot `og-preview.jpg` 413×531px (2026-06-27)
+- [x] Mobile optimisation — responsive breakpoints at 768px and 480px (2026-06-27)
+- [x] Mobile URDF — shown as transparent background animation, sliders hidden, camera auto-scaled to screen size, arm shifted left (2026-06-27)
+- [x] KinesthetIQ logo increased to 110px height (2026-06-27)
+- [x] "Now working with" label font size increased (2026-06-27)
+- [x] urdfControls switched to position:fixed, shifted upward to bottom:6rem (2026-06-27)
