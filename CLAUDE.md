@@ -173,6 +173,16 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 
 ---
 
+## Theme System
+- Default: **dark mode**
+- Toggle: sun/moon icon button in nav (next to Blog button), id=`themeToggle`
+- Persisted via `localStorage` key `theme` (`'light'` or `'dark'`)
+- Light mode activated via `html[data-theme="light"]` — overrides all CSS variables
+- Light tokens: `--bg:#f0f4f8`, `--bg2:#e6edf5`, `--bg3:#dce5ef`, `--line:#b8cad8`, `--steel:#3d6080`, `--accent:#007aaa`, `--accent2:#e05515`, `--text:#1a2a3c`, `--text-dim:#4a6a84`, `--white:#0a1520`, `--grid-col:rgba(0,122,170,0.07)`
+- Hardcoded overrides in light mode: nav background, urdf-row, loader, btn-p text, blog overlay scrim
+
+---
+
 ## Outstanding / Next Steps
 - [ ] KinesthetIQ experience card — add photos/CAD media
 - [ ] Mars Rover Manipal experience card — add photos
@@ -189,3 +199,5 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 - [x] Sitemap lastmod added (2026-06-26)
 - [x] Geo meta tags added — IN-KA / Bengaluru (2026-06-26)
 - [x] Hero image alt text fixed (2026-06-26)
+- [x] Dark/light mode toggle added with localStorage persistence (2026-06-26)
+- [x] Footer copyright updated to 2026 (2026-06-26)
