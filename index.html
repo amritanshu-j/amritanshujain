@@ -1334,15 +1334,12 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
     robotGroup.position.sub(ctr);
     robotGroup.rotation.set(Math.PI*0.5,Math.PI*1,Math.PI*0.1);
     const md=Math.max(sz.x,sz.y,sz.z);
-    const isMobile=window.innerWidth<=768;
-    if(isMobile){
-      camera.position.set(0,md*0.1,md*7.5);
-    } else {
-      camera.position.set(md*0.3,md*0.5,md*3.5);
-    }
+    robotMd=md;
+    camera.position.set(md*0.3,md*0.5,md*3.5);
     camera.lookAt(0,0,0);
     controls.target.set(0,0,0);
     controls.update();
+    resize();
 
     // ── Apply joint limits ──
     const limitMap={
@@ -1446,12 +1443,23 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
     });
   }
 
-  // ── Resize ──
+  // ── Resize — recalculates mobile camera so arm always fits in frame ──
+  let robotMd=null;
   function resize(){
     const w=container.clientWidth,h=container.clientHeight;
     if(!w||!h)return;
     renderer.setSize(w,h,false);
-    camera.aspect=w/h;camera.updateProjectionMatrix();
+    camera.aspect=w/h;
+    camera.updateProjectionMatrix();
+    if(robotMd&&w<=768){
+      // compute minimum camera distance so arm fits in the narrowest FOV axis
+      const tanHalfVFov=Math.tan(camera.fov/2*Math.PI/180);
+      const tanHalfHFov=tanHalfVFov*(w/h);
+      const dist=robotMd*2.4/Math.min(tanHalfVFov,tanHalfHFov);
+      camera.position.set(0,robotMd*0.05,dist);
+      camera.lookAt(0,0,0);
+      controls.update();
+    }
   }
   resize();
   window.addEventListener('resize',resize,{passive:true});
