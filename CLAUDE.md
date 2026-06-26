@@ -132,17 +132,19 @@ Uses `easeInOut` interpolation. After final frame, `introAnim = null` and slider
 ---
 
 ## SEO — Current State
-All of the following are implemented in `<head>`:
+All of the following are implemented in `<head>` (fully live on amritanshujain.com as of 2026-06-26):
 - `meta description`, `canonical`, `title` ✓
-- `meta robots` — index, follow, max-snippet:-1, max-image-preview:large ✓
-- `meta author`, `meta keywords`, `meta theme-color` ✓
-- Open Graph — title, description, type, url, site_name, locale, image, image dimensions, image alt ✓
-- Twitter/X Card — card, title, description, image, image alt ✓
-- JSON-LD Person schema — name, url, image, jobTitle, description, worksFor (KinesthetIQ), alumniOf (MIT Manipal), address (Bengaluru, Karnataka, IN), sameAs (LinkedIn, GitHub), knowsAbout (10 topics), award (4 results) ✓
+- `meta robots` — index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1 ✓
+- `meta author` — Amritanshu Jain ✓
+- `meta keywords` — 14 targeted keywords ✓
+- `meta theme-color` — #00d4ff ✓
+- Open Graph — title, description, type, url, site_name, locale, image, image:width (192), image:height (192), image:alt ✓
+- Twitter/X Card — card (summary), title, description, image, image:alt ✓
+- JSON-LD Person schema — name, url, image, jobTitle, description, worksFor (KinesthetIQ), alumniOf (MIT Manipal), address (Bengaluru, Karnataka, IN), sameAs (LinkedIn + GitHub), knowsAbout (10 topics), award (4 results), hasCredential (CSWP) ✓
 - Favicons — SVG, 192px, 48px, 32px, apple-touch-icon ✓
 - Sitemap submitted to Google Search Console ✓
 
-**Pending:** Create a proper `1200×630px` OG preview image (`images/og-preview.jpg`) and update the three `og:image` / `twitter:image` tags to point to it.
+**Pending:** Create a proper `1200×630px` OG preview image (`images/og-preview.jpg`) and update `og:image`, `og:image:width/height`, and `twitter:image` tags to point to it. Also change `twitter:card` from `summary` to `summary_large_image` once the image exists.
 
 ---
 
@@ -170,7 +172,10 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 - [ ] Mars Rover Manipal experience card — add photos
 - [ ] Blog — 3 draft posts exist; remove `data-draft="true"` to publish
 - [ ] SolidWorks animation — export as video, integrate in hero
-- [ ] Create `1200×630px` OG preview image
+- [ ] Create `1200×630px` OG preview image (`images/og-preview.jpg`) — update og:image, twitter:image tags, and switch twitter:card to `summary_large_image`
 - [ ] Decimate STL meshes for faster load
 - [ ] Make repo private
 - [ ] Test joint slider limits against URDF file (set `lower`/`upper` attributes in URDF to match JS limitMap)
+
+## Completed
+- [x] SEO — all meta tags, OG, Twitter/X Card, JSON-LD fully implemented (2026-06-26)
