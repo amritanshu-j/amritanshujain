@@ -333,7 +333,7 @@
     .loader-sub{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(0,180,255,.5);margin-top:.35rem;opacity:0;animation:lnFade .8s 1s forwards;}
     @keyframes lnFade{to{opacity:1;}}
 
-    /* ── Responsive ── */
+    /* ── Responsive: tablet ── */
     @media(max-width:900px){
       nav{padding:0 1.5rem;}
       section{padding:5rem 1.5rem;}
@@ -344,9 +344,82 @@
       .hero-bg-cad{display:block;}
       .xp-body{grid-template-columns:1fr;}
     }
+
+    /* ── Responsive: mobile ── */
+    @media(max-width:768px){
+      /* Hide 3D viewer and joint sliders — too heavy for mobile */
+      .bp-layer{display:none;}
+      #urdfControls{display:none!important;}
+
+      /* Hero: full-width, vertically centred, bg image provides visual */
+      #hero{padding:6rem 1.5rem 3rem;min-height:100svh;align-items:flex-start;}
+      .hero-content{max-width:100%;}
+      .hero-bg-cad{display:block;}
+      .hero-tag{font-size:.68rem;}
+      .hero-name{font-size:clamp(3.4rem,13vw,5.5rem);}
+      .hero-role{font-size:.88rem;max-width:100%;}
+      .hero-cta{margin-top:1.75rem;flex-wrap:wrap;gap:.75rem;}
+      .hero-employer{margin-top:1.5rem;}
+      .hero-employer img{height:80px;}
+
+      /* Sections */
+      section{padding:4rem 1.25rem;}
+      #experience,#skills,#about,#contact{padding-top:4rem;}
+
+      /* Experience cards */
+      .xp-head{padding:1.25rem 1.25rem 0;}
+      .xp-role{font-size:.95rem;}
+      .xp-pts{padding:1rem 1.25rem;}
+
+      /* Skills */
+      .sgrid{grid-template-columns:1fr;}
+
+      /* About */
+      .agrid{grid-template-columns:1fr;gap:2rem;}
+
+      /* Contact: stack links vertically */
+      .ch{font-size:clamp(2.2rem,9vw,3.5rem);}
+      .clinks{flex-direction:column;align-items:stretch;gap:.75rem;}
+      .clink{justify-content:center;padding:.85rem 1rem;}
+      .ci{padding:0;}
+    }
+
+    /* ── Responsive: small phones ── */
+    @media(max-width:480px){
+      nav{padding:0 1rem;}
+      .blog-toggle{font-size:.65rem;padding:4px 10px;letter-spacing:.1em;}
+      .theme-toggle{padding:4px 7px;}
+
+      /* Hero */
+      #hero{padding:5.5rem 1rem 2.5rem;}
+      .hero-tag{font-size:.62rem;letter-spacing:.15em;}
+      .hero-name{font-size:clamp(3rem,15vw,4.5rem);}
+      .hero-role{font-size:.85rem;}
+      .hero-cta{flex-direction:column;}
+      .btn{width:100%;justify-content:center;}
+      .hero-employer{flex-direction:column;align-items:flex-start;gap:.4rem;}
+      .hero-employer img{height:68px;}
+
+      /* Experience */
+      .xp-list{padding-left:.75rem;}
+      .xp-card::before{left:-.75rem;top:1.3rem;}
+      .xp-role{font-size:.88rem;}
+      .xp-co{font-size:.65rem;}
+
+      /* Awards */
+      .aphoto{width:70px;height:60px;}
+      .attl{font-size:.82rem;}
+      .asub{font-size:.58rem;}
+
+      /* Section header */
+      .sec-hdr{margin-bottom:2.5rem;}
+
+      /* Footer */
+      .fl,.fr{font-size:.62rem;letter-spacing:.08em;}
+    }
+
     @media(max-width:640px){
       .nav-links{display:none;}
-      .sgrid{grid-template-columns:1fr;}
     }
 
     /* ── Light mode token overrides ── */
