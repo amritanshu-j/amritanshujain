@@ -347,16 +347,25 @@
 
     /* ── Responsive: mobile ── */
     @media(max-width:768px){
-      /* Hide 3D viewer and joint sliders — too heavy for mobile */
-      .bp-layer{display:none;}
+      /* URDF viewer: show as transparent background, no sliders */
+      .bp-layer{
+        display:block;
+        position:absolute;
+        top:50%; left:50%;
+        transform:translate(-50%,-50%);
+        width:140%; height:110%;
+        opacity:0.28;
+        z-index:0;
+        pointer-events:none;
+      }
       #urdfControls{display:none!important;}
+      .hero-bg-cad{display:none;}
 
-      /* Hero: full-width, vertically centred, bg image provides visual */
+      /* Hero: full-width, text over the animation */
       #hero{padding:6rem 1.5rem 3rem;min-height:100svh;align-items:flex-start;}
-      .hero-content{max-width:100%;}
-      .hero-bg-cad{display:block;}
+      .hero-content{position:relative;z-index:1;max-width:100%;}
       .hero-tag{font-size:.68rem;}
-      .hero-name{font-size:clamp(3.4rem,13vw,5.5rem);}
+      .hero-name{font-size:clamp(3.4rem,13vw,5.5rem);text-shadow:0 2px 24px rgba(8,11,16,.8);}
       .hero-role{font-size:.88rem;max-width:100%;}
       .hero-cta{margin-top:1.75rem;flex-wrap:wrap;gap:.75rem;}
       .hero-employer{margin-top:1.5rem;}
@@ -389,6 +398,9 @@
       nav{padding:0 1rem;}
       .blog-toggle{font-size:.65rem;padding:4px 10px;letter-spacing:.1em;}
       .theme-toggle{padding:4px 7px;}
+
+      /* URDF slightly more opaque on very small screens for better visibility */
+      .bp-layer{opacity:0.22;width:160%;height:120%;}
 
       /* Hero */
       #hero{padding:5.5rem 1rem 2.5rem;}
