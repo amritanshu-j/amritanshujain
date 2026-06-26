@@ -1456,7 +1456,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
       const tanHalfVFov=Math.tan(camera.fov/2*Math.PI/180);
       const tanHalfHFov=tanHalfVFov*(w/h);
       const dist=robotMd*0.8/Math.min(tanHalfVFov,tanHalfHFov);
-      camera.position.set(dist*0.12,robotMd*0.05,dist);
+      camera.position.set(dist*0.16,robotMd*0.05,dist);
       camera.lookAt(0,0,0);
       controls.update();
     }
