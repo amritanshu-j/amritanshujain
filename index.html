@@ -347,18 +347,17 @@
 
     /* ── Responsive: mobile ── */
     @media(max-width:768px){
-      /* URDF viewer: show as transparent background, no sliders */
-      #hero{overflow:visible;}
+      /* URDF viewer: fill hero exactly, camera pulled back in JS */
       .bp-layer{
         display:block;
         position:absolute;
-        top:50%; left:50%;
-        transform:translate(-50%,-46%);
-        width:180%; height:160%;
-        opacity:0.28;
+        inset:0;
+        width:100%; height:100%;
+        transform:none;
+        opacity:0.30;
         z-index:0;
         pointer-events:none;
-        overflow:visible;
+        overflow:hidden;
       }
       #urdfControls{display:none!important;}
       .hero-bg-cad{display:none;}
@@ -401,8 +400,7 @@
       .blog-toggle{font-size:.65rem;padding:4px 10px;letter-spacing:.1em;}
       .theme-toggle{padding:4px 7px;}
 
-      /* URDF slightly more opaque on very small screens for better visibility */
-      .bp-layer{opacity:0.22;width:200%;height:180%;}
+      .bp-layer{opacity:0.22;}
 
       /* Hero */
       #hero{padding:5.5rem 1rem 2.5rem;}
@@ -1338,7 +1336,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
     const md=Math.max(sz.x,sz.y,sz.z);
     const isMobile=window.innerWidth<=768;
     if(isMobile){
-      camera.position.set(0,md*0.1,md*4.2);
+      camera.position.set(0,md*0.1,md*7.5);
     } else {
       camera.position.set(md*0.3,md*0.5,md*3.5);
     }
