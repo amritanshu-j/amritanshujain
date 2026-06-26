@@ -183,10 +183,14 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 ---
 
 ## Security / Privacy
-- Repo should be **private** (GitHub Pro or Cloudflare/Netlify free tier)
+- Repo should be **private** — options: GitHub Pro ($4/mo) or migrate to Cloudflare Pages (free, supports private repos)
 - Deploy obfuscated HTML via obfuscator.io — keep readable source local only
 - Strip all comments from deployed file
 - URDF/STL files cannot be truly protected on a static host — pre-rendered video is the only real solution
+
+## Hosting Options Considered
+- **GitHub Pages (current)** — free, requires public repo, served from US (higher latency for India)
+- **Cloudflare Pages (recommended)** — free, supports private repos, Indian edge nodes (Mumbai/Chennai/Bengaluru), ~200-500ms faster for Indian visitors. Caveats: 25MB per-asset limit (check STL sizes), 30-60s build delay on deploy, requires moving DNS to Cloudflare nameservers (one-time, up to 24hr propagation)
 
 ---
 
@@ -207,7 +211,9 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 - [ ] SolidWorks animation — export as video, integrate in hero
 - [ ] Create landscape `1200×630px` OG image — update og:image, dimensions, twitter:image, switch twitter:card to `summary_large_image`
 - [ ] Decimate STL meshes for faster load
-- [ ] Make repo private
+- [ ] Make repo private — use GitHub Pro ($4/mo) or migrate to Cloudflare Pages (free, better for India latency)
+- [ ] Check STL file sizes before Cloudflare migration (25MB per-asset limit)
+- [ ] Obfuscate HTML via obfuscator.io before deploying to production
 - [ ] Test joint slider limits against URDF file (set `lower`/`upper` attributes in URDF to match JS limitMap)
 
 ## Completed
@@ -224,3 +230,4 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 - [x] KinesthetIQ logo increased to 110px height (2026-06-27)
 - [x] "Now working with" label font size increased (2026-06-27)
 - [x] urdfControls switched to position:fixed, shifted upward to bottom:6rem (2026-06-27)
+- [x] Performance optimisation — CDN dns-prefetch, fetchpriority hints, merged duplicate media queries, removed inline style (2026-06-27)
