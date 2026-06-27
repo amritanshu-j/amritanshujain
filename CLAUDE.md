@@ -43,6 +43,8 @@ URDF/
       r1_manipulator.STL
       y1_manipulator.STL
       y2_manipulator.STL
+urdf-viewer/
+  index.html              ← standalone drag-drop URDF tool (separate page, see below)
 ```
 
 ---
@@ -68,17 +70,36 @@ URDF/
 
 ---
 
-## URDF Viewer — Current State
+## URDF Viewer — Hero (index.html)
+
+### Renderer
+```js
+WebGLRenderer({ canvas, alpha: true, antialias: true })
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+renderer.shadowMap.enabled = true
+```
 
 ### Canvas / Layout (desktop)
 - Container: `.bp-layer` — `position:absolute; top:calc(50% + 16rem); right:-2%; transform:translateY(-50%); width:68%; height:125%; z-index:0; overflow:visible;`
 - `#urdfControls` — `position:fixed; bottom:6rem; left:70%; z-index:2;` — scrollable with `max-height:calc(100vh - 6rem)`
 
 ### Canvas / Layout (mobile ≤768px)
-- `.bp-layer` fills hero: `position:absolute; inset:0; width:100%; height:100%; opacity:0.45;`
+```css
+.bp-layer {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  transform: none;
+  opacity: 0.45;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+```
 - `#urdfControls` hidden (`display:none!important`)
-- Camera auto-scaled to fit arm in frame based on canvas aspect ratio — adapts to any screen size
-- Camera X offset `dist*0.26` shifts arm left on mobile
+- Camera auto-scaled to fit arm in frame based on canvas aspect ratio
+- Camera X offset `dist*0.26` shifts arm left
 - Small phones (≤480px): opacity 0.37
 
 ### Camera (desktop)
@@ -94,7 +115,7 @@ const tanHalfVFov = Math.tan(camera.fov/2 * Math.PI/180);
 const tanHalfHFov = tanHalfVFov * (w/h);
 const dist = robotMd * 0.8 / Math.min(tanHalfVFov, tanHalfHFov);
 camera.position.set(dist*0.26, robotMd*0.05, dist);
-// robotMd is hoisted from buildRobot() and available in resize()
+// robotMd is let-hoisted in IIFE scope; resize() checks `if(robotMd && w<=768)`
 ```
 
 ### Controls (OrbitControls — fully locked)
@@ -112,7 +133,10 @@ robotGroup.rotation.set(Math.PI*0.5, Math.PI*1, Math.PI*0.1);
 
 ### Material
 ```js
-MeshStandardMaterial({ color: 0xb2bcc8, metalness: 0.72, roughness: 0.28 })
+MeshStandardMaterial({
+  color: 0xb2bcc8, metalness: 0.72, roughness: 0.28,
+  envMapIntensity: 1.0, side: THREE.DoubleSide
+})
 ```
 
 ### Lighting (4-point rig)
@@ -146,6 +170,62 @@ Keyframes using actual radian values:
 | 8.5s  | 0     | 0      | 0      | 0      | 0     | 0     |
 
 Uses `easeInOut` interpolation. After final frame, `introAnim = null` and sliders take over.
+
+### Render Pause
+Rendering pauses when `#hero` scrolls out of view (IntersectionObserver, threshold 0.1) to save GPU — resumes on re-entry.
+
+---
+
+## Standalone URDF Viewer Tool — urdf-viewer/index.html
+
+Separate page at `https://amritanshujain.com/urdf-viewer/`. Linked from nav via `.urdf-link` button. Full-screen tool for inspecting any URDF.
+
+### Tech
+- Three.js **r155** (ES module via importmap, newer than r128 used in hero)
+- `urdf-loader@0.12.3` (jsDelivr) — handles URDF parsing and joint hierarchy
+- OrbitControls from Three.js r155 addons
+
+### Layout
+Fixed nav (64px) + side panel (300px wide, `var(--panel-w)`) + 3D viewport (flex:1). `html,body { overflow:hidden }` — no scroll.
+
+### Camera & Controls
+```js
+PerspectiveCamera(45, 1, 0.001, 1000) at (2, 1.5, 3)
+OrbitControls — enableDamping: true, dampingFactor: 0.07
+// Free rotate / zoom / pan (opposite of locked hero viewer)
+```
+
+### Lighting
+```js
+AmbientLight(0xdde8f0, 0.45)           // brighter ambient than hero (0.25→0.45)
+DirectionalLight(0xffffff, 1.4) @ (6, 10, 7)   castShadow: true
+DirectionalLight(0x8aaabb, 0.45) @ (-5, 2, -4)
+DirectionalLight(0x00d4ff, 0.30) @ (-3, 4, -8) // slightly dimmer rim (0.35→0.30)
+DirectionalLight(0x334455, 0.20) @ (0, -6, 0)
+ShadowMaterial floor (opacity: 0.12) — receives shadows, invisible otherwise
+```
+
+### Material
+```js
+// Visual meshes
+MeshStandardMaterial({ color: 0xb2bcc8, metalness: 0.65, roughness: 0.3, side: DoubleSide })
+// Collision meshes
+MeshStandardMaterial({ color: 0xff6b35, transparent: true, opacity: 0.35, depthWrite: false })
+```
+
+### Features
+- **Drag-drop** a URDF package folder (walks directory entries via `webkitGetAsEntry`; builds filename→objectURL map to resolve `package://` URIs)
+- **File input** fallback (uses `webkitRelativePath`)
+- **Load Sample Robot** button — loads portfolio's own `URDF/urdf_manipulator_v2/` arm with same orientation as hero (`rotation.set(Math.PI*.5, Math.PI, Math.PI*.1)`)
+- Supports STL meshes; unknown formats (DAE, OBJ) load as empty `THREE.Group` with console.warn
+- **Robot info panel** — link count, joint count, movable joint count
+- **Options toggles**: Animate Joints, Show Visual (on by default), Show Collision, Show Grid, Show Axes
+- **Animate Joints** — sinusoidal sweep: `sin(clock*0.7 + jointName.length*0.4)` mapped to joint limits; pauses when user touches a slider
+- **Reset Camera** button
+- **Joint sliders** — one per movable joint, uses `j.setJointValue(v)` from urdf-loader
+- Camera framing: `dist = md*2.5`, position `(dist*.55, dist*.45, dist)` for drop-in robots; `dist = md*3`, position `(dist*.35, dist*.45, dist)` for sample robot
+- Grid: `GridHelper(10, 20)` scaled to `md*0.4`; Axes: `AxesHelper(0.5)` scaled to `md*0.12`
+- Light/dark theme via localStorage (same key `theme` as portfolio)
 
 ---
 
@@ -205,8 +285,6 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 ---
 
 ## Outstanding / Next Steps
-- [ ] Mars Rover Manipal experience card — add photos (no Drive folder found yet)
-- [ ] Mars Rover Manipal experience card — add photos (no Drive folder found yet)
 - [ ] Blog — 3 draft posts exist; remove `data-draft="true"` to publish
 - [ ] SolidWorks animation — export as video, integrate in hero
 - [ ] Create landscape `1200×630px` OG image — update og:image, dimensions, twitter:image, switch twitter:card to `summary_large_image`
@@ -233,3 +311,6 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 - [x] Resume button added to hero CTAs — links to Google Drive PDF (id: 1zgP4bzyl2fhCIfZvKDf5tKxqWeEsjUkZ) (2026-06-27)
 - [x] urdfControls switched to position:fixed, shifted upward to bottom:6rem (2026-06-27)
 - [x] Performance optimisation — CDN dns-prefetch, fetchpriority hints, merged duplicate media queries, removed inline style (2026-06-27)
+- [x] Standalone URDF Viewer tool page — `urdf-viewer/index.html`, drag-drop any URDF package, full orbit controls, joint sliders, animate mode, visual/collision/grid/axes toggles (2026-06-27)
+- [x] URDF Viewer linked from nav as `.urdf-link` button (2026-06-27)
+- [x] Mars Rover Manipal experience card — YouTube embed added (video `LtKkaTUwOCQ`, starts at 38s) instead of photos (2026-06-27)
