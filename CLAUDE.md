@@ -29,20 +29,31 @@ images/
   kinesthetiq-logo.svg
   og-preview.jpg          ← headshot, 413×531px, used as OG/Twitter/JSON-LD image
   favicon.svg
-  favicon-192.png
-  favicon-48.png
-  favicon-32.png
+  landing-page-photo.webp ← 961KB, displayed in About section as author photo
+  favicon-192.png         ← 192×192 PNG, also used as apple-touch-icon
+  favicon-48.png          ← 48×48 PNG
+  favicon-32.png          ← 32×32 PNG
 URDF/
-  urdf_manipulator_v2/
-    urdf/urdf_manipulator_v2.SLDASM.urdf
-    meshes/
-      base_link.STL
-      p1_manipulator.STL
-      p2_manipulator.STL
-      p3_manipulator.STL
-      r1_manipulator.STL
-      y1_manipulator.STL
-      y2_manipulator.STL
+  urdf_manipulator_v2/    ← full ROS package exported from SolidWorks
+    urdf/
+      urdf_manipulator_v2.SLDASM.urdf
+      urdf_manipulator_v2.SLDASM.csv
+    meshes/               ← STL file sizes (total ~40MB — check before Cloudflare migration)
+      base_link.STL       2.94 MB
+      p1_manipulator.STL  7.67 MB
+      p2_manipulator.STL  11.29 MB
+      p3_manipulator.STL  7.26 MB
+      r1_manipulator.STL  0.02 MB
+      y1_manipulator.STL  3.75 MB
+      y2_manipulator.STL  7.27 MB
+    config/
+    launch/
+      display.launch
+      gazebo.launch
+    CMakeLists.txt
+    package.xml
+    export.log
+    joint_names_urdf_manipulator_v2.SLDASM.yaml
 urdf-viewer/
   index.html              ← standalone drag-drop URDF tool (separate page, see below)
 ```
@@ -182,8 +193,8 @@ Separate page at `https://amritanshujain.com/urdf-viewer/`. Linked from nav via 
 
 ### Tech
 - Three.js **r155** (ES module via importmap, newer than r128 used in hero)
-- `urdf-loader@0.12.3` (jsDelivr) — handles URDF parsing and joint hierarchy
-- OrbitControls from Three.js r155 addons
+- **Self-contained URDF parser** (no external library) — same approach as hero viewer but as ES module; replaced broken `urdf-loader@0.12.3/src/URDFLoader.js` import
+- OrbitControls + STLLoader from Three.js r155 addons
 
 ### Layout
 Fixed nav (64px) + side panel (300px wide, `var(--panel-w)`) + 3D viewport (flex:1). `html,body { overflow:hidden }` — no scroll.
@@ -257,8 +268,10 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 ---
 
 ## Performance Notes
-- STL files from SolidWorks are likely oversized — decimating meshes to 20–30% triangle count would be the biggest load time improvement
-- Use Meshmixer (free) or meshoptimizer.org to reduce file sizes
+- STL files from SolidWorks are oversized — total ~40MB across 7 meshes. Worst offenders: p2_manipulator (11.29MB), p1/p3/y2 (~7MB each)
+- Decimating to 20–30% triangle count would be the biggest load time improvement; use Meshmixer (free) or meshoptimizer.org
+- ⚠ Cloudflare Pages has a 25MB per-asset limit — p2_manipulator.STL (11.29MB) is fine, but decimation is still strongly recommended before migrating
+- `images/landing-page-photo.webp` (961KB) is displayed in the About section as the author photo (`max-height:260px`, `object-position:top center`)
 
 ---
 
@@ -288,13 +301,15 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 - [ ] Blog — 3 draft posts exist; remove `data-draft="true"` to publish
 - [ ] SolidWorks animation — export as video, integrate in hero
 - [ ] Create landscape `1200×630px` OG image — update og:image, dimensions, twitter:image, switch twitter:card to `summary_large_image`
-- [ ] Decimate STL meshes for faster load
+- [ ] Decimate STL meshes for faster load (total ~40MB; target 20–30% triangle count reduction)
 - [ ] Make repo private — use GitHub Pro ($4/mo) or migrate to Cloudflare Pages (free, better for India latency)
-- [ ] Check STL file sizes before Cloudflare migration (25MB per-asset limit)
 - [ ] Obfuscate HTML via obfuscator.io before deploying to production
-- [ ] Test joint slider limits against URDF file (set `lower`/`upper` attributes in URDF to match JS limitMap)
+- [ ] `images/landing-page-photo.webp` is now in the About section — consider replacing with a higher-quality or better-cropped photo (current display: `max-height:260px`, `object-position:top center`)
 
 ## Completed
+- [x] **URDF viewer fixed** — both hero and standalone viewer now use self-contained URDF parser (no urdf-loader dependency). Fixed: `||` → `??` for limit clamping (was wrong for 0-value lower limits), `.trim()` on joint names (URDF had trailing space in "yaw 1 "), removed broken `urdf-loader@0.12.3/src/URDFLoader.js` import (2026-06-27)
+- [x] **Favicon PNGs created** — `favicon-192.png`, `favicon-48.png`, `favicon-32.png` generated from SVG design (black + white "AJ." text) — fixed 404 errors (2026-06-27)
+- [x] **landing-page-photo.webp integrated** — added to About section left column as author photo (`max-height:260px`, top-cropped) (2026-06-27)
 - [x] SEO — all meta tags, OG, Twitter/X Card, JSON-LD Person + WebSite schemas fully implemented (2026-06-26)
 - [x] robots.txt created (2026-06-26)
 - [x] Sitemap lastmod added (2026-06-26)

@@ -271,6 +271,8 @@
 
     /* ── About: bio + awards grid ── */
     .agrid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
+    .about-photo{margin-bottom:1.75rem;border-radius:6px;overflow:hidden;border:1px solid var(--line);}
+    .about-photo img{width:100%;max-height:260px;object-fit:cover;object-position:top center;display:block;}
     .atext p{font-size:.95rem;color:var(--text-dim);line-height:1.9;margin-bottom:1.25rem;}
     .atext p strong{color:var(--text);font-weight:600;}
     /* Certification card with left accent border */
@@ -868,6 +870,9 @@
   <div class="sec-hdr reveal"><span class="sec-num">03 /</span><h2 class="sec-ttl">About</h2><div class="sec-line"></div></div>
   <div class="agrid">
     <div class="atext reveal">
+      <div class="about-photo">
+        <img src="images/landing-page-photo.webp" alt="Amritanshu Jain — Lead Hardware Engineer" loading="lazy" decoding="async" width="640" height="480">
+      </div>
       <p>Driven by <strong>iterative development</strong>, I embrace structured problem-solving to tackle complex engineering challenges across the full hardware stack.</p>
       <p>My long-term goal is to <strong>deploy general-purpose robotics hardware</strong> that seamlessly blends into the environment — from custom gearboxes to full system integration.</p>
       <p>With real-world experience spanning the entire supply chain, I believe <strong>resilience is key</strong> to building exceptional products.</p>
@@ -1327,7 +1332,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
     // Parse links
     const linkDefs={};
     doc.querySelectorAll('link').forEach(el=>{
-      const name=el.getAttribute('name');
+      const name=el.getAttribute('name')?.trim();
       const meshEl=el.querySelector('visual mesh');
       const filename=meshEl?.getAttribute('filename')?.replace(/package:\/\/urdf_manipulator_v2\.SLDASM\//,BASE)??null;
       const scaleStr=meshEl?.getAttribute('scale');
@@ -1342,7 +1347,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
     const jointDefs=[];
     doc.querySelectorAll('joint').forEach(el=>{
       const type=el.getAttribute('type');
-      const name=el.getAttribute('name');
+      const name=el.getAttribute('name')?.trim();
       const parent=el.querySelector('parent')?.getAttribute('link');
       const child=el.querySelector('child')?.getAttribute('link');
       const orig=el.querySelector('origin');
@@ -1432,7 +1437,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
       'roll 1': {lower:-3.14, upper:3.14},
     };
     Object.entries(jointObjs).forEach(([name,j])=>{
-      const key=name.replace(/_/g,' ').toLowerCase();
+      const key=name.replace(/_/g,' ').toLowerCase().trim();
       if(limitMap[key]){j.lower=limitMap[key].lower;j.upper=limitMap[key].upper;}
     });
 
@@ -1465,7 +1470,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
       const j=jArr[i];
       if(!j)return;
       // clamp to limits
-      const val=Math.max(parseFloat(j.lower)||-Math.PI,Math.min(parseFloat(j.upper)||Math.PI,v));
+      const val=Math.max(j.lower??-Math.PI,Math.min(j.upper??Math.PI,v));
       if(j.type==='prismatic'){
         j.jg.position.copy(j.axis.clone().multiplyScalar(val));
       } else {

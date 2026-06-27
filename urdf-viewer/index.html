@@ -200,13 +200,11 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { STLLoader } from 'three/addons/loaders/STLLoader.js';
-import URDFLoader from 'https://cdn.jsdelivr.net/npm/urdf-loader@0.12.3/src/URDFLoader.js';
 
 // ── Theme ──
 (()=>{
   const html=document.documentElement,btn=document.getElementById('themeToggle');
-  const saved=localStorage.getItem('theme');
-  if(saved==='light')html.setAttribute('data-theme','light');
+  if(localStorage.getItem('theme')==='light')html.setAttribute('data-theme','light');
   btn.addEventListener('click',()=>{
     const light=html.getAttribute('data-theme')==='light';
     light?html.removeAttribute('data-theme'):html.setAttribute('data-theme','light');
@@ -221,7 +219,6 @@ const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
 renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
 renderer.shadowMap.enabled=true;
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-renderer.outputColorSpace=THREE.SRGBColorSpace;
 
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(45,1,0.001,1000);
@@ -233,198 +230,261 @@ controls.dampingFactor=0.07;
 
 // ── Lighting ──
 scene.add(new THREE.AmbientLight(0xdde8f0,0.45));
-const key=new THREE.DirectionalLight(0xffffff,1.4);key.position.set(6,10,7);key.castShadow=true;scene.add(key);
-scene.add(Object.assign(new THREE.DirectionalLight(0x8aaabb,0.45),{position:new THREE.Vector3(-5,2,-4)}));
-scene.add(Object.assign(new THREE.DirectionalLight(0x00d4ff,0.3),{position:new THREE.Vector3(-3,4,-8)}));
-scene.add(Object.assign(new THREE.DirectionalLight(0x334455,0.2),{position:new THREE.Vector3(0,-6,0)}));
+const keyL=new THREE.DirectionalLight(0xffffff,1.4);keyL.position.set(6,10,7);keyL.castShadow=true;scene.add(keyL);
+[[0x8aaabb,0.45,-5,2,-4],[0x00d4ff,0.30,-3,4,-8],[0x334455,0.20,0,-6,0]].forEach(([c,i,x,y,z])=>{
+  const l=new THREE.DirectionalLight(c,i);l.position.set(x,y,z);scene.add(l);
+});
 
 // ── Helpers ──
 const gridHelper=new THREE.GridHelper(10,20,0x1e2d3d,0x1e2d3d);
 gridHelper.visible=false;scene.add(gridHelper);
 const axesHelper=new THREE.AxesHelper(0.5);
 axesHelper.visible=false;scene.add(axesHelper);
-
-// ── Shadow floor ──
 const floor=new THREE.Mesh(new THREE.PlaneGeometry(20,20),new THREE.ShadowMaterial({opacity:.12}));
 floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
 
-// ── Mesh loaders ──
 const stlLoader=new STLLoader();
+const makeVisualMat=()=>new THREE.MeshStandardMaterial({color:0xb2bcc8,metalness:0.65,roughness:0.3,side:THREE.DoubleSide});
+const makeCollisionMat=()=>new THREE.MeshStandardMaterial({color:0xff6b35,transparent:true,opacity:.35,side:THREE.DoubleSide,depthWrite:false});
 
-function makeRobotMaterial(){
-  return new THREE.MeshStandardMaterial({color:0xb2bcc8,metalness:0.65,roughness:0.3,side:THREE.DoubleSide});
+// ── Self-contained URDF parser ──
+function parseVec3(s,def=[0,0,0]){
+  if(!s)return def;
+  const p=s.trim().split(/\s+/).map(Number);
+  return(p.length>=3&&p.every(isFinite))?[p[0],p[1],p[2]]:def;
 }
-function makeCollisionMaterial(){
-  return new THREE.MeshStandardMaterial({color:0xff6b35,transparent:true,opacity:.35,side:THREE.DoubleSide,depthWrite:false});
-}
 
-// ── URDF Loader ──
-let fileMap=new Map();
-let currentRobot=null;
-let animating=false;
-let animClock=0;
+async function buildRobotFromURDF(urdfText,urlResolver){
+  const doc=new DOMParser().parseFromString(urdfText,'text/xml');
+  if(doc.querySelector('parsererror'))throw new Error('Invalid URDF XML');
+  const robotName=doc.querySelector('robot')?.getAttribute('name')?.trim()||'Robot';
 
-function makeLoader(){
-  const loader=new URDFLoader();
-  loader.parseCollision=true;
-  loader.parseVisual=true;
-  loader.loadMeshCb=(path,manager,done)=>{
-    const ext=path.split('.').pop().toLowerCase();
-    if(ext==='stl'){
-      stlLoader.load(path,geo=>{
-        geo.computeVertexNormals();
-        const mesh=new THREE.Mesh(geo,makeRobotMaterial());
-        mesh.castShadow=true;mesh.receiveShadow=true;
-        done(mesh);
-      },null,e=>done(null,e));
-    } else {
-      // Unsupported mesh format — return empty group so URDF still loads
-      console.warn('Unsupported mesh format:',ext,path);
-      done(new THREE.Group());
+  const linkDefs={};
+  doc.querySelectorAll('link').forEach(el=>{
+    const name=el.getAttribute('name')?.trim();
+    if(!name)return;
+    const parseMesh=sel=>{
+      const mEl=el.querySelector(sel+' geometry mesh');
+      if(!mEl)return null;
+      const raw=mEl.getAttribute('filename');
+      if(!raw)return null;
+      const oEl=el.querySelector(sel+' origin');
+      return{url:urlResolver(raw),scale:parseVec3(mEl.getAttribute('scale'),[1,1,1]),xyz:parseVec3(oEl?.getAttribute('xyz')),rpy:parseVec3(oEl?.getAttribute('rpy'))};
+    };
+    linkDefs[name]={name,visual:parseMesh('visual'),collision:parseMesh('collision')};
+  });
+
+  const jointDefs=[];
+  doc.querySelectorAll('joint').forEach(el=>{
+    const name=el.getAttribute('name')?.trim();
+    const type=el.getAttribute('type');
+    const parent=el.querySelector('parent')?.getAttribute('link')?.trim();
+    const child=el.querySelector('child')?.getAttribute('link')?.trim();
+    if(!name||!type||!parent||!child)return;
+    const oEl=el.querySelector('origin'),aEl=el.querySelector('axis'),lEl=el.querySelector('limit');
+    jointDefs.push({name,type,parent,child,
+      xyz:parseVec3(oEl?.getAttribute('xyz')),rpy:parseVec3(oEl?.getAttribute('rpy')),
+      axis:parseVec3(aEl?.getAttribute('xyz'),[0,0,1]),
+      lower:parseFloat(lEl?.getAttribute('lower')??'-3.14159'),
+      upper:parseFloat(lEl?.getAttribute('upper')??'3.14159'),
+    });
+  });
+
+  // Build Three.js hierarchy
+  const linkObjs={};
+  for(const n of Object.keys(linkDefs)){linkObjs[n]=new THREE.Group();linkObjs[n].name=n;}
+
+  const childSet=new Set();
+  const joints={};
+  for(const j of jointDefs){
+    const og=new THREE.Group();
+    og.position.set(...j.xyz);
+    og.rotation.set(j.rpy[0],j.rpy[1],j.rpy[2]);
+    const jg=new THREE.Group();
+    og.add(jg);
+    if(linkObjs[j.parent])linkObjs[j.parent].add(og);
+    if(linkObjs[j.child])jg.add(linkObjs[j.child]);
+    childSet.add(j.child);
+    if(['revolute','continuous','prismatic'].includes(j.type)){
+      joints[j.name]={jg,axis:new THREE.Vector3(...j.axis),lower:j.lower,upper:j.upper,type:j.type};
     }
-  };
-  return loader;
+  }
+
+  const rootName=Object.keys(linkDefs).find(n=>!childSet.has(n));
+  const rootGroup=linkObjs[rootName]||new THREE.Group();
+  const visuals=[],collisions=[];
+
+  await Promise.all(Object.values(linkDefs).map(ld=>{
+    const loadMesh=(md,isCol)=>{
+      if(!md?.url)return Promise.resolve();
+      return new Promise(res=>{
+        stlLoader.load(md.url,geo=>{
+          geo.computeVertexNormals();
+          const mesh=new THREE.Mesh(geo,isCol?makeCollisionMat():makeVisualMat());
+          mesh.position.set(...md.xyz);mesh.rotation.set(md.rpy[0],md.rpy[1],md.rpy[2]);
+          mesh.scale.set(...md.scale);
+          mesh.castShadow=!isCol;mesh.receiveShadow=!isCol;
+          mesh.visible=!isCol;
+          linkObjs[ld.name]?.add(mesh);
+          (isCol?collisions:visuals).push(mesh);
+          res();
+        },null,()=>res());
+      });
+    };
+    return Promise.all([loadMesh(ld.visual,false),loadMesh(ld.collision,true)]);
+  }));
+
+  return{rootGroup,joints,visuals,collisions,robotName,linkCount:Object.keys(linkDefs).length,jointCount:jointDefs.length};
 }
 
-// ── File Map from drag-drop ──
-function getFile(entry){return new Promise(r=>entry.file(r));}
-function readAll(entry){
+// ── File map for drag-drop ──
+let fileMap=new Map();
+function makeFileMapResolver(map){
+  return url=>{
+    const pkg=url.match(/^package:\/\/[^/]+\/(.+)$/);
+    const rel=pkg?pkg[1]:url;
+    if(map.has(rel))return map.get(rel);
+    const base=rel.split(/[/\\]/).pop();
+    if(map.has(base))return map.get(base);
+    return url;
+  };
+}
+function getFile(e){return new Promise(r=>e.file(r));}
+function readEntries(reader){
   return new Promise(r=>{
-    const reader=entry.createReader();let all=[];
-    function next(){reader.readEntries(batch=>{if(!batch.length){r(all);return;}all=[...all,...batch];next();});}
-    next();
+    let all=[];
+    (function next(){reader.readEntries(b=>{if(!b.length){r(all);return;}all=[...all,...b];next();});})();
   });
 }
-async function walk(entry,prefix=''){
+async function walkEntry(entry){
   if(entry.isFile){
     const file=await getFile(entry);
     const url=URL.createObjectURL(file);
     fileMap.set(entry.name,url);
-    if(prefix)fileMap.set(prefix+entry.name,url);
-    if(entry.name.match(/\.urdf$/i))fileMap.set('__urdf__',url),fileMap.set('__urdfname__',entry.name.replace(/\.urdf$/i,''));
-  } else if(entry.isDirectory){
-    const entries=await readAll(entry);
-    for(const e of entries)await walk(e,prefix+entry.name+'/');
+    if(entry.fullPath)fileMap.set(entry.fullPath.replace(/^\//,''),url);
+    if(entry.name.match(/\.urdf$/i)){fileMap.set('__urdf__',url);fileMap.set('__name__',entry.name.replace(/\.urdf$/i,'').trim());}
+  }else if(entry.isDirectory){
+    const entries=await readEntries(entry.createReader());
+    for(const e of entries)await walkEntry(e);
   }
 }
 
-// ── URL modifier — resolves package:// and relative mesh paths ──
-function resolveUrl(url){
-  const pkg=url.match(/^package:\/\/[^/]+\/(.+)$/);
-  if(pkg){
-    const rel=pkg[1];
-    if(fileMap.has(rel))return fileMap.get(rel);
-    const base=rel.split('/').pop();
-    if(fileMap.has(base))return fileMap.get(base);
-    return url;
-  }
-  const base=url.split(/[/\\]/).pop();
-  if(fileMap.has(base))return fileMap.get(base);
-  return url;
-}
+// ── State ──
+let currentRoot=null,currentJoints={},currentVisuals=[],currentCollisions=[];
+let animating=false,animClock=0;
 
-// ── Load robot from URL ──
-function loadRobot(urdfUrl,name){
-  setStatus('Loading…','loading');
-  if(currentRobot){scene.remove(currentRobot);currentRobot=null;}
+// ── Load robot ──
+async function loadRobot(urdfText,name,urlResolver){
+  if(currentRoot){scene.remove(currentRoot);currentRoot=null;}
+  currentJoints={};currentVisuals=[];currentCollisions=[];
   document.getElementById('jointsWrap').classList.remove('show');
   document.getElementById('robotInfo').classList.remove('show');
 
-  const loader=makeLoader();
-  loader.manager=new THREE.LoadingManager();
-  loader.manager.setURLModifier(resolveUrl);
+  let result;
+  try{result=await buildRobotFromURDF(urdfText,urlResolver);}
+  catch(e){setStatus('Error: '+e.message,'error');return;}
 
-  loader.load(urdfUrl,robot=>{
-    currentRobot=robot;
-    scene.add(robot);
+  const{rootGroup,joints,visuals,collisions,robotName,linkCount,jointCount}=result;
+  currentRoot=rootGroup;currentJoints=joints;currentVisuals=visuals;currentCollisions=collisions;
+  scene.add(rootGroup);
 
-    // Hide collision by default
-    robot.traverse(o=>{if(o.isURDFCollider)o.visible=false;});
+  const box=new THREE.Box3().setFromObject(rootGroup);
+  const center=box.getCenter(new THREE.Vector3());
+  const sz=box.getSize(new THREE.Vector3());
+  const md=Math.max(sz.x,sz.y,sz.z)||1;
+  rootGroup.position.sub(center);
+  floor.position.y=-sz.y/2;
+  gridHelper.position.y=-sz.y/2;
+  gridHelper.scale.setScalar(md*.4);
+  axesHelper.scale.setScalar(md*.12);
+  const dist=md*2.5;
+  camera.position.set(dist*.55,dist*.45,dist);
+  controls.target.set(0,0,0);controls.update();
 
-    // Frame camera
-    const box=new THREE.Box3().setFromObject(robot);
-    const center=box.getCenter(new THREE.Vector3());
-    const sz=box.getSize(new THREE.Vector3());
-    const md=Math.max(sz.x,sz.y,sz.z)||1;
-    robot.position.sub(center);
-    floor.position.y=-sz.y/2;
-    gridHelper.position.y=-sz.y/2;
-    gridHelper.scale.setScalar(md*0.4);
-    axesHelper.scale.setScalar(md*0.12);
-
-    const dist=md*2.5;
-    camera.position.set(dist*.55,dist*.45,dist);
-    controls.target.set(0,0,0);
-    controls.update();
-
-    // Info
-    const allJoints=Object.values(robot.joints);
-    const movable=allJoints.filter(j=>j.jointType!=='fixed'&&j.jointType!=='floating');
-    document.getElementById('robotName').textContent=name||robot.robotName||'Robot';
-    document.getElementById('robotStats').innerHTML=
-      `<span class="stat">${Object.keys(robot.links).length} links</span>`+
-      `<span class="stat">${allJoints.length} joints</span>`+
-      `<span class="stat">${movable.length} movable</span>`;
-    document.getElementById('robotInfo').classList.add('show');
-    document.getElementById('optWrap').style.display='block';
-    document.getElementById('btnReset').style.display='block';
-    document.getElementById('emptyState').classList.add('hide');
-    setStatus('');
-    buildJoints(movable);
-  },null,err=>{
-    setStatus('Failed to load URDF. Check console.','error');
-    console.error('URDF error',err);
-  });
+  const movable=Object.values(joints);
+  document.getElementById('robotName').textContent=name||robotName;
+  document.getElementById('robotStats').innerHTML=
+    `<span class="stat">${linkCount} links</span>`+
+    `<span class="stat">${jointCount} joints</span>`+
+    `<span class="stat">${movable.length} movable</span>`;
+  document.getElementById('robotInfo').classList.add('show');
+  document.getElementById('optWrap').style.display='block';
+  document.getElementById('btnReset').style.display='block';
+  document.getElementById('emptyState').classList.add('hide');
+  setStatus('');
+  buildJointSliders(joints);
+  applyToggles();
 }
 
+// ── Sample robot ──
+document.getElementById('btnSample').addEventListener('click',async()=>{
+  setStatus('Loading…','loading');
+  const BASE='../URDF/urdf_manipulator_v2/';
+  const resolver=url=>{
+    const pkg=url.match(/^package:\/\/urdf_manipulator_v2\.SLDASM\/(.+)$/);
+    return pkg?BASE+pkg[1]:url;
+  };
+  try{
+    const resp=await fetch(BASE+'urdf/urdf_manipulator_v2.SLDASM.urdf');
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    const text=await resp.text();
+    await loadRobot(text,'6-DOF Manipulator',resolver);
+    if(currentRoot){
+      currentRoot.rotation.set(Math.PI*.5,Math.PI,Math.PI*.1);
+      const box=new THREE.Box3().setFromObject(currentRoot);
+      const sz=box.getSize(new THREE.Vector3());
+      const md=Math.max(sz.x,sz.y,sz.z)||1;
+      const dist=md*3;
+      camera.position.set(dist*.35,dist*.45,dist);
+      controls.update();
+    }
+  }catch(e){setStatus('Load failed: '+e.message,'error');}
+});
+
 // ── Joint sliders ──
-function buildJoints(joints){
+function buildJointSliders(joints){
   const list=document.getElementById('jointsList');
   list.innerHTML='';
-  if(!joints.length)return;
-  joints.forEach(j=>{
-    const lo=j.limit?.lower??-Math.PI;
-    const hi=j.limit?.upper??Math.PI;
+  const movable=Object.entries(joints);
+  if(!movable.length)return;
+  movable.forEach(([name,j])=>{
     const item=document.createElement('div');item.className='joint-item';
     const row=document.createElement('div');row.className='joint-row';
-    const nameEl=document.createElement('span');nameEl.className='joint-name';nameEl.textContent=j.name;nameEl.title=j.name;
+    const nameEl=document.createElement('span');nameEl.className='joint-name';nameEl.textContent=name;nameEl.title=name;
     const valEl=document.createElement('span');valEl.className='joint-val';valEl.textContent='0.00';
     const slider=document.createElement('input');
     slider.type='range';slider.className='joint-slider';
-    slider.min=lo;slider.max=hi;slider.step=0.001;slider.value=0;
+    slider.min=j.lower;slider.max=j.upper;slider.step=0.001;slider.value=0;
     slider.addEventListener('input',()=>{
       const v=parseFloat(slider.value);
-      j.setJointValue(v);
-      valEl.textContent=v.toFixed(2);
-      // pause auto-animate when user touches slider
-      if(animating){toggleOff('togAnimate');}
+      setJointValue(j,v);valEl.textContent=v.toFixed(2);
+      if(animating)toggleOff('togAnimate');
     });
+    j._slider=slider;j._valEl=valEl;
     row.appendChild(nameEl);row.appendChild(valEl);
     item.appendChild(row);item.appendChild(slider);
     list.appendChild(item);
-    j._slider=slider;j._valEl=valEl;
   });
   document.getElementById('jointsWrap').classList.add('show');
+}
+
+function setJointValue(j,v){
+  const val=Math.max(j.lower??-Math.PI,Math.min(j.upper??Math.PI,v));
+  if(j.type==='prismatic'){j.jg.position.copy(j.axis.clone().multiplyScalar(val));}
+  else{j.jg.quaternion.setFromAxisAngle(j.axis,val);}
 }
 
 // ── Toggles ──
 const togState={animate:false,visual:true,collision:false,grid:false,axes:false};
 function applyToggles(){
   animating=togState.animate;
-  axesHelper.visible=togState.axes;
-  gridHelper.visible=togState.grid;
-  if(currentRobot){
-    currentRobot.traverse(o=>{
-      if(o.isURDFVisual)o.visible=togState.visual;
-      if(o.isURDFCollider)o.visible=togState.collision;
-    });
-  }
+  gridHelper.visible=togState.grid;axesHelper.visible=togState.axes;
+  currentVisuals.forEach(m=>m.visible=togState.visual);
+  currentCollisions.forEach(m=>m.visible=togState.collision);
 }
 function toggleOff(id){
-  const row=document.getElementById(id);
-  const key=id.replace('tog','').toLowerCase();
-  togState[key]=false;
-  row.classList.remove('on');
+  togState[id.replace('tog','').toLowerCase()]=false;
+  document.getElementById(id).classList.remove('on');
   applyToggles();
 }
 ['togAnimate','togVisual','togCollision','togGrid','togAxes'].forEach(id=>{
@@ -438,61 +498,12 @@ function toggleOff(id){
 
 // ── Reset camera ──
 document.getElementById('btnReset').addEventListener('click',()=>{
-  if(!currentRobot)return;
-  const box=new THREE.Box3().setFromObject(currentRobot);
+  if(!currentRoot)return;
+  const box=new THREE.Box3().setFromObject(currentRoot);
   const sz=box.getSize(new THREE.Vector3());
   const md=Math.max(sz.x,sz.y,sz.z)||1;
-  const dist=md*2.5;
-  camera.position.set(dist*.55,dist*.45,dist);
-  controls.target.set(0,0,0);
-  controls.update();
-});
-
-// ── Sample robot (portfolio's own URDF) ──
-document.getElementById('btnSample').addEventListener('click',()=>{
-  fileMap=new Map();
-  const BASE='../URDF/urdf_manipulator_v2/';
-  // resolve package:// URIs for the sample robot
-  const resolver=url=>{
-    const pkg=url.match(/^package:\/\/urdf_manipulator_v2\.SLDASM\/(.+)$/);
-    if(pkg)return BASE+pkg[1];
-    return url;
-  };
-  setStatus('Loading sample…','loading');
-  if(currentRobot){scene.remove(currentRobot);currentRobot=null;}
-  const loader=makeLoader();
-  loader.manager=new THREE.LoadingManager();
-  loader.manager.setURLModifier(resolver);
-  loader.load('../URDF/urdf_manipulator_v2/urdf/urdf_manipulator_v2.SLDASM.urdf',robot=>{
-    currentRobot=robot;scene.add(robot);
-    robot.traverse(o=>{if(o.isURDFCollider)o.visible=false;});
-    const box=new THREE.Box3().setFromObject(robot);
-    const center=box.getCenter(new THREE.Vector3());
-    const sz=box.getSize(new THREE.Vector3());
-    const md=Math.max(sz.x,sz.y,sz.z)||1;
-    robot.position.sub(center);
-    robot.rotation.set(Math.PI*.5,Math.PI,Math.PI*.1);
-    floor.position.y=-sz.y/2;
-    gridHelper.position.y=-sz.y/2;
-    gridHelper.scale.setScalar(md*.4);
-    axesHelper.scale.setScalar(md*.12);
-    const dist=md*3;
-    camera.position.set(dist*.35,dist*.45,dist);
-    controls.target.set(0,0,0);controls.update();
-    const allJoints=Object.values(robot.joints);
-    const movable=allJoints.filter(j=>j.jointType!=='fixed'&&j.jointType!=='floating');
-    document.getElementById('robotName').textContent='6-DOF Manipulator';
-    document.getElementById('robotStats').innerHTML=
-      `<span class="stat">${Object.keys(robot.links).length} links</span>`+
-      `<span class="stat">${allJoints.length} joints</span>`+
-      `<span class="stat">${movable.length} movable</span>`;
-    document.getElementById('robotInfo').classList.add('show');
-    document.getElementById('optWrap').style.display='block';
-    document.getElementById('btnReset').style.display='block';
-    document.getElementById('emptyState').classList.add('hide');
-    setStatus('');
-    buildJoints(movable);
-  },null,err=>{setStatus('Sample load failed.','error');console.error(err);});
+  camera.position.set(md*2.5*.55,md*2.5*.45,md*2.5);
+  controls.target.set(0,0,0);controls.update();
 });
 
 // ── Drag & Drop ──
@@ -504,45 +515,49 @@ const dropZone=document.getElementById('dropZone');
     e.preventDefault();dropZone.classList.remove('over');
     fileMap=new Map();
     setStatus('Reading files…','loading');
-    for(const item of [...e.dataTransfer.items]){
+    for(const item of[...e.dataTransfer.items]){
       const entry=item.webkitGetAsEntry?.();
-      if(entry)await walk(entry);
+      if(entry)await walkEntry(entry);
     }
-    const urdfUrl=fileMap.get('__urdf__');
-    if(!urdfUrl){setStatus('No .urdf file found in dropped items.','error');return;}
-    loadRobot(urdfUrl,fileMap.get('__urdfname__')||'Robot');
+    const urdfUrl=fileMap.get('__urdf__'),name=fileMap.get('__name__')||'Robot';
+    if(!urdfUrl){setStatus('No .urdf file found.','error');return;}
+    try{
+      const resp=await fetch(urdfUrl);
+      const text=await resp.text();
+      await loadRobot(text,name,makeFileMapResolver(fileMap));
+    }catch(e){setStatus('Load failed: '+e.message,'error');}
   });
 });
 
-// File input fallback
 document.getElementById('fileInput').addEventListener('change',async e=>{
   fileMap=new Map();
-  let urdfUrl=null,urdfName=null;
-  for(const file of [...e.target.files]){
+  let urdfUrl=null,name=null;
+  for(const file of[...e.target.files]){
     const url=URL.createObjectURL(file);
-    const name=file.name;
-    const rel=file.webkitRelativePath||name;
-    fileMap.set(name,url);fileMap.set(rel,url);
-    if(!urdfUrl&&name.match(/\.urdf$/i)){urdfUrl=url;urdfName=name.replace(/\.urdf$/i,'');}
+    fileMap.set(file.name,url);
+    if(file.webkitRelativePath)fileMap.set(file.webkitRelativePath,url);
+    if(!urdfUrl&&file.name.match(/\.urdf$/i)){urdfUrl=url;name=file.name.replace(/\.urdf$/i,'').trim();}
   }
   if(!urdfUrl){setStatus('No .urdf file found.','error');return;}
-  loadRobot(urdfUrl,urdfName);
+  try{
+    const resp=await fetch(urdfUrl);
+    const text=await resp.text();
+    await loadRobot(text,name,makeFileMapResolver(fileMap));
+  }catch(e){setStatus('Load failed: '+e.message,'error');}
   e.target.value='';
 });
 
-// ── Status helper ──
+// ── Status ──
 function setStatus(msg,type=''){
   const el=document.getElementById('status');
-  el.textContent=msg;
-  el.className='status'+(msg?' show':'')+(type?' '+type:'');
+  el.textContent=msg;el.className='status'+(msg?' show':'')+(type?' '+type:'');
 }
 
 // ── Resize ──
 function resize(){
   const w=viewport.clientWidth,h=viewport.clientHeight;
   if(!w||!h)return;
-  renderer.setSize(w,h,false);
-  camera.aspect=w/h;camera.updateProjectionMatrix();
+  renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
 }
 resize();window.addEventListener('resize',resize,{passive:true});
 
@@ -551,13 +566,11 @@ const clock=new THREE.Clock();
 (function loop(){
   requestAnimationFrame(loop);
   const dt=clock.getDelta();
-  if(animating&&currentRobot){
-    animClock+=dt;
-    Object.values(currentRobot.joints).forEach(j=>{
-      if(j.jointType==='fixed'||j.jointType==='floating')return;
-      const lo=j.limit?.lower??-Math.PI,hi=j.limit?.upper??Math.PI;
-      const v=(Math.sin(animClock*.7+j.name.length*.4)*.5+.5)*(hi-lo)+lo;
-      j.setJointValue(v);
+  animClock+=dt;
+  if(animating&&currentRoot){
+    Object.values(currentJoints).forEach((j,i)=>{
+      const v=(Math.sin(animClock*.7+i*.4)*.5+.5)*(j.upper-j.lower)+j.lower;
+      setJointValue(j,v);
       if(j._slider)j._slider.value=v;
       if(j._valEl)j._valEl.textContent=v.toFixed(2);
     });
