@@ -3,9 +3,52 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>URDF Viewer — Amritanshu Jain</title>
-  <meta name="description" content="Interactive URDF robot model viewer. Drag and drop your URDF + mesh folder to visualize any robot."/>
+  <title>URDF Viewer Online — Free 3D Robot Model Visualizer</title>
+  <meta name="description" content="Free online URDF viewer. Drag and drop your URDF file and STL meshes to visualize any ROS robot model in 3D — no install required. Inspect joints, toggle visuals, and animate your robot directly in the browser."/>
+  <meta name="keywords" content="URDF viewer online, URDF viewer, ROS robot viewer, robot model viewer, URDF 3D viewer, STL robot viewer, online URDF visualizer, ROS URDF browser, robot arm viewer, free URDF tool"/>
+  <meta name="author" content="Amritanshu Jain"/>
   <link rel="canonical" href="https://amritanshujain.com/urdf-viewer/"/>
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://amritanshujain.com/urdf-viewer/"/>
+  <meta property="og:title" content="URDF Viewer Online — Free 3D Robot Model Visualizer"/>
+  <meta property="og:description" content="Drag and drop your URDF file and STL meshes to visualize any ROS robot in 3D. No install, no sign-up — runs entirely in the browser."/>
+  <meta property="og:image" content="https://amritanshujain.com/images/og-preview.jpg"/>
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="URDF Viewer Online — Free 3D Robot Model Visualizer"/>
+  <meta name="twitter:description" content="Drag and drop your URDF file and STL meshes to visualize any ROS robot in 3D. Runs entirely in the browser."/>
+  <meta name="twitter:image" content="https://amritanshujain.com/images/og-preview.jpg"/>
+
+  <!-- JSON-LD: SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "URDF Viewer Online",
+    "url": "https://amritanshujain.com/urdf-viewer/",
+    "description": "Free browser-based URDF viewer. Load URDF robot models and STL meshes via drag-and-drop. No installation required.",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any (browser-based)",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": {
+      "@type": "Person",
+      "name": "Amritanshu Jain",
+      "url": "https://amritanshujain.com"
+    },
+    "featureList": [
+      "Drag-and-drop URDF and STL mesh loading",
+      "Interactive 3D visualization with Three.js",
+      "Joint animation and manual joint control",
+      "Visual and collision geometry toggle",
+      "Supports package:// URI scheme",
+      "No sign-up or installation required"
+    ]
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet"/>
@@ -121,9 +164,11 @@
     /* Light mode */
     html[data-theme="light"]{--bg:#f0f4f8;--bg2:#e6edf5;--bg3:#dce5ef;--line:#b8cad8;--steel:#3d6080;--accent:#007aaa;--accent2:#e05515;--text:#1a2a3c;--text-dim:#4a6a84;--white:#0a1520;--grid-col:rgba(0,122,170,0.014);}
     html[data-theme="light"] nav{background:rgba(240,244,248,0.82);border-bottom-color:rgba(0,0,0,0.09);}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
   </style>
 </head>
 <body>
+<h1 class="sr-only">URDF Viewer Online — Free Browser-Based 3D Robot Model Visualizer</h1>
 
 <nav>
   <div class="nav-left">
