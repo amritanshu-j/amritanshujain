@@ -258,8 +258,6 @@
     /* Caption + expand row */
     .xp-caprow{position:absolute;bottom:8px;left:10px;right:10px;z-index:3;display:flex;align-items:flex-end;justify-content:space-between;}
     .xp-cap{font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(200,220,240,.65);letter-spacing:.06em;}
-    .xp-expand{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:rgba(0,212,255,.09);border:1px solid rgba(0,212,255,.22);padding:.2rem .55rem;border-radius:2px;cursor:pointer;transition:all .2s;white-space:nowrap;}
-    .xp-expand:hover{background:rgba(0,212,255,.2);}
     /* No gallery = collapse media area — see @media(max-width:900px) block below */
 
     /* ── Skills: tag cloud blocks ── */
@@ -642,13 +640,13 @@
               data-cap="Robotic Manipulator — v1" alt="Robotic Manipulator v1"/>
             <!-- CAD / Renders -->
             <img data-tab="cad" loading="lazy"
-              src="https://drive.google.com/thumbnail?id=1MiZEK0tgy1dwrIk9CHwuPbpsDnCLaid_&sz=w800"
-              data-full="https://drive.google.com/thumbnail?id=1MiZEK0tgy1dwrIk9CHwuPbpsDnCLaid_&sz=w1200"
-              data-cap="Totem Lite — Render" alt="Totem Lite Render"/>
-            <img data-tab="cad" loading="lazy"
               src="https://drive.google.com/thumbnail?id=1gafhaIvy1Gl6NPijMqr7DbY3dKy_cyhX&sz=w800"
               data-full="https://drive.google.com/thumbnail?id=1gafhaIvy1Gl6NPijMqr7DbY3dKy_cyhX&sz=w1200"
               data-cap="Totem Lite & Telescopic Assembly" alt="Totem Assembly"/>
+            <img data-tab="cad" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1MiZEK0tgy1dwrIk9CHwuPbpsDnCLaid_&sz=w800"
+              data-full="https://drive.google.com/thumbnail?id=1MiZEK0tgy1dwrIk9CHwuPbpsDnCLaid_&sz=w1200"
+              data-cap="Totem Lite — Render" alt="Totem Lite Render"/>
             <img data-tab="cad" loading="lazy"
               src="https://drive.google.com/thumbnail?id=12_UGuoZmr67KVUeUeE7Uo6GOMO-fyTtL&sz=w800"
               data-full="https://drive.google.com/thumbnail?id=12_UGuoZmr67KVUeUeE7Uo6GOMO-fyTtL&sz=w1200"
@@ -662,7 +660,6 @@
             <div class="xp-dots"></div>
             <div class="xp-caprow">
               <span class="xp-cap"></span>
-              <button class="xp-expand">Expand ↗</button>
             </div>
           </div>
         </div>
@@ -701,6 +698,14 @@
               data-cap="Isometric CAD View 1" alt="Isometric CAD View 1"/>
             <!-- CAD -->
             <img data-tab="cad" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1cpRkTL-VJMtKJicEqtMnHLMl-nQ5jphY&sz=w800"
+              data-full="https://drive.google.com/thumbnail?id=1cpRkTL-VJMtKJicEqtMnHLMl-nQ5jphY&sz=w1200"
+              data-cap="Robotic Manipulator on Quadruped — Torso" alt="Quadruped Torso"/>
+            <img data-tab="cad" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1fdaIc7G5pA7f_DGPlRJhNqCjE1LcIVI3&sz=w800"
+              data-full="https://drive.google.com/thumbnail?id=1fdaIc7G5pA7f_DGPlRJhNqCjE1LcIVI3&sz=w1200"
+              data-cap="Isometric CAD View 1" alt="Isometric CAD View 1"/>
+            <img data-tab="cad" loading="lazy"
               src="https://drive.google.com/thumbnail?id=13AVhwlPg2QVwWfaX_w_gGegpryzytEbJ&sz=w800"
               data-full="https://drive.google.com/thumbnail?id=13AVhwlPg2QVwWfaX_w_gGegpryzytEbJ&sz=w1200"
               data-cap="Isometric CAD View 2" alt="Isometric CAD View 2"/>
@@ -709,7 +714,6 @@
             <div class="xp-dots"></div>
             <div class="xp-caprow">
               <span class="xp-cap"></span>
-              <button class="xp-expand">Expand ↗</button>
             </div>
           </div>
         </div>
@@ -764,7 +768,6 @@
             <div class="xp-dots"></div>
             <div class="xp-caprow">
               <span class="xp-cap"></span>
-              <button class="xp-expand">Expand ↗</button>
             </div>
           </div>
         </div>
@@ -807,7 +810,6 @@
             <div class="xp-dots"></div>
             <div class="xp-caprow">
               <span class="xp-cap"></span>
-              <button class="xp-expand">Expand ↗</button>
             </div>
           </div>
         </div>
@@ -1200,15 +1202,7 @@ document.querySelectorAll('.xp-card').forEach(card=>{
 
   // Click viewer → open lightbox
   viewer.addEventListener('click',e=>{
-    if(e.target.classList.contains('xp-nav')||e.target.classList.contains('xp-dot')||e.target.classList.contains('xp-expand'))return;
-    const imgs=tabImgs();
-    const arr=imgs.map(i=>({src:i.dataset.full||i.src,cap:i.dataset.cap||i.alt}));
-    if(arr.length)openLB(arr[cur].src,arr[cur].cap,arr);
-  });
-
-  // Expand button → lightbox
-  viewer.querySelector('.xp-expand')?.addEventListener('click',e=>{
-    e.stopPropagation();
+    if(e.target.classList.contains('xp-nav')||e.target.classList.contains('xp-dot'))return;
     const imgs=tabImgs();
     const arr=imgs.map(i=>({src:i.dataset.full||i.src,cap:i.dataset.cap||i.alt}));
     if(arr.length)openLB(arr[cur].src,arr[cur].cap,arr);
