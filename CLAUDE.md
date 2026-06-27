@@ -205,8 +205,8 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 ---
 
 ## Outstanding / Next Steps
-- [ ] KinesthetIQ experience card — add photos/CAD media
-- [ ] Mars Rover Manipal experience card — add photos
+- [ ] Mars Rover Manipal experience card — add photos (no Drive folder found yet)
+- [ ] Mars Rover Manipal experience card — add photos (no Drive folder found yet)
 - [ ] Blog — 3 draft posts exist; remove `data-draft="true"` to publish
 - [ ] SolidWorks animation — export as video, integrate in hero
 - [ ] Create landscape `1200×630px` OG image — update og:image, dimensions, twitter:image, switch twitter:card to `summary_large_image`
@@ -229,5 +229,7 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 - [x] Mobile URDF — shown as transparent background animation, sliders hidden, camera auto-scaled to screen size, arm shifted left (2026-06-27)
 - [x] KinesthetIQ logo increased to 110px height (2026-06-27)
 - [x] "Now working with" label font size increased (2026-06-27)
+- [x] KinesthetIQ experience card — Photos tab (11 images: custom actuators, grippers, anthropomorphic exo, UDC, robotic manipulator) + CAD/Renders tab (Totem Series — 4 images) (2026-06-27)
+- [x] Resume button added to hero CTAs — links to Google Drive PDF (id: 1zgP4bzyl2fhCIfZvKDf5tKxqWeEsjUkZ) (2026-06-27)
 - [x] urdfControls switched to position:fixed, shifted upward to bottom:6rem (2026-06-27)
 - [x] Performance optimisation — CDN dns-prefetch, fetchpriority hints, merged duplicate media queries, removed inline style (2026-06-27)
