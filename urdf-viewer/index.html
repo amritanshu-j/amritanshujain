@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>URDF Viewer — Amritanshu Jain</title>
+  <meta name="description" content="Interactive URDF robot model viewer. Drag and drop your URDF + mesh folder to visualize any robot."/>
+  <link rel="canonical" href="https://amritanshujain.com/urdf-viewer/"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.155.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg:#080b10; --bg2:#0d1117; --bg3:#111820; --line:#1e2d3d;
+      --steel:#8fb4cc; --accent:#00d4ff; --accent2:#ff6b35;
+      --text:#c9d8e8; --text-dim:#5a7a94; --white:#eef4f9;
+      --grid-col:rgba(0,212,255,0.12);
+      --nav-h:64px; --panel-w:300px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html,body{height:100%;overflow:hidden;}
+    body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:16px;}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-col) 1px,transparent 1px),linear-gradient(90deg,var(--grid-col) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
+
+    /* ── Nav ── */
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:var(--nav-h);background:rgba(8,11,16,0.45);backdrop-filter:blur(20px) saturate(1.6);-webkit-backdrop-filter:blur(20px) saturate(1.6);border-bottom:1px solid rgba(255,255,255,0.07);box-shadow:0 1px 0 rgba(255,255,255,0.06) inset,0 4px 24px rgba(0,0,0,0.3);}
+    .nav-left{display:flex;align-items:center;gap:1rem;}
+    .nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.12em;color:var(--white);text-decoration:none;}
+    .nav-logo em{color:var(--accent);font-style:normal;}
+    .nav-sep{width:1px;height:18px;background:var(--line);}
+    .nav-title{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--steel);}
+    .nav-right{display:flex;align-items:center;gap:.75rem;}
+    .nav-back{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);text-decoration:none;padding:5px 12px;border-radius:8px;border:1px solid var(--line);transition:all .25s;}
+    .nav-back:hover{color:var(--accent);border-color:var(--accent);}
+    .theme-toggle{background:none;border:1px solid var(--line);border-radius:8px;padding:5px 8px;cursor:pointer;color:var(--text-dim);display:flex;align-items:center;transition:all .25s;}
+    .theme-toggle:hover{border-color:var(--accent);color:var(--accent);}
+    .icon-moon{display:block;}.icon-sun{display:none;}
+    html[data-theme="light"] .icon-moon{display:none;}html[data-theme="light"] .icon-sun{display:block;}
+
+    /* ── App Layout ── */
+    .app{position:fixed;inset:0;top:var(--nav-h);display:flex;z-index:1;}
+
+    /* ── Side Panel ── */
+    .panel{width:var(--panel-w);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;z-index:2;}
+    .panel-body{flex:1;overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:1.1rem;}
+    .panel-body::-webkit-scrollbar{width:3px;}
+    .panel-body::-webkit-scrollbar-thumb{background:var(--line);}
+
+    /* Drop zone */
+    .drop-zone{border:1px dashed var(--line);border-radius:6px;padding:1.5rem 1rem;text-align:center;cursor:pointer;transition:border-color .25s,background .25s;position:relative;}
+    .drop-zone:hover,.drop-zone.over{border-color:var(--accent);background:rgba(0,212,255,.04);}
+    .drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+    .drop-icon{font-size:1.6rem;color:var(--accent);margin-bottom:.5rem;}
+    .drop-title{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--steel);margin-bottom:.3rem;}
+    .drop-sub{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--text-dim);letter-spacing:.08em;line-height:1.7;}
+
+    /* Status */
+    .status{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;text-align:center;padding:.5rem;border-radius:4px;display:none;}
+    .status.show{display:block;}
+    .status.loading{color:var(--accent);background:rgba(0,212,255,.06);}
+    .status.error{color:var(--accent2);background:rgba(255,107,53,.06);}
+
+    /* Robot info */
+    .robot-info{display:none;}
+    .robot-info.show{display:block;}
+    .robot-name{font-family:'Bebas Neue',sans-serif;font-size:1.35rem;letter-spacing:.05em;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.5rem;}
+    .robot-stats{display:flex;gap:.4rem;flex-wrap:wrap;}
+    .stat{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:.18rem .5rem;border-radius:2px;}
+
+    /* Section header */
+    .sec-hdr{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);padding-bottom:.6rem;border-bottom:1px solid var(--line);}
+
+    /* Toggles */
+    .toggles{display:flex;flex-direction:column;gap:.2rem;}
+    .tog-row{display:flex;align-items:center;justify-content:space-between;padding:.45rem 0;cursor:pointer;border-radius:4px;transition:background .15s;}
+    .tog-row:hover{background:rgba(255,255,255,.02);}
+    .tog-label{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);}
+    .tog-switch{width:30px;height:17px;background:var(--line);border-radius:9px;position:relative;transition:background .2s;flex-shrink:0;}
+    .tog-switch::after{content:'';position:absolute;top:3px;left:3px;width:11px;height:11px;border-radius:50%;background:var(--text-dim);transition:all .2s;}
+    .tog-row.on .tog-switch{background:var(--accent);}
+    .tog-row.on .tog-label{color:var(--text);}
+    .tog-row.on .tog-switch::after{left:16px;background:var(--bg);}
+
+    /* Buttons */
+    .btn{width:100%;font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text);background:var(--bg3);border:1px solid var(--line);border-radius:4px;padding:.65rem;cursor:pointer;transition:all .2s;}
+    .btn:hover{border-color:var(--accent);color:var(--accent);}
+    .btn-sample{color:var(--steel);border-color:rgba(143,180,204,.3);background:rgba(143,180,204,.05);}
+    .btn-sample:hover{border-color:var(--steel);color:var(--white);}
+
+    /* Joint sliders */
+    .joints-wrap{display:none;}
+    .joints-wrap.show{display:block;}
+    .joint-item{padding:.55rem 0;border-bottom:1px solid rgba(30,45,61,.6);}
+    .joint-item:last-child{border-bottom:none;}
+    .joint-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;}
+    .joint-name{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.07em;color:var(--steel);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:175px;}
+    .joint-val{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--accent);min-width:36px;text-align:right;flex-shrink:0;}
+    .joint-slider{-webkit-appearance:none;width:100%;height:3px;background:var(--line);border-radius:2px;outline:none;cursor:pointer;}
+    .joint-slider::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--accent);cursor:pointer;}
+
+    /* Viewport */
+    .viewport{flex:1;position:relative;overflow:hidden;}
+    .viewport canvas{width:100%!important;height:100%!important;display:block;}
+
+    /* Empty state */
+    .empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem;pointer-events:none;z-index:1;}
+    .empty.hide{display:none;}
+    .empty-word{font-family:'Bebas Neue',sans-serif;font-size:5rem;letter-spacing:.15em;color:rgba(143,180,204,.06);line-height:1;}
+    .empty-hint{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(90,122,148,.35);}
+
+    /* Light mode */
+    html[data-theme="light"]{--bg:#f0f4f8;--bg2:#e6edf5;--bg3:#dce5ef;--line:#b8cad8;--steel:#3d6080;--accent:#007aaa;--accent2:#e05515;--text:#1a2a3c;--text-dim:#4a6a84;--white:#0a1520;--grid-col:rgba(0,122,170,0.07);}
+    html[data-theme="light"] nav{background:rgba(240,244,248,0.82);border-bottom-color:rgba(0,0,0,0.09);}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <a href="/" class="nav-logo">AJ<em>.</em></a>
+    <div class="nav-sep"></div>
+    <span class="nav-title">URDF Viewer</span>
+  </div>
+  <div class="nav-right">
+    <a href="/" class="nav-back">← Portfolio</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun"  width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="app">
+  <!-- PANEL -->
+  <div class="panel">
+    <div class="panel-body">
+
+      <!-- Drop zone -->
+      <div class="drop-zone" id="dropZone">
+        <input type="file" id="fileInput" multiple/>
+        <div class="drop-icon">⬡</div>
+        <div class="drop-title">Drop URDF Folder</div>
+        <div class="drop-sub">Drag your package folder here<br/>STL · DAE · OBJ meshes supported</div>
+      </div>
+
+      <button class="btn btn-sample" id="btnSample">Load Sample Robot ↗</button>
+
+      <div class="status" id="status"></div>
+
+      <!-- Robot info -->
+      <div class="robot-info" id="robotInfo">
+        <div class="robot-name" id="robotName">Robot</div>
+        <div class="robot-stats" id="robotStats"></div>
+      </div>
+
+      <!-- Options -->
+      <div id="optWrap" style="display:none;">
+        <div class="sec-hdr" style="margin-bottom:.75rem;">Options</div>
+        <div class="toggles">
+          <div class="tog-row" id="togAnimate"><span class="tog-label">Animate Joints</span><div class="tog-switch"></div></div>
+          <div class="tog-row on" id="togVisual"><span class="tog-label">Show Visual</span><div class="tog-switch"></div></div>
+          <div class="tog-row" id="togCollision"><span class="tog-label">Show Collision</span><div class="tog-switch"></div></div>
+          <div class="tog-row" id="togGrid"><span class="tog-label">Show Grid</span><div class="tog-switch"></div></div>
+          <div class="tog-row" id="togAxes"><span class="tog-label">Show Axes</span><div class="tog-switch"></div></div>
+        </div>
+      </div>
+
+      <button class="btn" id="btnReset" style="display:none;">Reset Camera</button>
+
+      <!-- Joints -->
+      <div class="joints-wrap" id="jointsWrap">
+        <div class="sec-hdr" style="margin-bottom:.75rem;">Joints</div>
+        <div id="jointsList"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- VIEWPORT -->
+  <div class="viewport" id="viewport">
+    <canvas id="urdfCanvas"></canvas>
+    <div class="empty" id="emptyState">
+      <div class="empty-word">URDF</div>
+      <div class="empty-hint">Drop a folder to begin</div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { STLLoader } from 'three/addons/loaders/STLLoader.js';
+import URDFLoader from 'https://cdn.jsdelivr.net/npm/urdf-loader@0.12.3/src/URDFLoader.js';
+
+// ── Theme ──
+(()=>{
+  const html=document.documentElement,btn=document.getElementById('themeToggle');
+  const saved=localStorage.getItem('theme');
+  if(saved==='light')html.setAttribute('data-theme','light');
+  btn.addEventListener('click',()=>{
+    const light=html.getAttribute('data-theme')==='light';
+    light?html.removeAttribute('data-theme'):html.setAttribute('data-theme','light');
+    localStorage.setItem('theme',light?'dark':'light');
+  });
+})();
+
+// ── Renderer ──
+const canvas=document.getElementById('urdfCanvas');
+const viewport=document.getElementById('viewport');
+const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(45,1,0.001,1000);
+camera.position.set(2,1.5,3);
+
+const controls=new OrbitControls(camera,canvas);
+controls.enableDamping=true;
+controls.dampingFactor=0.07;
+
+// ── Lighting ──
+scene.add(new THREE.AmbientLight(0xdde8f0,0.45));
+const key=new THREE.DirectionalLight(0xffffff,1.4);key.position.set(6,10,7);key.castShadow=true;scene.add(key);
+scene.add(Object.assign(new THREE.DirectionalLight(0x8aaabb,0.45),{position:new THREE.Vector3(-5,2,-4)}));
+scene.add(Object.assign(new THREE.DirectionalLight(0x00d4ff,0.3),{position:new THREE.Vector3(-3,4,-8)}));
+scene.add(Object.assign(new THREE.DirectionalLight(0x334455,0.2),{position:new THREE.Vector3(0,-6,0)}));
+
+// ── Helpers ──
+const gridHelper=new THREE.GridHelper(10,20,0x1e2d3d,0x1e2d3d);
+gridHelper.visible=false;scene.add(gridHelper);
+const axesHelper=new THREE.AxesHelper(0.5);
+axesHelper.visible=false;scene.add(axesHelper);
+
+// ── Shadow floor ──
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(20,20),new THREE.ShadowMaterial({opacity:.12}));
+floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+
+// ── Mesh loaders ──
+const stlLoader=new STLLoader();
+
+function makeRobotMaterial(){
+  return new THREE.MeshStandardMaterial({color:0xb2bcc8,metalness:0.65,roughness:0.3,side:THREE.DoubleSide});
+}
+function makeCollisionMaterial(){
+  return new THREE.MeshStandardMaterial({color:0xff6b35,transparent:true,opacity:.35,side:THREE.DoubleSide,depthWrite:false});
+}
+
+// ── URDF Loader ──
+let fileMap=new Map();
+let currentRobot=null;
+let animating=false;
+let animClock=0;
+
+function makeLoader(){
+  const loader=new URDFLoader();
+  loader.parseCollision=true;
+  loader.parseVisual=true;
+  loader.loadMeshCb=(path,manager,done)=>{
+    const ext=path.split('.').pop().toLowerCase();
+    if(ext==='stl'){
+      stlLoader.load(path,geo=>{
+        geo.computeVertexNormals();
+        const mesh=new THREE.Mesh(geo,makeRobotMaterial());
+        mesh.castShadow=true;mesh.receiveShadow=true;
+        done(mesh);
+      },null,e=>done(null,e));
+    } else {
+      // Unsupported mesh format — return empty group so URDF still loads
+      console.warn('Unsupported mesh format:',ext,path);
+      done(new THREE.Group());
+    }
+  };
+  return loader;
+}
+
+// ── File Map from drag-drop ──
+function getFile(entry){return new Promise(r=>entry.file(r));}
+function readAll(entry){
+  return new Promise(r=>{
+    const reader=entry.createReader();let all=[];
+    function next(){reader.readEntries(batch=>{if(!batch.length){r(all);return;}all=[...all,...batch];next();});}
+    next();
+  });
+}
+async function walk(entry,prefix=''){
+  if(entry.isFile){
+    const file=await getFile(entry);
+    const url=URL.createObjectURL(file);
+    fileMap.set(entry.name,url);
+    if(prefix)fileMap.set(prefix+entry.name,url);
+    if(entry.name.match(/\.urdf$/i))fileMap.set('__urdf__',url),fileMap.set('__urdfname__',entry.name.replace(/\.urdf$/i,''));
+  } else if(entry.isDirectory){
+    const entries=await readAll(entry);
+    for(const e of entries)await walk(e,prefix+entry.name+'/');
+  }
+}
+
+// ── URL modifier — resolves package:// and relative mesh paths ──
+function resolveUrl(url){
+  const pkg=url.match(/^package:\/\/[^/]+\/(.+)$/);
+  if(pkg){
+    const rel=pkg[1];
+    if(fileMap.has(rel))return fileMap.get(rel);
+    const base=rel.split('/').pop();
+    if(fileMap.has(base))return fileMap.get(base);
+    return url;
+  }
+  const base=url.split(/[/\\]/).pop();
+  if(fileMap.has(base))return fileMap.get(base);
+  return url;
+}
+
+// ── Load robot from URL ──
+function loadRobot(urdfUrl,name){
+  setStatus('Loading…','loading');
+  if(currentRobot){scene.remove(currentRobot);currentRobot=null;}
+  document.getElementById('jointsWrap').classList.remove('show');
+  document.getElementById('robotInfo').classList.remove('show');
+
+  const loader=makeLoader();
+  loader.manager=new THREE.LoadingManager();
+  loader.manager.setURLModifier(resolveUrl);
+
+  loader.load(urdfUrl,robot=>{
+    currentRobot=robot;
+    scene.add(robot);
+
+    // Hide collision by default
+    robot.traverse(o=>{if(o.isURDFCollider)o.visible=false;});
+
+    // Frame camera
+    const box=new THREE.Box3().setFromObject(robot);
+    const center=box.getCenter(new THREE.Vector3());
+    const sz=box.getSize(new THREE.Vector3());
+    const md=Math.max(sz.x,sz.y,sz.z)||1;
+    robot.position.sub(center);
+    floor.position.y=-sz.y/2;
+    gridHelper.position.y=-sz.y/2;
+    gridHelper.scale.setScalar(md*0.4);
+    axesHelper.scale.setScalar(md*0.12);
+
+    const dist=md*2.5;
+    camera.position.set(dist*.55,dist*.45,dist);
+    controls.target.set(0,0,0);
+    controls.update();
+
+    // Info
+    const allJoints=Object.values(robot.joints);
+    const movable=allJoints.filter(j=>j.jointType!=='fixed'&&j.jointType!=='floating');
+    document.getElementById('robotName').textContent=name||robot.robotName||'Robot';
+    document.getElementById('robotStats').innerHTML=
+      `<span class="stat">${Object.keys(robot.links).length} links</span>`+
+      `<span class="stat">${allJoints.length} joints</span>`+
+      `<span class="stat">${movable.length} movable</span>`;
+    document.getElementById('robotInfo').classList.add('show');
+    document.getElementById('optWrap').style.display='block';
+    document.getElementById('btnReset').style.display='block';
+    document.getElementById('emptyState').classList.add('hide');
+    setStatus('');
+    buildJoints(movable);
+  },null,err=>{
+    setStatus('Failed to load URDF. Check console.','error');
+    console.error('URDF error',err);
+  });
+}
+
+// ── Joint sliders ──
+function buildJoints(joints){
+  const list=document.getElementById('jointsList');
+  list.innerHTML='';
+  if(!joints.length)return;
+  joints.forEach(j=>{
+    const lo=j.limit?.lower??-Math.PI;
+    const hi=j.limit?.upper??Math.PI;
+    const item=document.createElement('div');item.className='joint-item';
+    const row=document.createElement('div');row.className='joint-row';
+    const nameEl=document.createElement('span');nameEl.className='joint-name';nameEl.textContent=j.name;nameEl.title=j.name;
+    const valEl=document.createElement('span');valEl.className='joint-val';valEl.textContent='0.00';
+    const slider=document.createElement('input');
+    slider.type='range';slider.className='joint-slider';
+    slider.min=lo;slider.max=hi;slider.step=0.001;slider.value=0;
+    slider.addEventListener('input',()=>{
+      const v=parseFloat(slider.value);
+      j.setJointValue(v);
+      valEl.textContent=v.toFixed(2);
+      // pause auto-animate when user touches slider
+      if(animating){toggleOff('togAnimate');}
+    });
+    row.appendChild(nameEl);row.appendChild(valEl);
+    item.appendChild(row);item.appendChild(slider);
+    list.appendChild(item);
+    j._slider=slider;j._valEl=valEl;
+  });
+  document.getElementById('jointsWrap').classList.add('show');
+}
+
+// ── Toggles ──
+const togState={animate:false,visual:true,collision:false,grid:false,axes:false};
+function applyToggles(){
+  animating=togState.animate;
+  axesHelper.visible=togState.axes;
+  gridHelper.visible=togState.grid;
+  if(currentRobot){
+    currentRobot.traverse(o=>{
+      if(o.isURDFVisual)o.visible=togState.visual;
+      if(o.isURDFCollider)o.visible=togState.collision;
+    });
+  }
+}
+function toggleOff(id){
+  const row=document.getElementById(id);
+  const key=id.replace('tog','').toLowerCase();
+  togState[key]=false;
+  row.classList.remove('on');
+  applyToggles();
+}
+['togAnimate','togVisual','togCollision','togGrid','togAxes'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',()=>{
+    const key=id.replace('tog','').toLowerCase();
+    togState[key]=!togState[key];
+    document.getElementById(id).classList.toggle('on',togState[key]);
+    applyToggles();
+  });
+});
+
+// ── Reset camera ──
+document.getElementById('btnReset').addEventListener('click',()=>{
+  if(!currentRobot)return;
+  const box=new THREE.Box3().setFromObject(currentRobot);
+  const sz=box.getSize(new THREE.Vector3());
+  const md=Math.max(sz.x,sz.y,sz.z)||1;
+  const dist=md*2.5;
+  camera.position.set(dist*.55,dist*.45,dist);
+  controls.target.set(0,0,0);
+  controls.update();
+});
+
+// ── Sample robot (portfolio's own URDF) ──
+document.getElementById('btnSample').addEventListener('click',()=>{
+  fileMap=new Map();
+  const BASE='../URDF/urdf_manipulator_v2/';
+  // resolve package:// URIs for the sample robot
+  const resolver=url=>{
+    const pkg=url.match(/^package:\/\/urdf_manipulator_v2\.SLDASM\/(.+)$/);
+    if(pkg)return BASE+pkg[1];
+    return url;
+  };
+  setStatus('Loading sample…','loading');
+  if(currentRobot){scene.remove(currentRobot);currentRobot=null;}
+  const loader=makeLoader();
+  loader.manager=new THREE.LoadingManager();
+  loader.manager.setURLModifier(resolver);
+  loader.load('../URDF/urdf_manipulator_v2/urdf/urdf_manipulator_v2.SLDASM.urdf',robot=>{
+    currentRobot=robot;scene.add(robot);
+    robot.traverse(o=>{if(o.isURDFCollider)o.visible=false;});
+    const box=new THREE.Box3().setFromObject(robot);
+    const center=box.getCenter(new THREE.Vector3());
+    const sz=box.getSize(new THREE.Vector3());
+    const md=Math.max(sz.x,sz.y,sz.z)||1;
+    robot.position.sub(center);
+    robot.rotation.set(Math.PI*.5,Math.PI,Math.PI*.1);
+    floor.position.y=-sz.y/2;
+    gridHelper.position.y=-sz.y/2;
+    gridHelper.scale.setScalar(md*.4);
+    axesHelper.scale.setScalar(md*.12);
+    const dist=md*3;
+    camera.position.set(dist*.35,dist*.45,dist);
+    controls.target.set(0,0,0);controls.update();
+    const allJoints=Object.values(robot.joints);
+    const movable=allJoints.filter(j=>j.jointType!=='fixed'&&j.jointType!=='floating');
+    document.getElementById('robotName').textContent='6-DOF Manipulator';
+    document.getElementById('robotStats').innerHTML=
+      `<span class="stat">${Object.keys(robot.links).length} links</span>`+
+      `<span class="stat">${allJoints.length} joints</span>`+
+      `<span class="stat">${movable.length} movable</span>`;
+    document.getElementById('robotInfo').classList.add('show');
+    document.getElementById('optWrap').style.display='block';
+    document.getElementById('btnReset').style.display='block';
+    document.getElementById('emptyState').classList.add('hide');
+    setStatus('');
+    buildJoints(movable);
+  },null,err=>{setStatus('Sample load failed.','error');console.error(err);});
+});
+
+// ── Drag & Drop ──
+const dropZone=document.getElementById('dropZone');
+[dropZone,viewport].forEach(el=>{
+  el.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('over');});
+  el.addEventListener('dragleave',()=>dropZone.classList.remove('over'));
+  el.addEventListener('drop',async e=>{
+    e.preventDefault();dropZone.classList.remove('over');
+    fileMap=new Map();
+    setStatus('Reading files…','loading');
+    for(const item of [...e.dataTransfer.items]){
+      const entry=item.webkitGetAsEntry?.();
+      if(entry)await walk(entry);
+    }
+    const urdfUrl=fileMap.get('__urdf__');
+    if(!urdfUrl){setStatus('No .urdf file found in dropped items.','error');return;}
+    loadRobot(urdfUrl,fileMap.get('__urdfname__')||'Robot');
+  });
+});
+
+// File input fallback
+document.getElementById('fileInput').addEventListener('change',async e=>{
+  fileMap=new Map();
+  let urdfUrl=null,urdfName=null;
+  for(const file of [...e.target.files]){
+    const url=URL.createObjectURL(file);
+    const name=file.name;
+    const rel=file.webkitRelativePath||name;
+    fileMap.set(name,url);fileMap.set(rel,url);
+    if(!urdfUrl&&name.match(/\.urdf$/i)){urdfUrl=url;urdfName=name.replace(/\.urdf$/i,'');}
+  }
+  if(!urdfUrl){setStatus('No .urdf file found.','error');return;}
+  loadRobot(urdfUrl,urdfName);
+  e.target.value='';
+});
+
+// ── Status helper ──
+function setStatus(msg,type=''){
+  const el=document.getElementById('status');
+  el.textContent=msg;
+  el.className='status'+(msg?' show':'')+(type?' '+type:'');
+}
+
+// ── Resize ──
+function resize(){
+  const w=viewport.clientWidth,h=viewport.clientHeight;
+  if(!w||!h)return;
+  renderer.setSize(w,h,false);
+  camera.aspect=w/h;camera.updateProjectionMatrix();
+}
+resize();window.addEventListener('resize',resize,{passive:true});
+
+// ── Render loop ──
+const clock=new THREE.Clock();
+(function loop(){
+  requestAnimationFrame(loop);
+  const dt=clock.getDelta();
+  if(animating&&currentRobot){
+    animClock+=dt;
+    Object.values(currentRobot.joints).forEach(j=>{
+      if(j.jointType==='fixed'||j.jointType==='floating')return;
+      const lo=j.limit?.lower??-Math.PI,hi=j.limit?.upper??Math.PI;
+      const v=(Math.sin(animClock*.7+j.name.length*.4)*.5+.5)*(hi-lo)+lo;
+      j.setJointValue(v);
+      if(j._slider)j._slider.value=v;
+      if(j._valEl)j._valEl.textContent=v.toFixed(2);
+    });
+  }
+  controls.update();
+  renderer.render(scene,camera);
+})();
+</script>
+</body>
+</html>

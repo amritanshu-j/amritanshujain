@@ -463,6 +463,8 @@
     .blog-toggle{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.3);padding:5px 14px;border-radius:8px;cursor:pointer;transition:all .25s;white-space:nowrap;}
     .blog-toggle:hover{background:rgba(0,212,255,.16);box-shadow:0 0 14px rgba(0,212,255,.2);}
     .blog-toggle.open{background:rgba(0,212,255,.18);border-color:var(--accent);}
+    .urdf-link{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--steel);background:rgba(143,180,204,.07);border:1px solid rgba(143,180,204,.25);padding:5px 14px;border-radius:8px;transition:all .25s;white-space:nowrap;text-decoration:none;}
+    .urdf-link:hover{background:rgba(143,180,204,.15);border-color:var(--steel);color:var(--white);}
     /* ── Blog overlay: slides in from the right ── */
     .blog-overlay{position:fixed;inset:0;z-index:200;pointer-events:none;display:flex;justify-content:flex-end;}
     .blog-overlay::before{content:'';position:absolute;inset:0;background:rgba(4,7,12,.7);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;transition:opacity .4s ease;pointer-events:none;}
@@ -526,6 +528,8 @@
     <a href="#skills" data-section="skills">Skills</a>
     <a href="#about" data-section="about">About</a>
     <a href="#contact" data-section="contact">Contact</a>
+    <!-- URDF Viewer — standalone tool page -->
+    <a href="/urdf-viewer" class="urdf-link">URDF Viewer</a>
     <!-- Blog toggle — opens overlay, not part of scroll nav -->
     <button class="blog-toggle" id="blogToggle" aria-label="Open blog">Blog</button>
     <!-- Theme toggle -->
