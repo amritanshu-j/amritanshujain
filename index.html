@@ -293,12 +293,17 @@
     .sgrid .sblk:nth-child(4) .sblk-ttl{color:var(--steel);}
     .sgrid .sblk:nth-child(4):hover{border-color:rgba(143,180,204,.3);box-shadow:0 6px 24px rgba(0,0,0,.25),inset 0 1px 0 rgba(143,180,204,.06);}
 
-    /* ── About: bio + awards grid ── */
-    .agrid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
-    .about-photo{margin-bottom:1.75rem;border-radius:6px;overflow:hidden;border:1px solid var(--line);}
-    .about-photo img{width:100%;height:auto;display:block;}
-    .atext p{font-size:.95rem;color:var(--text-dim);line-height:1.9;margin-bottom:1.25rem;}
-    .atext p strong{color:var(--text);font-weight:600;}
+    /* ── About: identity card + credentials row + awards ── */
+    .about-card{display:grid;grid-template-columns:210px 1fr;background:var(--bg3);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:1.5rem;transition:border-color .25s ease-out,box-shadow .3s ease-out;}
+    .about-card:hover{border-color:rgba(0,212,255,.2);box-shadow:0 8px 28px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);}
+    .about-img{overflow:hidden;border-right:1px solid var(--line);}
+    .about-img img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;}
+    .about-bio{padding:2rem 2.25rem;display:flex;flex-direction:column;justify-content:center;}
+    .about-bio p{font-size:.9rem;color:var(--text-dim);line-height:1.9;margin-bottom:1.1rem;}
+    .about-bio p:last-child{margin-bottom:0;}
+    .about-bio p strong{color:var(--text);font-weight:600;}
+    .about-creds{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2.5rem;}
+    .about-creds .acert{margin-top:0;}
     /* Certification card with left accent border */
     .acert{background:var(--bg3);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:2px;padding:1.25rem 1.5rem;margin-top:1.5rem;}
     .acert.orange{border-left-color:var(--accent2);}
@@ -365,7 +370,9 @@
       section{padding:5rem 1.5rem;}
       #hero{padding:0 1.5rem;}
       #experience,#skills,#about,#contact{clip-path:none;margin-top:0;padding-top:5rem;}
-      .agrid{grid-template-columns:1fr;gap:2.5rem;}
+      .about-card{grid-template-columns:1fr;}
+      .about-img{border-right:none;border-bottom:1px solid var(--line);max-height:240px;}
+      .about-creds{grid-template-columns:1fr;}
       footer{padding:2rem 1.5rem;flex-direction:column;gap:.5rem;text-align:center;}
       .hero-bg-cad{display:block;}
       .xp-body{grid-template-columns:1fr;}
@@ -413,7 +420,7 @@
       .sgrid{grid-template-columns:1fr;}
 
       /* About */
-      .agrid{grid-template-columns:1fr;gap:2rem;}
+      .about-bio{padding:1.25rem 1.5rem;}
 
       /* Contact: stack links vertically */
       .ch{font-size:clamp(2.2rem,9vw,3.5rem);}
@@ -937,40 +944,47 @@
 <!-- ABOUT -->
 <section id="about">
   <div class="sec-hdr reveal"><span class="sec-num">03 /</span><h2 class="sec-ttl">About</h2><div class="sec-line"></div></div>
-  <div class="agrid">
-    <div class="atext reveal">
-      <div class="about-photo">
-        <img src="images/landing-page-photo.webp" alt="Amritanshu Jain — Lead Hardware Engineer" loading="lazy" decoding="async" width="640" height="480">
-      </div>
-      <p>Driven by <strong>iterative development</strong>, I embrace structured problem-solving to tackle complex engineering challenges across the full hardware stack.</p>
-      <p>My long-term goal is to <strong>deploy general-purpose robotics hardware</strong> that seamlessly blends into the environment — from custom gearboxes to full system integration.</p>
-      <p>With real-world experience spanning the entire supply chain, I believe <strong>resilience is key</strong> to building exceptional products.</p>
-      <div class="acert"><div class="acert-ttl">SolidWorks CSWP Certified Professional</div><div class="acert-sub">Mechanical Design — Dassault Systèmes</div><div class="acert-id">Credential ID: VR7JPXUA2T</div></div>
-      <div class="acert orange"><div class="acert-ttl">B.Tech — Mechanical Engineering</div><div class="acert-sub">Manipal Institute of Technology, Manipal · 2020–2024</div></div>
+  <!-- Identity card: photo + bio -->
+  <div class="about-card reveal">
+    <div class="about-img">
+      <img src="images/landing-page-photo.webp" alt="Amritanshu Jain" loading="lazy" decoding="async" width="640" height="480">
     </div>
-    <div class="reveal">
-      <div class="sec-num sec-num--label">Honors & Awards</div>
-      <div class="alist">
-        <div class="aitem" data-src="https://drive.google.com/thumbnail?id=1KEqwzAzX76T4JXQSu_sGCCLbyN4tSY8l&sz=w1200" data-caption="IRC 2023 — 3rd Prize">
-          <div class="aphoto"><img src="https://drive.google.com/thumbnail?id=1KEqwzAzX76T4JXQSu_sGCCLbyN4tSY8l&sz=w300" loading="lazy" alt="IRC 2023"/></div>
-          <div class="abody"><div class="aico">🥉</div><div class="attl">International Rover Challenge (IRC)</div><div class="asub">3rd Prize · Space Robotics Society · 2023</div></div>
-        </div>
-        <div class="aitem" data-src="https://drive.google.com/thumbnail?id=17Q0FqKQ1ywFSOzUpfMIs9jEKUhjbMGjg&sz=w1200" data-caption="IRDC 2022 — 2nd Prize">
-          <div class="aphoto"><img src="https://drive.google.com/thumbnail?id=17Q0FqKQ1ywFSOzUpfMIs9jEKUhjbMGjg&sz=w300" loading="lazy" alt="IRDC 2022"/></div>
-          <div class="abody"><div class="aico">🥈</div><div class="attl">International Rover Design Challenge (IRDC)</div><div class="asub">2nd Prize · Space Robotics Society · 2022</div></div>
-        </div>
-        <div class="aitem" data-src="https://drive.google.com/thumbnail?id=1G_yTo3rAyL59WS0vVL3NYU71HJqdM3Wj&sz=w1200" data-caption="IRDC 2021 — 3rd Prize">
-          <div class="aphoto"><img src="https://drive.google.com/thumbnail?id=1G_yTo3rAyL59WS0vVL3NYU71HJqdM3Wj&sz=w300" loading="lazy" alt="IRDC 2021"/></div>
-          <div class="abody"><div class="aico">🥉</div><div class="attl">International Rover Design Challenge (IRDC)</div><div class="asub">3rd Prize · Mars Society South Asia · 2021</div></div>
-        </div>
-        <div class="aitem" data-src="https://drive.google.com/thumbnail?id=1bKziUrj3RvmCyYbXMTbCMXcqKuvDslgV&sz=w1200" data-caption="URC 2022 — Final Round">
-          <div class="aphoto"><img src="https://drive.google.com/thumbnail?id=1bKziUrj3RvmCyYbXMTbCMXcqKuvDslgV&sz=w300" loading="lazy" alt="URC 2022"/></div>
-          <div class="abody"><div class="aico">🚀</div><div class="attl">University Rover Challenge (URC)</div><div class="asub">Final Round Qualifier · The Mars Society · 2022</div></div>
-        </div>
-        <div class="aitem" data-src="https://drive.google.com/thumbnail?id=1yRa-nJtN9IjC7sAOl9Nv8vpzM3CXzOWe&sz=w1200" data-caption="Mars Rover Manipal Team">
-          <div class="aphoto"><img src="https://drive.google.com/thumbnail?id=1yRa-nJtN9IjC7sAOl9Nv8vpzM3CXzOWe&sz=w300" loading="lazy" alt="MRM Team"/></div>
-          <div class="abody"><div class="aico">🤖</div><div class="attl">Mars Rover Manipal</div><div class="asub">Mechanical Head · MIT Udupi · 2021–2023</div></div>
-        </div>
+    <div class="about-bio">
+      <p>Founding engineer at <strong>KinesthetIQ</strong>, designing the actuators, grippers, and teleoperation hardware that make embodied AI physical. Every system starts from scratch — custom planetary gearboxes, low-cost BLDC actuators, bimanual control devices — because the edge cases that matter rarely fit off-the-shelf solutions.</p>
+      <p>That instinct to build from first principles was forged competing internationally with <strong>Mars Rover Manipal</strong>, then sharpened through research at <strong>IISc RBCCPS</strong> (legged robot manipulation) and <strong>Chirathe Robotics / ARTPARK</strong> (high-TRL quadrupeds). Rapid iteration, controlled failure, and a clear understanding of why something broke — that's the cycle.</p>
+      <p>The larger goal: hardware that trains the next generation of robots. Low-cost, standardised work cells that collect the demonstrations <strong>Large Behaviour Models</strong> need to generalise. General-purpose manipulation that feels inevitable — not because it's impressive, but because it's practical and deployable at scale.</p>
+    </div>
+  </div>
+
+  <!-- Credentials -->
+  <div class="about-creds reveal">
+    <div class="acert"><div class="acert-ttl">SolidWorks CSWP Certified Professional</div><div class="acert-sub">Mechanical Design — Dassault Systèmes</div><div class="acert-id">Credential ID: VR7JPXUA2T</div></div>
+    <div class="acert orange"><div class="acert-ttl">B.Tech — Mechanical Engineering</div><div class="acert-sub">Manipal Institute of Technology, Manipal · 2020–2024</div></div>
+  </div>
+
+  <!-- Honors & Awards -->
+  <div class="reveal">
+    <div class="sec-num sec-num--label">Honors & Awards</div>
+    <div class="alist">
+      <div class="aitem" data-src="https://drive.google.com/thumbnail?id=1KEqwzAzX76T4JXQSu_sGCCLbyN4tSY8l&sz=w1200" data-caption="IRC 2023 — 3rd Prize">
+        <div class="aphoto"><img src="https://drive.google.com/thumbnail?id=1KEqwzAzX76T4JXQSu_sGCCLbyN4tSY8l&sz=w300" loading="lazy" alt="IRC 2023"/></div>
+        <div class="abody"><div class="aico">🥉</div><div class="attl">International Rover Challenge (IRC)</div><div class="asub">3rd Prize · Space Robotics Society · 2023</div></div>
+      </div>
+      <div class="aitem" data-src="https://drive.google.com/thumbnail?id=17Q0FqKQ1ywFSOzUpfMIs9jEKUhjbMGjg&sz=w1200" data-caption="IRDC 2022 — 2nd Prize">
+        <div class="aphoto"><img src="https://drive.google.com/thumbnail?id=17Q0FqKQ1ywFSOzUpfMIs9jEKUhjbMGjg&sz=w300" loading="lazy" alt="IRDC 2022"/></div>
+        <div class="abody"><div class="aico">🥈</div><div class="attl">International Rover Design Challenge (IRDC)</div><div class="asub">2nd Prize · Space Robotics Society · 2022</div></div>
+      </div>
+      <div class="aitem" data-src="https://drive.google.com/thumbnail?id=1G_yTo3rAyL59WS0vVL3NYU71HJqdM3Wj&sz=w1200" data-caption="IRDC 2021 — 3rd Prize">
+        <div class="aphoto"><img src="https://drive.google.com/thumbnail?id=1G_yTo3rAyL59WS0vVL3NYU71HJqdM3Wj&sz=w300" loading="lazy" alt="IRDC 2021"/></div>
+        <div class="abody"><div class="aico">🥉</div><div class="attl">International Rover Design Challenge (IRDC)</div><div class="asub">3rd Prize · Mars Society South Asia · 2021</div></div>
+      </div>
+      <div class="aitem" data-src="https://drive.google.com/thumbnail?id=1bKziUrj3RvmCyYbXMTbCMXcqKuvDslgV&sz=w1200" data-caption="URC 2022 — Final Round">
+        <div class="aphoto"><img src="https://drive.google.com/thumbnail?id=1bKziUrj3RvmCyYbXMTbCMXcqKuvDslgV&sz=w300" loading="lazy" alt="URC 2022"/></div>
+        <div class="abody"><div class="aico">🚀</div><div class="attl">University Rover Challenge (URC)</div><div class="asub">Final Round Qualifier · The Mars Society · 2022</div></div>
+      </div>
+      <div class="aitem" data-src="https://drive.google.com/thumbnail?id=1yRa-nJtN9IjC7sAOl9Nv8vpzM3CXzOWe&sz=w1200" data-caption="Mars Rover Manipal Team">
+        <div class="aphoto"><img src="https://drive.google.com/thumbnail?id=1yRa-nJtN9IjC7sAOl9Nv8vpzM3CXzOWe&sz=w300" loading="lazy" alt="MRM Team"/></div>
+        <div class="abody"><div class="aico">🤖</div><div class="attl">Mars Rover Manipal</div><div class="asub">Mechanical Head · MIT Udupi · 2021–2023</div></div>
       </div>
     </div>
   </div>
