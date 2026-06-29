@@ -230,9 +230,9 @@
     .xp-role{font-size:1.05rem;font-weight:600;color:var(--white);margin-bottom:.2rem;}
     .xp-co{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--steel);}
     /* Two-column body: bullet points left, media right */
-    .xp-body{display:grid;grid-template-columns:1fr 2fr;gap:0;}
-    .xp-pts{padding:1.25rem 1.5rem;list-style:none;display:flex;flex-direction:column;gap:.45rem;border-right:1px solid var(--line);}
-    .xp-pts li{font-size:.82rem;color:var(--text-dim);line-height:1.6;padding-left:1rem;position:relative;}
+    .xp-body{display:grid;grid-template-columns:2fr 3fr;gap:0;}
+    .xp-pts{padding:1.4rem 1.5rem;list-style:none;display:flex;flex-direction:column;gap:.55rem;border-right:1px solid var(--line);}
+    .xp-pts li{font-size:.84rem;color:var(--text-dim);line-height:1.65;padding-left:1rem;position:relative;}
     .xp-pts li::before{content:'›';position:absolute;left:0;color:var(--accent);}
     /* Media panel: tabs + viewer */
     .xp-media{display:flex;flex-direction:column;}
@@ -249,15 +249,18 @@
     .xp-viewer.empty{display:flex;align-items:center;justify-content:center;}
     .xp-viewer.empty span{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-dim);letter-spacing:.1em;opacity:.5;}
     /* Carousel controls */
-    .xp-dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:4px;z-index:3;}
-    .xp-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25);cursor:pointer;transition:background .2s;border:none;padding:0;}
-    .xp-dot.active{background:var(--accent);}
+    .xp-prog{position:absolute;bottom:0;left:0;right:0;height:2px;background:rgba(255,255,255,.07);z-index:3;}
+    .xp-prog-bar{height:100%;background:var(--accent);transition:width .35s ease;width:0;}
     .xp-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:3;background:rgba(0,0,0,.4);border:none;color:var(--accent);width:26px;height:26px;border-radius:50%;font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
     .xp-viewer:hover .xp-nav{opacity:1;}
     .xp-nav.prev{left:7px;}.xp-nav.next{right:7px;}
-    /* Caption + expand row */
-    .xp-caprow{position:absolute;bottom:8px;left:10px;right:10px;z-index:3;display:flex;align-items:flex-end;justify-content:space-between;}
-    .xp-cap{font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(200,220,240,.65);letter-spacing:.06em;}
+    /* Video tab: centered play hint */
+    .xp-viewer[data-media-type="video"]::before{content:'▶';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:3rem;color:rgba(255,255,255,.45);z-index:2;pointer-events:none;text-shadow:0 2px 24px rgba(0,0,0,.9);transition:color .2s;}
+    .xp-viewer[data-media-type="video"]:hover::before{color:rgba(255,255,255,.82);}
+    /* Caption + counter row */
+    .xp-caprow{position:absolute;bottom:10px;left:12px;right:12px;z-index:3;display:flex;align-items:flex-end;justify-content:space-between;gap:.5rem;}
+    .xp-cap{font-family:'DM Mono',monospace;font-size:.62rem;color:rgba(200,220,240,.82);letter-spacing:.06em;}
+    .xp-counter{font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(200,220,240,.4);letter-spacing:.06em;white-space:nowrap;}
     /* No gallery = collapse media area — see @media(max-width:900px) block below */
 
     /* ── Skills: tag cloud blocks ── */
@@ -297,6 +300,7 @@
     .lightbox{position:fixed;inset:0;z-index:500;background:rgba(4,7,12,.97);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
     .lightbox.active{opacity:1;pointer-events:all;}
     .lb-img{max-width:90vw;max-height:85vh;object-fit:contain;border-radius:2px;border:1px solid var(--line);}
+    .lb-frame{width:90vw;max-width:1200px;height:80vh;border:none;border-radius:2px;}
     .lb-close{position:fixed;top:1.5rem;right:1.5rem;background:var(--bg3);border:1px solid var(--line);color:var(--text);width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all .2s;}
     .lb-close:hover{border-color:var(--accent);color:var(--accent);}
     .lb-cap{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;}
@@ -380,6 +384,7 @@
       .xp-head{padding:1.25rem 1.25rem 0;}
       .xp-role{font-size:.95rem;}
       .xp-pts{padding:1rem 1.25rem;}
+      .xp-tab{font-size:.6rem;letter-spacing:.08em;padding:.75rem .6rem;}
 
       /* Skills */
       .sgrid{grid-template-columns:1fr;}
@@ -417,6 +422,7 @@
       .xp-card::before{left:-.75rem;top:1.3rem;}
       .xp-role{font-size:.88rem;}
       .xp-co{font-size:.65rem;}
+      .xp-tab{font-size:.58rem;letter-spacing:.05em;padding:.65rem .4rem;}
 
       /* Awards */
       .aphoto{width:70px;height:60px;}
@@ -597,6 +603,7 @@
           <div class="xp-tabs">
             <button class="xp-tab active" data-tab="photos">Photos</button>
             <button class="xp-tab" data-tab="cad">CAD / Renders</button>
+            <button class="xp-tab" data-tab="videos">Videos</button>
           </div>
           <div class="xp-viewer" data-active-tab="photos">
             <!-- Photos -->
@@ -644,6 +651,18 @@
               src="https://drive.google.com/thumbnail?id=1UWIqnGFS8WQt7xUIpyuZgsA6N001iot5&sz=w800"
               data-full="https://drive.google.com/thumbnail?id=1UWIqnGFS8WQt7xUIpyuZgsA6N001iot5&sz=w1200"
               data-cap="Robotic Manipulator — v1" alt="Robotic Manipulator v1"/>
+            <img data-tab="photos" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1J3y3fh4AujLhPZ4Wik0KOJG_VhZVPNjZ&sz=w800"
+              data-full="https://drive.google.com/thumbnail?id=1J3y3fh4AujLhPZ4Wik0KOJG_VhZVPNjZ&sz=w1200"
+              data-cap="Active Gripper — Finger Evolution" alt="Active Gripper Finger Evolution"/>
+            <img data-tab="photos" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1QVQeHI_JRFRMtZThm23H1YiR5UasrUJT&sz=w800"
+              data-full="https://drive.google.com/thumbnail?id=1QVQeHI_JRFRMtZThm23H1YiR5UasrUJT&sz=w1200"
+              data-cap="Perioperation Glove — Prototype" alt="Perioperation Glove Prototype"/>
+            <img data-tab="photos" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1hSz53epAF1Uy3bdwUNGydk31RZg5PFdT&sz=w800"
+              data-full="https://drive.google.com/thumbnail?id=1hSz53epAF1Uy3bdwUNGydk31RZg5PFdT&sz=w1200"
+              data-cap="KinesthetIQ — Open Day" alt="KinesthetIQ Open Day"/>
             <!-- CAD / Renders -->
             <img data-tab="cad" loading="lazy"
               src="https://drive.google.com/thumbnail?id=1gafhaIvy1Gl6NPijMqr7DbY3dKy_cyhX&sz=w800"
@@ -661,11 +680,33 @@
               src="https://drive.google.com/thumbnail?id=1aQz9IBn84jnz0nsADGO_X48SS3PLEfNM&sz=w800"
               data-full="https://drive.google.com/thumbnail?id=1aQz9IBn84jnz0nsADGO_X48SS3PLEfNM&sz=w1200"
               data-cap="Totem Series — Concept 2" alt="Totem Concept 2"/>
+            <img data-tab="cad" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1HZvnJxmIPEHvKyEdjBMLxoLorz6_RLVC&sz=w800"
+              data-full="https://drive.google.com/thumbnail?id=1HZvnJxmIPEHvKyEdjBMLxoLorz6_RLVC&sz=w1200"
+              data-cap="YAM Type Manipulator — Concept" alt="YAM Type Manipulator"/>
+            <!-- Videos -->
+            <img data-tab="videos" data-type="video" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=14Xfo7DfvyLyX7kA6u928vp3B0vChee10&sz=w800"
+              data-full="https://drive.google.com/file/d/14Xfo7DfvyLyX7kA6u928vp3B0vChee10/preview"
+              data-cap="Autonomous Cloth Folding ▶" alt="Autonomous Cloth Folding"/>
+            <img data-tab="videos" data-type="video" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1o1SYutSN9im2bmUsItSDtLgedqT9uBAT&sz=w800"
+              data-full="https://drive.google.com/file/d/1o1SYutSN9im2bmUsItSDtLgedqT9uBAT/preview"
+              data-cap="Autonomous Box Closing ▶" alt="Autonomous Box Closing"/>
+            <img data-tab="videos" data-type="video" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1QhiwOfpyzlKGIB1_C5ZTFg-l5c7tJJTb&sz=w800"
+              data-full="https://drive.google.com/file/d/1QhiwOfpyzlKGIB1_C5ZTFg-l5c7tJJTb/preview"
+              data-cap="Telescopic Teleoperation ▶" alt="Telescopic Teleoperation"/>
+            <img data-tab="videos" data-type="video" loading="lazy"
+              src="https://drive.google.com/thumbnail?id=1lSTppdl7f7S8J7_nATeEAi5okBtPJanO&sz=w800"
+              data-full="https://drive.google.com/file/d/1lSTppdl7f7S8J7_nATeEAi5okBtPJanO/preview"
+              data-cap="Perioperation — Live Demo ▶" alt="Perioperation Demo"/>
             <button class="xp-nav prev">‹</button>
             <button class="xp-nav next">›</button>
-            <div class="xp-dots"></div>
+            <div class="xp-prog"><div class="xp-prog-bar"></div></div>
             <div class="xp-caprow">
               <span class="xp-cap"></span>
+              <span class="xp-counter"></span>
             </div>
           </div>
         </div>
@@ -717,9 +758,10 @@
               data-cap="Isometric CAD View 2" alt="Isometric CAD View 2"/>
             <button class="xp-nav prev">‹</button>
             <button class="xp-nav next">›</button>
-            <div class="xp-dots"></div>
+            <div class="xp-prog"><div class="xp-prog-bar"></div></div>
             <div class="xp-caprow">
               <span class="xp-cap"></span>
+              <span class="xp-counter"></span>
             </div>
           </div>
         </div>
@@ -771,9 +813,10 @@
               data-cap="Actuator Cross-Section" alt="Actuator Cross-Section"/>
             <button class="xp-nav prev">‹</button>
             <button class="xp-nav next">›</button>
-            <div class="xp-dots"></div>
+            <div class="xp-prog"><div class="xp-prog-bar"></div></div>
             <div class="xp-caprow">
               <span class="xp-cap"></span>
+              <span class="xp-counter"></span>
             </div>
           </div>
         </div>
@@ -813,9 +856,10 @@
               data-cap="CAD — Lower Human Jaw" alt="CAD of Lower Human Jaw"/>
             <button class="xp-nav prev">‹</button>
             <button class="xp-nav next">›</button>
-            <div class="xp-dots"></div>
+            <div class="xp-prog"><div class="xp-prog-bar"></div></div>
             <div class="xp-caprow">
               <span class="xp-cap"></span>
+              <span class="xp-counter"></span>
             </div>
           </div>
         </div>
@@ -986,6 +1030,7 @@
 <div class="lightbox" id="lightbox">
   <button class="lb-nav prev" id="lbPrev">‹</button>
   <img class="lb-img" id="lbImg" src="" alt=""/>
+  <iframe class="lb-frame" id="lbFrame" src="" style="display:none;" allow="autoplay" allowfullscreen></iframe>
   <button class="lb-nav next" id="lbNext">›</button>
   <button class="lb-close" id="lbClose">✕</button>
   <div class="lb-cap" id="lbCap"></div>
@@ -1144,40 +1189,35 @@ const revObs=new IntersectionObserver((entries)=>{
 },{threshold:.08});
 document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
 
-// ── Experience cards: Photos/CAD tabs + carousel ──
+// ── Experience cards: tabs + carousel ──
 document.querySelectorAll('.xp-card').forEach(card=>{
   const viewer=card.querySelector('.xp-viewer');
   if(!viewer||viewer.classList.contains('empty'))return;
 
   const tabs=card.querySelectorAll('.xp-tab');
-  const dotsEl=viewer.querySelector('.xp-dots');
+  const progBarEl=viewer.querySelector('.xp-prog-bar');
+  const counterEl=viewer.querySelector('.xp-counter');
   const capEl=viewer.querySelector('.xp-cap');
   let activeTab=viewer.dataset.activeTab||'photos';
   let cur=0,timer=null;
 
-  // Return visible imgs for current tab
   function tabImgs(){return Array.from(viewer.querySelectorAll(`img[data-tab="${activeTab}"]`));}
 
-  // Build dot indicators for current tab's images
-  function buildDots(imgs){
-    dotsEl.innerHTML='';
-    imgs.forEach((_,i)=>{
-      const d=document.createElement('button');
-      d.className='xp-dot'+(i===0?' active':'');
-      d.addEventListener('click',e=>{e.stopPropagation();go(i);});
-      dotsEl.appendChild(d);
-    });
+  function buildProgress(imgs){
+    if(progBarEl)progBarEl.style.width=imgs.length>1?`${100/imgs.length}%`:'100%';
+    if(counterEl)counterEl.textContent=imgs.length>1?`1 / ${imgs.length}`:'';
   }
 
   function go(n){
     const imgs=tabImgs();
     if(!imgs.length)return;
     imgs[cur]?.classList.remove('active');
-    dotsEl.children[cur]?.classList.remove('active');
     cur=(n+imgs.length)%imgs.length;
     imgs[cur].classList.add('active');
-    dotsEl.children[cur]?.classList.add('active');
+    if(progBarEl)progBarEl.style.width=`${(cur+1)/imgs.length*100}%`;
+    if(counterEl)counterEl.textContent=imgs.length>1?`${cur+1} / ${imgs.length}`:'';
     if(capEl)capEl.textContent=imgs[cur].dataset.cap||'';
+    viewer.dataset.mediaType=imgs[cur].dataset.type||'image';
   }
 
   function startTimer(){
@@ -1190,45 +1230,46 @@ document.querySelectorAll('.xp-card').forEach(card=>{
     tab.addEventListener('click',()=>{
       activeTab=tab.dataset.tab;
       tabs.forEach(t=>t.classList.toggle('active',t===tab));
-      // Hide all, show tab's first image
       viewer.querySelectorAll('img').forEach(i=>i.classList.remove('active'));
       cur=0;
       const imgs=tabImgs();
       if(imgs.length)imgs[0].classList.add('active');
-      buildDots(imgs);
+      buildProgress(imgs);
       if(capEl)capEl.textContent=imgs[0]?.dataset.cap||'';
-      startTimer();
+      viewer.dataset.mediaType=imgs[0]?.dataset.type||'image';
+      if(activeTab==='videos')clearInterval(timer);else startTimer();
     });
   });
 
   // Prev/next
-  viewer.querySelector('.xp-nav.prev')?.addEventListener('click',e=>{e.stopPropagation();go(cur-1);startTimer();});
-  viewer.querySelector('.xp-nav.next')?.addEventListener('click',e=>{e.stopPropagation();go(cur+1);startTimer();});
+  viewer.querySelector('.xp-nav.prev')?.addEventListener('click',e=>{e.stopPropagation();go(cur-1);if(activeTab!=='videos')startTimer();});
+  viewer.querySelector('.xp-nav.next')?.addEventListener('click',e=>{e.stopPropagation();go(cur+1);if(activeTab!=='videos')startTimer();});
 
-  // Pause on hover
+  // Pause on hover, resume only for non-video tabs
   viewer.addEventListener('mouseenter',()=>clearInterval(timer));
-  viewer.addEventListener('mouseleave',startTimer);
+  viewer.addEventListener('mouseleave',()=>{if(activeTab!=='videos')startTimer();});
 
   // Click viewer → open lightbox
   viewer.addEventListener('click',e=>{
-    if(e.target.classList.contains('xp-nav')||e.target.classList.contains('xp-dot'))return;
+    if(e.target.classList.contains('xp-nav'))return;
     const imgs=tabImgs();
-    const arr=imgs.map(i=>({src:i.dataset.full||i.src,cap:i.dataset.cap||i.alt}));
-    if(arr.length)openLB(arr[cur].src,arr[cur].cap,arr);
+    const arr=imgs.map(i=>({src:i.dataset.full||i.src,cap:i.dataset.cap||i.alt,type:i.dataset.type||'image'}));
+    if(arr.length)openLB(arr[cur].src,arr[cur].cap,arr,arr[cur].type);
   });
 
   // Init
-  buildDots(tabImgs());
+  buildProgress(tabImgs());
   if(capEl)capEl.textContent=tabImgs()[0]?.dataset.cap||'';
+  viewer.dataset.mediaType=tabImgs()[0]?.dataset.type||'image';
   startTimer();
 });
 
 // ── Lightbox: fullscreen image viewer with prev/next and keyboard nav ──
-const lb=document.getElementById('lightbox'),lbI=document.getElementById('lbImg'),lbC=document.getElementById('lbCap');
+const lb=document.getElementById('lightbox'),lbI=document.getElementById('lbImg'),lbF=document.getElementById('lbFrame'),lbC=document.getElementById('lbCap');
 let lbArr=[],lbIdx=0;
-function openLB(src,cap,arr){lbI.src=src;lbC.textContent=cap;lb.classList.add('active');document.body.style.overflow='hidden';lbArr=arr||[{src,cap}];lbIdx=lbArr.findIndex(x=>x.src===src);if(lbIdx<0)lbIdx=0;}
-function closeLB(){lb.classList.remove('active');document.body.style.overflow='';lbI.src='';}
-function navLB(d){if(lbArr.length<=1)return;lbIdx=(lbIdx+d+lbArr.length)%lbArr.length;lbI.src=lbArr[lbIdx].src;lbC.textContent=lbArr[lbIdx].cap;}
+function openLB(src,cap,arr,type){const v=type==='video';lbI.style.display=v?'none':'';lbF.style.display=v?'':'none';if(v)lbF.src=src;else lbI.src=src;lbC.textContent=cap;lb.classList.add('active');document.body.style.overflow='hidden';lbArr=arr||[{src,cap,type:type||'image'}];lbIdx=lbArr.findIndex(x=>x.src===src);if(lbIdx<0)lbIdx=0;}
+function closeLB(){lb.classList.remove('active');document.body.style.overflow='';lbI.src='';lbF.src='';}
+function navLB(d){if(lbArr.length<=1)return;lbIdx=(lbIdx+d+lbArr.length)%lbArr.length;const item=lbArr[lbIdx];const v=item.type==='video';lbI.style.display=v?'none':'';lbF.style.display=v?'':'none';if(v)lbF.src=item.src;else lbI.src=item.src;lbC.textContent=item.cap;}
 document.getElementById('lbClose').addEventListener('click',closeLB);
 document.getElementById('lbPrev').addEventListener('click',()=>navLB(-1));
 document.getElementById('lbNext').addEventListener('click',()=>navLB(1));
