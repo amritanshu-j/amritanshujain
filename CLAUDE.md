@@ -29,7 +29,8 @@ images/
   kinesthetiq-logo.svg
   og-preview.jpg          ← headshot, 413×531px, used as OG/Twitter/JSON-LD image
   favicon.svg
-  landing-page-photo.webp ← 961KB, displayed in About section as author photo
+  landing-page-photo.webp ← 961KB, no longer used on main site
+  og-preview.jpg          ← headshot, 413×531px — OG/Twitter/JSON-LD image AND About section identity card photo
   favicon-192.png         ← 192×192 PNG, also used as apple-touch-icon
   favicon-48.png          ← 48×48 PNG
   favicon-32.png          ← 32×32 PNG
@@ -87,7 +88,7 @@ Three-accent system: cyan (primary), orange (secondary), violet (`--accent3`, ad
 - **Skills (02)** — 4 blocks, each with a different accent colour title (cyan/orange/violet/steel)
 - **About (03)** — identity card (photo + bio) + credentials row (CSWP + B.Tech) + awards list. See About section below.
 - **Contact** — phone (cyan hover), email (orange hover), LinkedIn (violet hover)
-- **Footer** — © 2026 · Bengaluru, Karnataka · India
+- **Footer** — `© 2026 AMRITANSHU JAIN` (left) · `BENGALURU, KARNATAKA · INDIA` (right)
 
 ---
 
@@ -343,7 +344,7 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 - STL files from SolidWorks are oversized — total ~40MB across 7 meshes. Worst offenders: p2_manipulator (11.29MB), p1/p3/y2 (~7MB each)
 - Decimating to 20–30% triangle count would be the biggest load time improvement; use Meshmixer (free) or meshoptimizer.org
 - ⚠ Cloudflare Pages has a 25MB per-asset limit — p2_manipulator.STL (11.29MB) is fine, but decimation is still strongly recommended before migrating
-- `images/landing-page-photo.webp` (961KB) is displayed in the About section identity card as a 210px-wide sidebar (`object-fit:cover; object-position:center top`) — no max-height cap, fills card height
+- `images/og-preview.jpg` (413×531px portrait headshot) is used in both the About section identity card (210px sidebar, `object-fit:cover`) and as the OG/Twitter/JSON-LD image. `landing-page-photo.webp` is no longer referenced in the site.
 
 ---
 
@@ -373,7 +374,7 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 
 Three horizontal bands (restructured 2026-06-30):
 
-1. **Identity card** (`.about-card`) — `grid-template-columns:210px 1fr`. Left: `.about-img` photo fills full card height via `object-fit:cover; object-position:center top`. Right: `.about-bio` — 3 paragraphs, `padding:2rem 2.25rem`, vertically centred. Card uses XP card design language (bg3, border, border-radius:6px, glass hover).
+1. **Identity card** (`.about-card`) — `grid-template-columns:210px 1fr`. Left: `.about-img` shows `og-preview.jpg` (413×531 headshot) filling full card height via `object-fit:cover; object-position:center top`. Right: `.about-bio` — 3 paragraphs, `padding:2rem 2.25rem`, vertically centred. Card uses XP card design language (bg3, border, border-radius:6px, glass hover).
    - Responsive ≤900px: stacks vertically, photo capped at `max-height:240px`
 
 2. **Credentials row** (`.about-creds`) — `grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:2.5rem`. Contains CSWP cert (cyan left border) and B.Tech (orange left border). `.about-creds .acert` overrides `margin-top:0`.
@@ -434,7 +435,7 @@ Applied across the site using nth-child selectors — no HTML classes needed:
 - [ ] Decimate STL meshes for faster load (total ~40MB; target 20–30% triangle count reduction)
 - [ ] Make repo private — use GitHub Pro ($4/mo) or migrate to Cloudflare Pages (free, better for India latency)
 - [ ] Obfuscate HTML via obfuscator.io before deploying to production
-- [ ] `images/landing-page-photo.webp` — consider replacing with a higher-quality photo; current display is a 210px sidebar in the identity card with `object-fit:cover`
+- [ ] `images/landing-page-photo.webp` — no longer used, can be deleted from the repo to reduce size
 
 ## Completed
 - [x] **About section restructured** — identity card (photo sidebar + bio) + credentials row + full-width awards list. Bio rewritten with specific language: KinesthetIQ/LBMs/ARTPARK/IISc. (2026-06-30)
