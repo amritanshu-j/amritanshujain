@@ -71,13 +71,14 @@ urdf-viewer/
 ---
 
 ## Site Sections (scroll order)
+- **Loader** — planetary gearbox splash screen (canvas `#gearCanvas` 340×340, 8:1 reduction animation, hides 1600ms after `window.load`, cancels RAF)
 - **Nav** — fixed, liquid glass, logo animates to full name on scroll, Blog slide-in panel
-- **Hero** — tagline, name (Bebas Neue), role, CTAs, KinesthetIQ logo, Three.js URDF viewer
+- **Hero** — tagline, name (Bebas Neue), role, CTAs (View Work / Get In Touch / Resume ↗), KinesthetIQ logo, Three.js URDF viewer
 - **Experience (01)** — `.xp-card` per role, Photos/CAD tabs, carousel, lightbox
 - **Skills (02)** — 4 blocks
-- **About (03)** — bio, CSWP cert, B.Tech MIT Manipal, awards grid
+- **About (03)** — author photo, bio, CSWP cert (ID: VR7JPXUA2T), B.Tech MIT Manipal (2020–2024), 5-item awards grid (IRC 2023 🥉, IRDC 2022 🥈, IRDC 2021 🥉, URC 2022 🚀, MRM team 🤖)
 - **Contact** — phone, email, LinkedIn
-- **Footer** — © 2025 · Bengaluru, Karnataka · India
+- **Footer** — © 2026 · Bengaluru, Karnataka · India
 
 ---
 
@@ -187,9 +188,33 @@ Rendering pauses when `#hero` scrolls out of view (IntersectionObserver, thresho
 
 ---
 
+## Loader — Planetary Gearbox Splash Screen
+
+Canvas `#gearCanvas` (340×340 px) animates a planetary gearbox while the page loads. Hidden 1600ms after `window.load` fires (`cancelAnimationFrame` + `.hidden` class → `opacity:0; visibility:hidden`).
+
+```
+Sun gear:   Z=12, ω = 1.4 rad/s (input)
+Planet:     Z=36, 3 planets at 120° spacing, carrier ω = Wsun/8
+Ring:       Z=84, fixed
+Ratio:      8:1 (displayed as "8 : 1" text on canvas)
+```
+- Colors: CYAN `#00d4ff` on BG `#060d18`
+- Progress bar at bottom animates continuously (does NOT track real load progress)
+- `.loader-name` ("AMRITANSHU JAIN") and `.loader-sub` ("Lead Hardware Engineer") fade in via CSS animation
+
+---
+
 ## Standalone URDF Viewer Tool — urdf-viewer/index.html
 
 Separate page at `https://amritanshujain.com/urdf-viewer/`. Linked from nav via `.urdf-link` button. Full-screen tool for inspecting any URDF.
+
+### SEO (urdf-viewer page)
+- Title: "URDF Viewer Online — Free 3D Robot Model Visualizer"
+- `canonical`: `https://amritanshujain.com/urdf-viewer/`
+- 10 keywords targeting `urdf viewer online`, `ROS robot viewer`, etc.
+- Twitter card: `summary_large_image` (unlike main page which uses `summary`)
+- JSON-LD: `SoftwareApplication` schema — name, url, description, featureList, author
+- OG image: same `og-preview.jpg` as main site
 
 ### Tech
 - Three.js **r155** (ES module via importmap, newer than r128 used in hero)
@@ -231,7 +256,7 @@ MeshStandardMaterial({ color: 0xff6b35, transparent: true, opacity: 0.35, depthW
 - Supports STL meshes; unknown formats (DAE, OBJ) load as empty `THREE.Group` with console.warn
 - **Robot info panel** — link count, joint count, movable joint count
 - **Options toggles**: Animate Joints, Show Visual (on by default), Show Collision, Show Grid, Show Axes
-- **Animate Joints** — sinusoidal sweep: `sin(clock*0.7 + jointName.length*0.4)` mapped to joint limits; pauses when user touches a slider
+- **Animate Joints** — sinusoidal sweep: `sin(animClock*0.7 + i*0.4)` (where `i` is the movable joint index) mapped to joint limits; pauses when user touches a slider
 - **Reset Camera** button
 - **Joint sliders** — one per movable joint, uses `j.setJointValue(v)` from urdf-loader
 - Camera framing: `dist = md*2.5`, position `(dist*.55, dist*.45, dist)` for drop-in robots; `dist = md*3`, position `(dist*.35, dist*.45, dist)` for sample robot
@@ -240,8 +265,24 @@ MeshStandardMaterial({ color: 0xff6b35, transparent: true, opacity: 0.35, depthW
 
 ---
 
+## Experience Cards
+
+Five `.xp-card` entries in scroll order. Each card has `.xp-head` (date / role / company) and `.xp-body` (`.xp-pts` bullet list | `.xp-media` with tabs + carousel). Carousel auto-advances every 4200ms; pauses on hover; clicking viewer opens lightbox.
+
+| # | Period | Role | Company | Media |
+|---|--------|------|---------|-------|
+| 1 | May 2024 – Present | Lead Hardware Engineer · Founding Engineer | KinesthetIQ Robotics Studio · Bengaluru | Photos tab (11 imgs: actuators, grippers, exo, UDC, manipulator) + CAD/Renders tab (4 imgs: Totem Series) |
+| 2 | Aug 2023 – Feb 2024 | Mechanical Design Engineer | ARTPARK · Chirathe Robotics (Strider Robotics) · Bengaluru | Photos tab (2 imgs: Quadruped TORSO, Isometric view 1) + CAD tab (3 imgs: TORSO + 2 isometric views) |
+| 3 | Dec 2022 – Jul 2023 | Research Intern | Robert Bosch Centre for Cyber-Physical Systems · IISc · Bengaluru | Photos tab (2 imgs: arm on quadruped, team) + CAD tab (3 imgs: manipulator CAD, 3D-printed gearbox, actuator cross-section) |
+| 4 | May 2022 – Dec 2022 | Research Intern | Curiouz TechLabs · Udupi | Photos tab (1 img: implant stress analysis) + CAD tab (1 img: lower jaw CAD) |
+| 5 | Jul 2021 – Sep 2023 | Mechanical Head | Mars Rover Manipal · MIT Udupi | YouTube embed only (`LtKkaTUwOCQ`, starts 38s) — no tabs |
+
+All images served via Google Drive thumbnails (`sz=w800` thumbnails, `sz=w1200` full-res for lightbox). The Mars Rover card has no `.xp-tabs` wrapper.
+
+---
+
 ## SEO — Current State
-All of the following are implemented (fully live on amritanshujain.com as of 2026-06-26):
+All of the following are implemented (fully live on amritanshujain.com as of 2026-06-27):
 - `meta description`, `canonical`, `title` ✓
 - `meta robots` — index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1 ✓
 - `meta author` — Amritanshu Jain ✓
@@ -253,7 +294,7 @@ All of the following are implemented (fully live on amritanshujain.com as of 202
 - JSON-LD Person schema — name, url, image (`og-preview.jpg` 413×531), jobTitle, description, worksFor (KinesthetIQ), alumniOf (MIT Manipal), address (Bengaluru, Karnataka, IN), sameAs (LinkedIn + GitHub), knowsAbout (10 topics), award (4 results), hasCredential (CSWP) ✓
 - JSON-LD WebSite schema — name, url, description, author ✓
 - `robots.txt` — allows all crawlers, points to sitemap ✓
-- Sitemap with `<lastmod>` (2026-06-26) — submitted to Google Search Console ✓
+- Sitemap (2 URLs: main `priority:1.0` + `/urdf-viewer/` `priority:0.9`) with `<lastmod>2026-06-27</lastmod>` — submitted to Google Search Console ✓
 - Favicons — SVG, 192px, 48px, 32px, apple-touch-icon ✓
 - Hero image alt text fixed (`ARM ON QUADRUPED.webp`) ✓
 - Twitter handle: @amritj2002 (account exists but not active — tagged for attribution only) ✓
@@ -312,7 +353,7 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 - [x] **landing-page-photo.webp integrated** — added to About section left column as author photo (`max-height:260px`, top-cropped) (2026-06-27)
 - [x] SEO — all meta tags, OG, Twitter/X Card, JSON-LD Person + WebSite schemas fully implemented (2026-06-26)
 - [x] robots.txt created (2026-06-26)
-- [x] Sitemap lastmod added (2026-06-26)
+- [x] Sitemap created with 2 URLs (main + urdf-viewer), lastmod `2026-06-27` (2026-06-27)
 - [x] Geo meta tags added — IN-KA / Bengaluru (2026-06-26)
 - [x] Hero image alt text fixed (2026-06-26)
 - [x] Dark/light mode toggle added with localStorage persistence (2026-06-26)
@@ -323,6 +364,9 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 - [x] KinesthetIQ logo increased to 110px height (2026-06-27)
 - [x] "Now working with" label font size increased (2026-06-27)
 - [x] KinesthetIQ experience card — Photos tab (11 images: custom actuators, grippers, anthropomorphic exo, UDC, robotic manipulator) + CAD/Renders tab (Totem Series — 4 images) (2026-06-27)
+- [x] Chirathe Robotics experience card — Photos tab (2 images) + CAD tab (3 images: TORSO + isometric views) (2026-06-27)
+- [x] IISc RBCCPS experience card — Photos tab (2 images: arm on quadruped, team) + CAD tab (3 images: manipulator, gearbox, actuator cross-section) (2026-06-27)
+- [x] Curiouz TechLabs experience card — Photos tab (1 image: implant stress analysis) + CAD tab (1 image: lower jaw CAD) (2026-06-27)
 - [x] Resume button added to hero CTAs — links to Google Drive PDF (id: 1zgP4bzyl2fhCIfZvKDf5tKxqWeEsjUkZ) (2026-06-27)
 - [x] urdfControls switched to position:fixed, shifted upward to bottom:6rem (2026-06-27)
 - [x] Performance optimisation — CDN dns-prefetch, fetchpriority hints, merged duplicate media queries, removed inline style (2026-06-27)
