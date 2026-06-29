@@ -62,22 +62,31 @@ urdf-viewer/
 
 ## Design Tokens
 ```css
+/* Dark (default) */
 --bg: #080b10       --bg2: #0d1117      --bg3: #111820
 --line: #1e2d3d     --steel: #8fb4cc    --accent: #00d4ff
---accent2: #ff6b35  --text: #c9d8e8     --text-dim: #5a7a94
---white: #eef4f9    --grid-col: rgba(0,212,255,0.12)
+--accent2: #ff6b35  --accent3: #8b7cf6  --text: #c9d8e8
+--text-dim: #5a7a94 --white: #eef4f9    --grid-col: rgba(0,212,255,0.12)
+
+/* Light overrides (html[data-theme="light"]) */
+--bg: #f0f4f8       --bg2: #e6edf5      --bg3: #dce5ef
+--line: #b8cad8     --steel: #3d6080    --accent: #007aaa
+--accent2: #e05515  --accent3: #5b4fd8  --text: #1a2a3c
+--text-dim: #4a6a84 --white: #0a1520    --grid-col: rgba(0,122,170,0.07)
 ```
+
+Three-accent system: cyan (primary), orange (secondary), violet (`--accent3`, added 2026-06-30). Applied as a colour spectrum across the UI — per-card timeline dots, per-section header lines, per-skill-block titles, per-contact-link hovers.
 
 ---
 
 ## Site Sections (scroll order)
-- **Loader** — planetary gearbox splash screen (canvas `#gearCanvas` 340×340, 8:1 reduction animation, hides 1600ms after `window.load`, cancels RAF)
+- **Loader** — planetary gearbox splash screen (canvas `#gearCanvas` 340×340, 8:1 reduction animation, hides **2200ms** after `window.load`, cancels RAF). `.loader-glass` frosted card wraps the name — see Loader section below.
 - **Nav** — fixed, liquid glass, logo animates to full name on scroll, Blog slide-in panel
 - **Hero** — tagline, name (Bebas Neue), role, CTAs (View Work / Get In Touch / Resume ↗), KinesthetIQ logo, Three.js URDF viewer
-- **Experience (01)** — `.xp-card` per role, Photos/CAD tabs, carousel, lightbox
-- **Skills (02)** — 4 blocks
-- **About (03)** — author photo, bio, CSWP cert (ID: VR7JPXUA2T), B.Tech MIT Manipal (2020–2024), 5-item awards grid (IRC 2023 🥉, IRDC 2022 🥈, IRDC 2021 🥉, URC 2022 🚀, MRM team 🤖)
-- **Contact** — phone, email, LinkedIn
+- **Experience (01)** — `.xp-card` per role, Photos/CAD/Videos tabs, carousel with progress bar + counter, lightbox (images + Drive video iframes)
+- **Skills (02)** — 4 blocks, each with a different accent colour title (cyan/orange/violet/steel)
+- **About (03)** — identity card (photo + bio) + credentials row (CSWP + B.Tech) + awards list. See About section below.
+- **Contact** — phone (cyan hover), email (orange hover), LinkedIn (violet hover)
 - **Footer** — © 2026 · Bengaluru, Karnataka · India
 
 ---
@@ -190,7 +199,7 @@ Rendering pauses when `#hero` scrolls out of view (IntersectionObserver, thresho
 
 ## Loader — Planetary Gearbox Splash Screen
 
-Canvas `#gearCanvas` (340×340 px) animates a planetary gearbox while the page loads. Hidden 1600ms after `window.load` fires (`cancelAnimationFrame` + `.hidden` class → `opacity:0; visibility:hidden`).
+Canvas `#gearCanvas` (340×340 px) animates a planetary gearbox while the page loads. Hidden **2200ms** after `window.load` fires (`cancelAnimationFrame` + `.hidden` class → `opacity:0; visibility:hidden`).
 
 ```
 Sun gear:   Z=12, ω = 1.4 rad/s (input)
@@ -200,7 +209,14 @@ Ratio:      8:1 (displayed as "8 : 1" text on canvas)
 ```
 - Colors: CYAN `#00d4ff` on BG `#060d18`
 - Progress bar at bottom animates continuously (does NOT track real load progress)
-- `.loader-name` ("AMRITANSHU JAIN") and `.loader-sub` ("Lead Hardware Engineer") fade in via CSS animation
+
+### Glass card
+`.loader-glass` wraps **only** the name (no subtitle). Sequence:
+- `0.4s` → glass card fades in (`lnFade 1s ease-out`)
+- `0.72s` → "AMRITANSHU JAIN" fades in inside card (`lnFade 1.1s ease-out`)
+- `2.2s` → whole loader fades out
+
+Glass card style: `rgba(255,255,255,.04)` bg, `rgba(255,255,255,.09)` border, `blur(18px) saturate(1.4)` backdrop, `inset 0 1px 0 rgba(255,255,255,.13)` top-rim highlight, `0 0 60px rgba(0,180,255,.06)` ambient cyan glow. Light-mode override: dark-tinted with white rim.
 
 ---
 
@@ -267,17 +283,32 @@ MeshStandardMaterial({ color: 0xff6b35, transparent: true, opacity: 0.35, depthW
 
 ## Experience Cards
 
-Five `.xp-card` entries in scroll order. Each card has `.xp-head` (date / role / company) and `.xp-body` (`.xp-pts` bullet list | `.xp-media` with tabs + carousel). Carousel auto-advances every 4200ms; pauses on hover; clicking viewer opens lightbox.
+Five `.xp-card` entries in scroll order. Each card has `.xp-head` (date / role / company) and `.xp-body` (`.xp-pts` bullet list | `.xp-media` with tabs + carousel). Carousel auto-advances every 4200ms; pauses on hover; clicking viewer opens lightbox. Navigation uses a **progress bar** (`.xp-prog` / `.xp-prog-bar`) + slide counter (`.xp-counter`), not dots.
+
+Videos tab: carousel pauses auto-advance; clicking thumbnail opens a Drive `/preview` iframe in the lightbox (lazy-loaded, zero cost until clicked — facade pattern).
+
+Each card has a unique **timeline dot colour** (dot `::before`, hover border, date label all match):
+- Card 1 KinesthetIQ: cyan (`--accent`)
+- Card 2 Chirathe: orange (`--accent2`)
+- Card 3 IISc: violet (`--accent3`)
+- Card 4 Curiouz: steel (`--steel`)
+- Card 5 Mars Rover: orange (`--accent2`)
 
 | # | Period | Role | Company | Media |
 |---|--------|------|---------|-------|
-| 1 | May 2024 – Present | Lead Hardware Engineer · Founding Engineer | KinesthetIQ Robotics Studio · Bengaluru | Photos tab (11 imgs: actuators, grippers, exo, UDC, manipulator) + CAD/Renders tab (4 imgs: Totem Series) |
-| 2 | Aug 2023 – Feb 2024 | Mechanical Design Engineer | ARTPARK · Chirathe Robotics (Strider Robotics) · Bengaluru | Photos tab (2 imgs: Quadruped TORSO, Isometric view 1) + CAD tab (3 imgs: TORSO + 2 isometric views) |
-| 3 | Dec 2022 – Jul 2023 | Research Intern | Robert Bosch Centre for Cyber-Physical Systems · IISc · Bengaluru | Photos tab (2 imgs: arm on quadruped, team) + CAD tab (3 imgs: manipulator CAD, 3D-printed gearbox, actuator cross-section) |
-| 4 | May 2022 – Dec 2022 | Research Intern | Curiouz TechLabs · Udupi | Photos tab (1 img: implant stress analysis) + CAD tab (1 img: lower jaw CAD) |
+| 1 | May 2024 – Present | Lead Hardware Engineer · Founding Engineer | KinesthetIQ Robotics Studio · Bengaluru | Photos (14 imgs) + CAD/Renders (5 imgs: Totem Series + YAM Manipulator) + Videos (4 Drive videos) |
+| 2 | Aug 2023 – Feb 2024 | Mechanical Design Engineer | ARTPARK · Chirathe Robotics (Strider Robotics) · Bengaluru | Photos (2 imgs) + CAD (3 imgs) |
+| 3 | Dec 2022 – Jul 2023 | Research Intern | Robert Bosch Centre for Cyber-Physical Systems · IISc · Bengaluru | Photos (2 imgs) + CAD (3 imgs) |
+| 4 | May 2022 – Dec 2022 | Research Intern | Curiouz TechLabs · Udupi | Photos (1 img) + CAD (1 img) |
 | 5 | Jul 2021 – Sep 2023 | Mechanical Head | Mars Rover Manipal · MIT Udupi | YouTube embed only (`LtKkaTUwOCQ`, starts 38s) — no tabs |
 
-All images served via Google Drive thumbnails (`sz=w800` thumbnails, `sz=w1200` full-res for lightbox). The Mars Rover card has no `.xp-tabs` wrapper.
+KinesthetIQ Videos tab Drive IDs:
+- `14Xfo7DfvyLyX7kA6u928vp3B0vChee10` — Autonomous Cloth Folding
+- `1o1SYutSN9im2bmUsItSDtLgedqT9uBAT` — Autonomous Box Closing
+- `1QhiwOfpyzlKGIB1_C5ZTFg-l5c7tJJTb` — Telescopic Teleoperation
+- `1lSTppdl7f7S8J7_nATeEAi5okBtPJanO` — Perioperation Live Demo
+
+All images served via Google Drive thumbnails (`sz=w800` carousel, `sz=w1200` lightbox). Mars Rover card has no `.xp-tabs` wrapper. The timeline vertical line is 2px wide with a blurred `::after` glow pseudo (cyan→violet→transparent).
 
 ---
 
@@ -312,7 +343,7 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 - STL files from SolidWorks are oversized — total ~40MB across 7 meshes. Worst offenders: p2_manipulator (11.29MB), p1/p3/y2 (~7MB each)
 - Decimating to 20–30% triangle count would be the biggest load time improvement; use Meshmixer (free) or meshoptimizer.org
 - ⚠ Cloudflare Pages has a 25MB per-asset limit — p2_manipulator.STL (11.29MB) is fine, but decimation is still strongly recommended before migrating
-- `images/landing-page-photo.webp` (961KB) is displayed in the About section as the author photo (`max-height:260px`, `object-position:top center`)
+- `images/landing-page-photo.webp` (961KB) is displayed in the About section identity card as a 210px-wide sidebar (`object-fit:cover; object-position:center top`) — no max-height cap, fills card height
 
 ---
 
@@ -338,6 +369,64 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 
 ---
 
+## About Section — Current Structure
+
+Three horizontal bands (restructured 2026-06-30):
+
+1. **Identity card** (`.about-card`) — `grid-template-columns:210px 1fr`. Left: `.about-img` photo fills full card height via `object-fit:cover; object-position:center top`. Right: `.about-bio` — 3 paragraphs, `padding:2rem 2.25rem`, vertically centred. Card uses XP card design language (bg3, border, border-radius:6px, glass hover).
+   - Responsive ≤900px: stacks vertically, photo capped at `max-height:240px`
+
+2. **Credentials row** (`.about-creds`) — `grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:2.5rem`. Contains CSWP cert (cyan left border) and B.Tech (orange left border). `.about-creds .acert` overrides `margin-top:0`.
+   - Responsive ≤900px: single column
+
+3. **Awards** (`.sec-num--label` glass chip + `.alist`) — full section width. 5 `.aitem` cards, each clickable (opens photo in lightbox).
+
+### Bio text (3 paragraphs)
+- Para 1: KinesthetIQ founding engineer, building actuators/grippers/teleoperation from scratch — custom planetary gearboxes, BLDC actuators, bimanual devices
+- Para 2: lineage — Mars Rover Manipal → IISc RBCCPS (legged robot manipulation) → Chirathe/ARTPARK (high-TRL quadrupeds). Iteration cycle.
+- Para 3: larger goal — LBM training data, standardised work cells, deployable general-purpose manipulation
+
+---
+
+## Visual Design System
+
+### Colour spectrum (added 2026-06-30)
+Applied across the site using nth-child selectors — no HTML classes needed:
+
+**Experience card dots / hover borders / date labels:**
+- nth-child(1) KinesthetIQ: `--accent` cyan
+- nth-child(2) Chirathe: `--accent2` orange
+- nth-child(3) IISc: `--accent3` violet
+- nth-child(4) Curiouz: `--steel`
+- nth-child(5) Mars Rover: `--accent2` orange
+
+**Skill block titles (`.sblk-ttl`):**
+- nth-child(1): cyan | nth-child(2): orange | nth-child(3): violet | nth-child(4): steel
+
+**Section header lines (`.sec-line`):**
+- `#experience`: default (cyan via var(--line)) | `#skills`: violet | `#about`: orange | `#contact`: default
+
+**Contact link hovers:**
+- nth-child(1) phone: cyan | nth-child(2) email: orange | nth-child(3) LinkedIn: violet
+
+### Frosted glass treatments
+- **XP card hover**: `box-shadow: 0 14px 40px rgba(0,0,0,.4), inset 0 1px 0 <accent-rgba>` — tinted to match card's dot colour
+- **Skill blocks**: `0 6px 24px rgba(0,0,0,.25), inset 0 1px 0 <accent-rgba>`
+- **Award items**: `0 6px 22px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,107,53,.08)`
+- **Contact links**: full glass tile — `backdrop-filter:blur(14px) saturate(1.4)`, tinted bg, bright inset top-rim, lifts 3px
+- **`.sec-num--label`**: glass chip — `rgba(255,255,255,.04)` bg, hairline border, `blur(8px)` backdrop
+- **Loader `.loader-glass`**: `blur(18px) saturate(1.4)`, `inset 0 1px 0 rgba(255,255,255,.13)`, ambient cyan glow
+
+### Animation system (2026-06-30)
+- **Entrance curve**: `cubic-bezier(0.22,1,0.36,1)` — used on all reveals, hero fadeUp, nav logo swap. Snappy deceleration, no overshoot.
+- **Hover transitions**: `ease-out` — cards, tabs, buttons, links, tags
+- **Scroll reveal** (`.reveal`): `translateY(30px) scale(0.97)` → `none`, `.7s` duration. IntersectionObserver threshold `.12`, stagger `i×55ms`
+- **Hero fadeUp**: `translateY(28px) scale(0.97)` keyframe, `.7s` per element, delays .2/.32/.46/.6/.72s
+- **No `all` transitions** — all transitions are explicit property lists for performance
+- **Timeline glow**: `::before` 2px line + `::after` blurred pseudo (`width:10px, filter:blur(5px)`) carrying the same gradient
+
+---
+
 ## Outstanding / Next Steps
 - [ ] Blog — 3 draft posts exist; remove `data-draft="true"` to publish
 - [ ] SolidWorks animation — export as video, integrate in hero
@@ -345,31 +434,23 @@ Three.js scripts, URDF file, and all 7 STL meshes are preloaded so the browser f
 - [ ] Decimate STL meshes for faster load (total ~40MB; target 20–30% triangle count reduction)
 - [ ] Make repo private — use GitHub Pro ($4/mo) or migrate to Cloudflare Pages (free, better for India latency)
 - [ ] Obfuscate HTML via obfuscator.io before deploying to production
-- [ ] `images/landing-page-photo.webp` is now in the About section — consider replacing with a higher-quality or better-cropped photo (current display: `max-height:260px`, `object-position:top center`)
+- [ ] `images/landing-page-photo.webp` — consider replacing with a higher-quality photo; current display is a 210px sidebar in the identity card with `object-fit:cover`
 
 ## Completed
-- [x] **URDF viewer fixed** — both hero and standalone viewer now use self-contained URDF parser (no urdf-loader dependency). Fixed: `||` → `??` for limit clamping (was wrong for 0-value lower limits), `.trim()` on joint names (URDF had trailing space in "yaw 1 "), removed broken `urdf-loader@0.12.3/src/URDFLoader.js` import (2026-06-27)
-- [x] **Favicon PNGs created** — `favicon-192.png`, `favicon-48.png`, `favicon-32.png` generated from SVG design (black + white "AJ." text) — fixed 404 errors (2026-06-27)
-- [x] **landing-page-photo.webp integrated** — added to About section left column as author photo (`max-height:260px`, top-cropped) (2026-06-27)
-- [x] SEO — all meta tags, OG, Twitter/X Card, JSON-LD Person + WebSite schemas fully implemented (2026-06-26)
-- [x] robots.txt created (2026-06-26)
-- [x] Sitemap created with 2 URLs (main + urdf-viewer), lastmod `2026-06-27` (2026-06-27)
-- [x] Geo meta tags added — IN-KA / Bengaluru (2026-06-26)
-- [x] Hero image alt text fixed (2026-06-26)
-- [x] Dark/light mode toggle added with localStorage persistence (2026-06-26)
-- [x] Footer copyright updated to 2026 (2026-06-26)
-- [x] OG/Twitter/JSON-LD image updated to headshot `og-preview.jpg` 413×531px (2026-06-27)
-- [x] Mobile optimisation — responsive breakpoints at 768px and 480px (2026-06-27)
-- [x] Mobile URDF — shown as transparent background animation, sliders hidden, camera auto-scaled to screen size, arm shifted left (2026-06-27)
-- [x] KinesthetIQ logo increased to 110px height (2026-06-27)
-- [x] "Now working with" label font size increased (2026-06-27)
-- [x] KinesthetIQ experience card — Photos tab (11 images: custom actuators, grippers, anthropomorphic exo, UDC, robotic manipulator) + CAD/Renders tab (Totem Series — 4 images) (2026-06-27)
-- [x] Chirathe Robotics experience card — Photos tab (2 images) + CAD tab (3 images: TORSO + isometric views) (2026-06-27)
-- [x] IISc RBCCPS experience card — Photos tab (2 images: arm on quadruped, team) + CAD tab (3 images: manipulator, gearbox, actuator cross-section) (2026-06-27)
-- [x] Curiouz TechLabs experience card — Photos tab (1 image: implant stress analysis) + CAD tab (1 image: lower jaw CAD) (2026-06-27)
-- [x] Resume button added to hero CTAs — links to Google Drive PDF (id: 1zgP4bzyl2fhCIfZvKDf5tKxqWeEsjUkZ) (2026-06-27)
-- [x] urdfControls switched to position:fixed, shifted upward to bottom:6rem (2026-06-27)
-- [x] Performance optimisation — CDN dns-prefetch, fetchpriority hints, merged duplicate media queries, removed inline style (2026-06-27)
-- [x] Standalone URDF Viewer tool page — `urdf-viewer/index.html`, drag-drop any URDF package, full orbit controls, joint sliders, animate mode, visual/collision/grid/axes toggles (2026-06-27)
-- [x] URDF Viewer linked from nav as `.urdf-link` button (2026-06-27)
-- [x] Mars Rover Manipal experience card — YouTube embed added (video `LtKkaTUwOCQ`, starts at 38s) instead of photos (2026-06-27)
+- [x] **About section restructured** — identity card (photo sidebar + bio) + credentials row + full-width awards list. Bio rewritten with specific language: KinesthetIQ/LBMs/ARTPARK/IISc. (2026-06-30)
+- [x] **Frosted glass system** — loader glass card, XP card hover highlights, skill block highlights, contact link glass tiles, award item highlights, sec-num--label chip (2026-06-30)
+- [x] **Animation refinement** — `cubic-bezier(0.22,1,0.36,1)` entrances, `ease-out` hovers, explicit transitions, scroll reveal scale+translate, tighter stagger (2026-06-30)
+- [x] **Three-accent colour system** — `--accent3:#8b7cf6` violet added (light: `#5b4fd8`); colour spectrum across cards, skills, sections, contact links (2026-06-30)
+- [x] **Timeline glow** — 2px line + blurred `::after` glow pseudo (cyan→violet gradient) (2026-06-30)
+- [x] **KinesthetIQ Videos tab** — 4 Drive video entries (facade pattern: thumbnail shown, iframe only loads in lightbox on click) (2026-06-28)
+- [x] **Loader glass card** — `.loader-glass` frosted panel, subtitle removed, display time extended to 2200ms (2026-06-30)
+- [x] **Progress bar navigation** — replaced dot indicators; 2px animated bar + slide counter (X / N) (2026-06-28)
+- [x] **URDF viewer fixed** — both hero and standalone viewer now use self-contained URDF parser. Fixed `||` → `??` for 0-value joint limits, `.trim()` on joint names (2026-06-27)
+- [x] **Favicon PNGs created** — `favicon-192.png`, `favicon-48.png`, `favicon-32.png` (2026-06-27)
+- [x] SEO — meta tags, OG, Twitter/X Card, JSON-LD Person + WebSite schemas (2026-06-26)
+- [x] robots.txt + sitemap (2 URLs, lastmod 2026-06-27) (2026-06-27)
+- [x] Dark/light mode toggle with localStorage persistence (2026-06-26)
+- [x] Mobile optimisation — responsive breakpoints 768px + 480px, URDF as background (2026-06-27)
+- [x] Standalone URDF Viewer — `urdf-viewer/index.html`, drag-drop, full controls, joint sliders, animate mode (2026-06-27)
+- [x] Resume button in hero CTAs — Drive PDF id: 1zgP4bzyl2fhCIfZvKDf5tKxqWeEsjUkZ (2026-06-27)
+- [x] Mars Rover card — YouTube embed (`LtKkaTUwOCQ`, starts 38s) (2026-06-27)
