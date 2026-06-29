@@ -102,7 +102,7 @@
     /* ── Design tokens: all colours live here — edit once, applies everywhere ── */
     :root{
       --bg:#080b10; --bg2:#0d1117; --bg3:#111820; --line:#1e2d3d;
-      --steel:#8fb4cc; --accent:#00d4ff; --accent2:#ff6b35;
+      --steel:#8fb4cc; --accent:#00d4ff; --accent2:#ff6b35; --accent3:#8b7cf6;
       --text:#c9d8e8; --text-dim:#5a7a94; --white:#eef4f9;
       --grid-col:rgba(0,212,255,0.12);
     }
@@ -209,6 +209,8 @@
     .sec-num--label{display:block;margin-bottom:1.25rem;}
     .sec-ttl{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,4vw,3.5rem);letter-spacing:.05em;color:var(--white);}
     .sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);}
+    #skills .sec-line{background:linear-gradient(90deg,var(--accent3),transparent);}
+    #about .sec-line{background:linear-gradient(90deg,var(--accent2),transparent);}
     /* Diagonal cuts: alternating sections clip into each other with an angled edge */
     #experience{background:var(--bg2);clip-path:polygon(0 2.5rem,100% 0,100% 100%,0 100%);margin-top:-2.5rem;padding-top:10rem;}
     #skills{background:var(--bg);clip-path:polygon(0 0,100% 2.5rem,100% 100%,0 100%);margin-top:-2.5rem;padding-top:10rem;}
@@ -218,11 +220,23 @@
     /* ── Experience: standardised cards ── */
     /* Vertical connector line */
     .xp-list{display:flex;flex-direction:column;gap:2rem;position:relative;padding-left:1.5rem;}
-    .xp-list::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--accent),var(--line),transparent);}
+    .xp-list::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--accent),var(--accent3),var(--line),transparent);}
     /* Each card */
     .xp-card{position:relative;background:var(--bg3);border:1px solid var(--line);border-radius:6px;overflow:hidden;transition:border-color .25s;}
     .xp-card::before{content:'';position:absolute;left:-1.5rem;top:1.6rem;width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(0,212,255,.5);z-index:1;}
     .xp-card:hover{border-color:rgba(0,212,255,.35);}
+    .xp-list>.xp-card:nth-child(2)::before{background:var(--accent2);box-shadow:0 0 10px rgba(255,107,53,.5);}
+    .xp-list>.xp-card:nth-child(2):hover{border-color:rgba(255,107,53,.35);}
+    .xp-list>.xp-card:nth-child(2) .xp-date{color:var(--accent2);}
+    .xp-list>.xp-card:nth-child(3)::before{background:var(--accent3);box-shadow:0 0 10px rgba(139,124,246,.5);}
+    .xp-list>.xp-card:nth-child(3):hover{border-color:rgba(139,124,246,.35);}
+    .xp-list>.xp-card:nth-child(3) .xp-date{color:var(--accent3);}
+    .xp-list>.xp-card:nth-child(4)::before{background:var(--steel);box-shadow:0 0 10px rgba(143,180,204,.3);}
+    .xp-list>.xp-card:nth-child(4):hover{border-color:rgba(143,180,204,.28);}
+    .xp-list>.xp-card:nth-child(4) .xp-date{color:var(--steel);}
+    .xp-list>.xp-card:nth-child(5)::before{background:var(--accent2);box-shadow:0 0 10px rgba(255,107,53,.4);}
+    .xp-list>.xp-card:nth-child(5):hover{border-color:rgba(255,107,53,.3);}
+    .xp-list>.xp-card:nth-child(5) .xp-date{color:var(--accent2);}
     /* Top meta row */
     .xp-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1.5rem 1.5rem 0;}
     .xp-meta{flex:1;}
@@ -271,6 +285,12 @@
     .stags{display:flex;flex-wrap:wrap;gap:.5rem;}
     .stag{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--text);background:rgba(255,255,255,.04);border:1px solid var(--line);padding:.3rem .75rem;border-radius:2px;transition:all .2s;}
     .stag:hover{border-color:var(--steel);color:var(--white);}
+    .sgrid .sblk:nth-child(2) .sblk-ttl{color:var(--accent2);}
+    .sgrid .sblk:nth-child(2):hover{border-color:rgba(255,107,53,.35);}
+    .sgrid .sblk:nth-child(3) .sblk-ttl{color:var(--accent3);}
+    .sgrid .sblk:nth-child(3):hover{border-color:rgba(139,124,246,.35);}
+    .sgrid .sblk:nth-child(4) .sblk-ttl{color:var(--steel);}
+    .sgrid .sblk:nth-child(4):hover{border-color:rgba(143,180,204,.3);}
 
     /* ── About: bio + awards grid ── */
     .agrid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
@@ -316,6 +336,8 @@
     .clinks{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
     .clink{display:flex;align-items:center;gap:.6rem;font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;color:var(--text);padding:.8rem 1.5rem;border:1px solid var(--line);border-radius:2px;transition:all .2s;}
     .clink:hover{color:var(--accent);border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,212,255,.12);}
+    .clinks a:nth-child(2):hover{color:var(--accent2);border-color:var(--accent2);box-shadow:0 6px 20px rgba(255,107,53,.1);}
+    .clinks a:nth-child(3):hover{color:var(--accent3);border-color:var(--accent3);box-shadow:0 6px 20px rgba(139,124,246,.1);}
 
     /* ── Footer ── */
     footer{position:relative;z-index:1;padding:2rem 2.5rem;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
@@ -445,7 +467,7 @@
     html[data-theme="light"]{
       --bg:#f0f4f8; --bg2:#e6edf5; --bg3:#dce5ef;
       --line:#b8cad8; --steel:#3d6080; --accent:#007aaa;
-      --accent2:#e05515; --text:#1a2a3c; --text-dim:#4a6a84;
+      --accent2:#e05515; --accent3:#5b4fd8; --text:#1a2a3c; --text-dim:#4a6a84;
       --white:#0a1520; --grid-col:rgba(0,122,170,0.07);
     }
     html[data-theme="light"] nav{background:rgba(240,244,248,0.82);border-bottom:1px solid rgba(0,0,0,0.09);box-shadow:0 1px 0 rgba(255,255,255,0.7) inset,0 4px 24px rgba(0,0,0,0.07);}
