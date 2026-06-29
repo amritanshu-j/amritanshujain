@@ -355,8 +355,9 @@
     .loader{position:fixed;inset:0;background:#060d18;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;z-index:9999;transition:opacity .9s,visibility .9s;}
     .loader.hidden{opacity:0;visibility:hidden;pointer-events:none;}
     .loader canvas{display:block;}
-    .loader-name{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:.28em;color:#eef4f9;margin-top:-4px;opacity:0;animation:lnFade 1s .6s forwards;}
-    .loader-sub{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(0,180,255,.5);margin-top:.35rem;opacity:0;animation:lnFade .8s 1s forwards;}
+    .loader-glass{display:flex;flex-direction:column;align-items:center;margin-top:.6rem;padding:.9rem 2.8rem 1.1rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:10px;backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.13),inset 0 0 0 1px rgba(255,255,255,.03),0 10px 40px rgba(0,0,0,.45),0 0 60px rgba(0,180,255,.06);opacity:0;animation:lnFade .9s .42s forwards;}
+    .loader-name{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:.28em;color:#eef4f9;margin-top:0;opacity:0;animation:lnFade .8s .68s forwards;}
+    .loader-sub{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(0,180,255,.5);margin-top:.35rem;opacity:0;animation:lnFade .7s 1.05s forwards;}
     @keyframes lnFade{to{opacity:1;}}
 
     /* ── Responsive: tablet ── */
@@ -475,6 +476,7 @@
     html[data-theme="light"] .nav-links a:hover{background:rgba(0,0,0,0.04);box-shadow:0 4px 16px rgba(0,0,0,0.08),inset 0 1px 0 rgba(255,255,255,0.6);}
     html[data-theme="light"] .urdf-row{background:rgba(240,244,248,0.88);}
     html[data-theme="light"] .loader{background:#dce5ef;}
+    html[data-theme="light"] .loader-glass{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 10px 40px rgba(0,0,0,.12);}
     html[data-theme="light"] .loader-name{color:#0a1520;}
     html[data-theme="light"] body::before{opacity:0.6;}
     html[data-theme="light"] .btn-p{color:#f0f4f8;}
@@ -545,8 +547,10 @@
 
 <div class="loader" id="loader">
   <canvas id="gearCanvas" width="340" height="340"></canvas>
-  <div class="loader-name">AMRITANSHU JAIN</div>
-  <div class="loader-sub">Lead Hardware Engineer</div>
+  <div class="loader-glass">
+    <div class="loader-name">AMRITANSHU JAIN</div>
+    <div class="loader-sub">Lead Hardware Engineer</div>
+  </div>
 </div>
 
 <nav>
