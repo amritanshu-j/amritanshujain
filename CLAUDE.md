@@ -286,6 +286,12 @@ MeshStandardMaterial({ color: 0xff6b35, transparent: true, opacity: 0.35, depthW
 
 Five `.xp-card` entries in scroll order. Each card has `.xp-head` (date / role / company) and `.xp-body` (`.xp-pts` bullet list | `.xp-media` with tabs + carousel). Carousel auto-advances every 4200ms; pauses on hover; clicking viewer opens lightbox. Navigation uses a **progress bar** (`.xp-prog` / `.xp-prog-bar`) + slide counter (`.xp-counter`), not dots.
 
+**Card body layout:** `grid-template-columns:3fr 2fr` (text wider, media narrower — keeps viewer shorter without distorting aspect ratio). `align-items:start` so bullet column doesn't stretch. Column divider is a `::before` pseudo-element on `.xp-body` (`left:60%; top:0; bottom:0; width:1px`) — hidden on mobile (`display:none` in 900px breakpoint). `.xp-pts` has no `border-right` (divider is on parent).
+
+**Card meta text sizes:** `.xp-date` `.78rem`, `.xp-role` `1.2rem`, `.xp-co` `.78rem`.
+
+**Mars Rover career progression stepper:** replaces single `.xp-role` text. Three `.career-step` divs inside `.career-track`, each with `.career-dot` + `.career-info` (`.career-role` + `.career-dates`). Steps connected by `::after` pseudo-element lines; second line uses orange gradient. Active step (Mechanical Head) has glowing orange dot. On mobile ≤480px flips to vertical column layout.
+
 Videos tab: carousel pauses auto-advance; clicking thumbnail opens a Drive `/preview` iframe in the lightbox (lazy-loaded, zero cost until clicked — facade pattern).
 
 Each card has a unique **timeline dot colour** (dot `::before`, hover border, date label all match):
@@ -301,7 +307,7 @@ Each card has a unique **timeline dot colour** (dot `::before`, hover border, da
 | 2 | Aug 2023 – Feb 2024 | Mechanical Design Engineer | ARTPARK · Chirathe Robotics (Strider Robotics) · Bengaluru | Photos (2 imgs) + CAD (3 imgs) |
 | 3 | Dec 2022 – Jul 2023 | Research Intern | Robert Bosch Centre for Cyber-Physical Systems · IISc · Bengaluru | Photos (2 imgs) + CAD (3 imgs) |
 | 4 | May 2022 – Dec 2022 | Research Intern | Curiouz TechLabs · Udupi | Photos (1 img) + CAD (1 img) |
-| 5 | Jul 2021 – Sep 2023 | Mechanical Head | Mars Rover Manipal · MIT Udupi | YouTube embed only (`LtKkaTUwOCQ`, starts 38s) — no tabs |
+| 5 | Nov 2020 – Sep 2023 | Mechanical Head (via stepper: Trainee → Engineer → Mechanical Head) | Mars Rover Manipal · MIT Udupi | YouTube embed only (`LtKkaTUwOCQ`, starts 38s) — no tabs |
 
 KinesthetIQ Videos tab Drive IDs:
 - `14Xfo7DfvyLyX7kA6u928vp3B0vChee10` — Autonomous Cloth Folding
@@ -429,6 +435,7 @@ Applied across the site using nth-child selectors — no HTML classes needed:
 ---
 
 ## Outstanding / Next Steps
+- [ ] Hero role text — 3-sentence version live; review once more after a few days
 - [ ] Blog — 3 draft posts exist; remove `data-draft="true"` to publish
 - [ ] SolidWorks animation — export as video, integrate in hero
 - [ ] Create landscape `1200×630px` OG image — update og:image, dimensions, twitter:image, switch twitter:card to `summary_large_image`
@@ -438,6 +445,11 @@ Applied across the site using nth-child selectors — no HTML classes needed:
 - [ ] `images/landing-page-photo.webp` — no longer used, can be deleted from the repo to reduce size
 
 ## Completed
+- [x] **Hero role text rewritten** — 3 sentences: field-ready hardware, first-principles build (actuators/grippers/teleoperation rigs), every design decision toward robots that work anywhere (2026-07-02)
+- [x] **Mars Rover career stepper** — `.career-track` replaces single `.xp-role`; horizontal dots+lines mini-timeline; Trainee/Engineer/Mechanical Head with date ranges; active dot glows orange; line between steps 2–3 fades grey→orange; vertical stack on mobile ≤480px (2026-07-02)
+- [x] **Mars Rover card updated** — date Nov 2020–Sep 2023 (full tenure); 4 specific bullets: all-terrain wheel + planetary gearbox, 6-DOF arm + soil module, design cycles, 200+ applicant recruitment (2026-07-02)
+- [x] **Card meta text scaled up** — xp-date .62→.78rem, xp-role 1.05→1.20rem, xp-co .70→.78rem; proportional responsive overrides at 768px and 480px (2026-07-02)
+- [x] **Experience card layout** — grid 2fr 3fr → 3fr 2fr (wider text, shorter media panel with no aspect-ratio distortion); align-items:start; column divider via ::before on .xp-body at left:60%; border-right removed from .xp-pts (2026-07-02)
 - [x] **Mobile optimisation pass 2** — nav-links gap stepped (2.5rem→1.5rem@900px→1rem@768px); 640px block moved before 480px in cascade; xp-tab text-overflow:ellipsis; video play icon 2rem on mobile; landscape hero collapses to auto height; lightbox mobile adjustments (safe-area-inset, larger tap targets, swipe nav, frame sizing); scroll-to-top respects safe-area-inset-bottom; mobile-menu max-height (100dvh-64px) + overflow-y:auto; hamburger: outside-click close + body scroll lock + resize close (2026-07-02)
 - [x] **Mobile hamburger menu** — `.hamburger` button in `.nav-actions` (outside `.nav-links`) + `.mobile-menu` slide-down panel; visible ≤640px; includes nav anchors + Blog/Field Notes button; ESC + link-click close; active section synced with scroll (2026-07-02)
 - [x] **Scroll-to-top button** — `.scroll-top` fixed button (bottom-right), appears after 400px scroll, glass style with cyan border/glow (2026-07-02)
