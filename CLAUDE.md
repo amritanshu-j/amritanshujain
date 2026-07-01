@@ -445,6 +445,7 @@ Applied across the site using nth-child selectors — no HTML classes needed:
 - [ ] `images/landing-page-photo.webp` — no longer used, can be deleted from the repo to reduce size
 
 ## Completed
+- [x] **Accessibility polish** — `prefers-reduced-motion:reduce` block (near-zero durations so `...forwards` fills still resolve; forces `.reveal` visible; disables smooth scroll) + global `:focus-visible` cyan focus ring for keyboard users. Both at end of `<style>`. Note: JS smooth-scrolls (scroll-top button) and canvas/interval animations (gearbox loader, carousel auto-advance) are not gated — CSS-only scope by design (2026-07-02)
 - [x] **Hero role text rewritten** — 3 sentences: field-ready hardware, first-principles build (actuators/grippers/teleoperation rigs), every design decision toward robots that work anywhere (2026-07-02)
 - [x] **Mars Rover career stepper** — `.career-track` replaces single `.xp-role`; horizontal dots+lines mini-timeline; Trainee/Engineer/Mechanical Head with date ranges; active dot glows orange; line between steps 2–3 fades grey→orange; vertical stack on mobile ≤480px (2026-07-02)
 - [x] **Mars Rover card updated** — date Nov 2020–Sep 2023 (full tenure); 4 specific bullets: all-terrain wheel + planetary gearbox, 6-DOF arm + soil module, design cycles, 200+ applicant recruitment (2026-07-02)
