@@ -97,6 +97,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com"/>
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net"/>
+  <link rel="dns-prefetch" href="https://drive.google.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet"/>
   <style>
     /* ── Design tokens: all colours live here — edit once, applies everywhere ── */
@@ -153,7 +154,7 @@
     .nav-links a:hover{color:var(--white);background:rgba(255,255,255,0.04);backdrop-filter:blur(14px) saturate(1.3);-webkit-backdrop-filter:blur(14px) saturate(1.3);box-shadow:0 4px 16px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.1);}
     .nav-links a:hover::before,.nav-links a:hover::after{opacity:1;}
     /* Active nav link underline */
-    .nav-links a.active{color:var(--accent);}
+    .nav-links a.active{color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent);}
     .nav-links a.active::after{transform:scaleX(1);}
 
     /* ── Hero section ── */
@@ -285,7 +286,7 @@
     .sblk-ttl{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--line);}
     .stags{display:flex;flex-wrap:wrap;gap:.5rem;}
     .stag{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--text);background:rgba(255,255,255,.04);border:1px solid var(--line);padding:.3rem .75rem;border-radius:2px;transition:border-color .2s ease-out,color .2s ease-out;}
-    .stag:hover{border-color:var(--steel);color:var(--white);}
+    .stag:hover{border-color:var(--steel);color:var(--white);box-shadow:0 0 10px rgba(143,180,204,.12);}
     .sgrid .sblk:nth-child(2) .sblk-ttl{color:var(--accent2);}
     .sgrid .sblk:nth-child(2):hover{border-color:rgba(255,107,53,.35);box-shadow:0 6px 24px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,107,53,.08);}
     .sgrid .sblk:nth-child(3) .sblk-ttl{color:var(--accent3);}
@@ -367,6 +368,7 @@
     /* ── Responsive: tablet ── */
     @media(max-width:900px){
       nav{padding:0 1.5rem;}
+      .nav-links{gap:1.5rem;}
       section{padding:5rem 1.5rem;}
       #hero{padding:0 1.5rem;}
       #experience,#skills,#about,#contact{clip-path:none;margin-top:0;padding-top:5rem;}
@@ -410,11 +412,17 @@
       section{padding:4rem 1.25rem;}
       #experience,#skills,#about,#contact{padding-top:4rem;}
 
+      /* Nav: tighter at tablet-mobile range */
+      .nav-links{gap:1rem;}
+      .nav-links a{font-size:.65rem;padding:4px 8px;}
+      .blog-toggle,.urdf-link{font-size:.65rem;padding:4px 10px;}
+
       /* Experience cards */
       .xp-head{padding:1.25rem 1.25rem 0;}
       .xp-role{font-size:.95rem;}
       .xp-pts{padding:1rem 1.25rem;}
-      .xp-tab{font-size:.6rem;letter-spacing:.08em;padding:.75rem .6rem;}
+      .xp-tab{font-size:.6rem;letter-spacing:.08em;padding:.75rem .6rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+      .xp-viewer[data-media-type="video"]::before{font-size:2rem;}
 
       /* Skills */
       .sgrid{grid-template-columns:1fr;}
@@ -429,9 +437,18 @@
       .ci{padding:0;}
     }
 
+    @media(max-width:640px){
+      .nav-links{display:none;}
+      .hamburger{display:flex;}
+      .mobile-menu{display:block;max-height:calc(100dvh - 64px);overflow-y:auto;}
+      .blog-panel{width:100vw;}.blog-panel-head{padding:1.5rem 1.25rem 1rem;}.blog-list{padding:1rem 1.25rem 2rem;}
+    }
+
     /* ── Responsive: small phones ── */
     @media(max-width:480px){
       nav{padding:0 1rem;}
+      .nav-actions{gap:.35rem;}
+      .hamburger{padding:6px 8px;}
       .blog-toggle{font-size:.65rem;padding:4px 10px;letter-spacing:.1em;}
       .theme-toggle{padding:4px 7px;}
 
@@ -466,9 +483,24 @@
       .fl,.fr{font-size:.62rem;letter-spacing:.08em;}
     }
 
-    @media(max-width:640px){
-      .nav-links{display:none;}
-      .blog-panel{width:100vw;}.blog-panel-head{padding:1.5rem 1.25rem 1rem;}.blog-list{padding:1rem 1.25rem 2rem;}
+    /* ── Lightbox adjustments on mobile ── */
+    @media(max-width:768px){
+      .lb-close{top:max(1.25rem,env(safe-area-inset-top,0px));right:1rem;width:44px;height:44px;font-size:1rem;}
+      .lb-nav{width:48px;height:48px;}
+      .lb-nav.prev{left:.5rem;}
+      .lb-nav.next{right:.5rem;}
+      .lb-cap{bottom:max(1.25rem,env(safe-area-inset-bottom,0px));font-size:.65rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80vw;}
+      .lb-img{max-width:98vw;max-height:80vh;}
+      .lb-frame{width:98vw;height:55vw;max-height:72vh;}
+    }
+
+    /* ── Landscape mobile ── */
+    @media(max-width:768px) and (orientation:landscape){
+      #hero{min-height:auto;padding:4.5rem 1.5rem 2rem;}
+      .hero-name{font-size:clamp(2.2rem,5.5vw,3rem);}
+      .hero-role{max-width:65%;font-size:.82rem;}
+      .hero-cta{margin-top:1rem;}
+      .hero-employer{margin-top:1rem;}
     }
 
     /* ── Light mode token overrides ── */
@@ -497,6 +529,34 @@
     .icon-sun{display:none;}
     html[data-theme="light"] .icon-moon{display:none;}
     html[data-theme="light"] .icon-sun{display:block;}
+
+    /* ── Nav actions wrapper (theme toggle + hamburger) ── */
+    .nav-actions{display:flex;align-items:center;gap:.5rem;}
+
+    /* ── 4th contact link (GitHub) ── */
+    .clinks a:nth-child(4):hover{color:var(--steel);border-color:rgba(143,180,204,.45);background:rgba(143,180,204,.05);box-shadow:0 12px 32px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.09),inset 0 0 0 1px rgba(143,180,204,.05);}
+
+    /* ── Mobile hamburger button ── */
+    .hamburger{display:none;flex-direction:column;gap:5px;background:none;border:1px solid var(--line);border-radius:8px;padding:8px 10px;cursor:pointer;transition:border-color .25s,box-shadow .25s;}
+    .hamburger:hover{border-color:var(--accent);box-shadow:0 0 14px rgba(0,212,255,.1);}
+    .hamburger span{display:block;width:18px;height:2px;background:var(--text-dim);border-radius:1px;transition:transform .3s cubic-bezier(0.22,1,0.36,1),opacity .25s,background .25s;}
+    .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);background:var(--accent);}
+    .hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0);}
+    .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);background:var(--accent);}
+
+    /* ── Mobile slide-down menu ── */
+    .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;z-index:99;background:var(--bg2);border-bottom:1px solid var(--line);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);padding:.5rem 1.25rem 1rem;transform:translateY(-110%);transition:transform .35s cubic-bezier(0.22,1,0.36,1);}
+    .mobile-menu.open{transform:translateY(0);}
+    .mobile-menu a{display:block;padding:.7rem 0;font-family:'DM Mono',monospace;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);text-decoration:none;border-bottom:1px solid var(--line);transition:color .2s ease-out;}
+    .mobile-menu a:last-of-type{border-bottom:none;}
+    .mobile-menu a:hover,.mobile-menu a.active{color:var(--accent);}
+    .mobile-blog-btn{display:block;width:100%;text-align:left;background:none;border:none;border-top:1px solid var(--line);padding:.7rem 0;margin-top:.25rem;font-family:'DM Mono',monospace;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);cursor:pointer;transition:color .2s ease-out;}
+    .mobile-blog-btn:hover{color:var(--white);}
+
+    /* ── Scroll-to-top button ── */
+    .scroll-top{position:fixed;bottom:calc(2rem + env(safe-area-inset-bottom,0px));right:1.75rem;z-index:90;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.45);backdrop-filter:blur(12px);border:1px solid rgba(0,212,255,.25);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .35s,transform .35s,background .2s,box-shadow .2s;transform:translateY(10px);}
+    .scroll-top.visible{opacity:1;pointer-events:all;transform:translateY(0);}
+    .scroll-top:hover{background:rgba(0,212,255,.12);box-shadow:0 0 22px rgba(0,212,255,.22);}
 
     /* ── Blog toggle button in nav ── */
     .blog-toggle{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.3);padding:5px 14px;border-radius:8px;cursor:pointer;transition:all .25s;white-space:nowrap;}
@@ -568,17 +628,28 @@
     <a href="#skills" data-section="skills">Skills</a>
     <a href="#about" data-section="about">About</a>
     <a href="#contact" data-section="contact">Contact</a>
-    <!-- URDF Viewer — standalone tool page -->
     <a href="/urdf-viewer" class="urdf-link">URDF Viewer</a>
-    <!-- Blog toggle — opens overlay, not part of scroll nav -->
     <button class="blog-toggle" id="blogToggle" aria-label="Open blog">Blog</button>
-    <!-- Theme toggle -->
+  </div>
+  <div class="nav-actions">
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
       <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
     </button>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+  <a href="#experience" data-section="experience">Experience</a>
+  <a href="#skills" data-section="skills">Skills</a>
+  <a href="#about" data-section="about">About</a>
+  <a href="#contact" data-section="contact">Contact</a>
+  <a href="/urdf-viewer">URDF Viewer</a>
+  <button class="mobile-blog-btn" id="mobileBlogToggle">Blog / Field Notes</button>
+</div>
 
 <!-- HERO -->
 <section id="hero">
@@ -999,9 +1070,14 @@
       <a href="tel:+919849565839" class="clink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.64A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>+91 98495 65839</a>
       <a href="mailto:amritj2002@gmail.com" class="clink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>amritj2002@gmail.com</a>
       <a href="https://www.linkedin.com/in/amritanshujain/" target="_blank" rel="noopener noreferrer" class="clink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+      <a href="https://github.com/amritanshu-j" target="_blank" rel="noopener noreferrer" class="clink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>GitHub</a>
     </div>
   </div>
 </section>
+
+<button class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
 
 <footer>
   <div class="fl">© 2026 AMRITANSHU JAIN</div>
@@ -1296,6 +1372,14 @@ document.querySelectorAll('.xp-card').forEach(card=>{
     if(arr.length)openLB(arr[cur].src,arr[cur].cap,arr,arr[cur].type);
   });
 
+  // Touch swipe for carousel
+  let _swipeX=0;
+  viewer.addEventListener('touchstart',e=>{_swipeX=e.touches[0].clientX;},{passive:true});
+  viewer.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-_swipeX;
+    if(Math.abs(dx)>40){if(dx<0)go(cur+1);else go(cur-1);if(activeTab!=='videos')startTimer();}
+  },{passive:true});
+
   // Init
   buildProgress(tabImgs());
   if(capEl)capEl.textContent=tabImgs()[0]?.dataset.cap||'';
@@ -1314,6 +1398,13 @@ document.getElementById('lbPrev').addEventListener('click',()=>navLB(-1));
 document.getElementById('lbNext').addEventListener('click',()=>navLB(1));
 lb.addEventListener('click',e=>{if(e.target===lb)closeLB();});
 document.addEventListener('keydown',e=>{if(!lb.classList.contains('active'))return;if(e.key==='Escape')closeLB();if(e.key==='ArrowLeft')navLB(-1);if(e.key==='ArrowRight')navLB(1);});
+// Touch swipe for lightbox
+let _lbTx=0;
+lb.addEventListener('touchstart',e=>{_lbTx=e.touches[0].clientX;},{passive:true});
+lb.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-_lbTx;
+  if(Math.abs(dx)>55)navLB(dx<0?1:-1);
+},{passive:true});
 
 // ── Awards: click to open in lightbox ──
 document.querySelectorAll(".aitem[data-src]").forEach(item=>{
@@ -1355,6 +1446,73 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
     if(isLight){html.removeAttribute('data-theme');localStorage.setItem('theme','dark');}
     else{html.setAttribute('data-theme','light');localStorage.setItem('theme','light');}
   });
+})();
+
+// ── Mobile hamburger menu ──
+(function(){
+  const hamburger=document.getElementById('hamburger');
+  const mobileMenu=document.getElementById('mobileMenu');
+  const mobileBlogToggle=document.getElementById('mobileBlogToggle');
+  const mobileNavLinks=mobileMenu.querySelectorAll('a[data-section]');
+
+  function openMenu(){
+    hamburger.classList.add('open');
+    hamburger.setAttribute('aria-expanded','true');
+    mobileMenu.classList.add('open');
+    mobileMenu.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+  }
+  function closeMenu(){
+    hamburger.classList.remove('open');
+    hamburger.setAttribute('aria-expanded','false');
+    mobileMenu.classList.remove('open');
+    mobileMenu.setAttribute('aria-hidden','true');
+    document.body.style.overflow='';
+  }
+
+  hamburger.addEventListener('click',()=>mobileMenu.classList.contains('open')?closeMenu():openMenu());
+
+  // Anchor clicks in mobile menu: smooth scroll then close
+  mobileMenu.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click',()=>closeMenu());
+  });
+
+  // Blog from mobile menu
+  mobileBlogToggle.addEventListener('click',()=>{closeMenu();setTimeout(()=>openBlog(),50);});
+
+  // ESC closes
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&mobileMenu.classList.contains('open'))closeMenu();
+  });
+
+  // Tap outside menu closes it
+  document.addEventListener('click',e=>{
+    if(mobileMenu.classList.contains('open')&&!mobileMenu.contains(e.target)&&!hamburger.contains(e.target))closeMenu();
+  });
+
+  // Resize to desktop closes menu
+  window.addEventListener('resize',()=>{
+    if(window.innerWidth>640&&mobileMenu.classList.contains('open'))closeMenu();
+  },{passive:true});
+
+  // Keep mobile menu active state in sync with scroll
+  function updateMobileNav(){
+    const trigger=window.scrollY+window.innerHeight/3;
+    let active=null;
+    document.querySelectorAll('section[id]').forEach(s=>{if(s.offsetTop<=trigger)active=s.id;});
+    mobileNavLinks.forEach(a=>a.classList.toggle('active',a.dataset.section===active));
+  }
+  window.addEventListener('scroll',updateMobileNav,{passive:true});
+  updateMobileNav();
+})();
+
+// ── Scroll-to-top button ──
+(function(){
+  const btn=document.getElementById('scrollTop');
+  window.addEventListener('scroll',()=>{
+    btn.classList.toggle('visible',window.scrollY>400);
+  },{passive:true});
+  btn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
 })();
 </script>
 
@@ -1595,6 +1753,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&blogOverlay.classLi
       const sl=document.createElement('input');sl.type='range';sl.className='urdf-slider';
       sl.min=j.lower;sl.max=j.upper;sl.step=0.001;sl.value=0;
       sl.addEventListener('input',()=>{
+        introAnim=null;
         const v=parseFloat(sl.value);
         val.textContent=v.toFixed(2);
         if(j.type==='prismatic'){

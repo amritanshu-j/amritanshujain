@@ -82,12 +82,12 @@ Three-accent system: cyan (primary), orange (secondary), violet (`--accent3`, ad
 
 ## Site Sections (scroll order)
 - **Loader** — planetary gearbox splash screen (canvas `#gearCanvas` 340×340, 8:1 reduction animation, hides **2200ms** after `window.load`, cancels RAF). `.loader-glass` frosted card wraps the name — see Loader section below.
-- **Nav** — fixed, liquid glass, logo animates to full name on scroll, Blog slide-in panel
+- **Nav** — fixed, liquid glass, logo animates to full name on scroll, Blog slide-in panel. Structure: `.nav-logo` (left) + `.nav-links` (desktop links + blog toggle) + `.nav-actions` (theme toggle + hamburger — always visible). Mobile hamburger (≤640px) opens `.mobile-menu` slide-down panel.
 - **Hero** — tagline, name (Bebas Neue), role, CTAs (View Work / Get In Touch / Resume ↗), KinesthetIQ logo, Three.js URDF viewer
 - **Experience (01)** — `.xp-card` per role, Photos/CAD/Videos tabs, carousel with progress bar + counter, lightbox (images + Drive video iframes)
 - **Skills (02)** — 4 blocks, each with a different accent colour title (cyan/orange/violet/steel)
 - **About (03)** — identity card (photo + bio) + credentials row (CSWP + B.Tech) + awards list. See About section below.
-- **Contact** — phone (cyan hover), email (orange hover), LinkedIn (violet hover)
+- **Contact** — phone (cyan hover), email (orange hover), LinkedIn (violet hover), GitHub (steel hover)
 - **Footer** — `© 2026 AMRITANSHU JAIN` (left) · `BENGALURU, KARNATAKA · INDIA` (right)
 
 ---
@@ -408,7 +408,7 @@ Applied across the site using nth-child selectors — no HTML classes needed:
 - `#experience`: default (cyan via var(--line)) | `#skills`: violet | `#about`: orange | `#contact`: default
 
 **Contact link hovers:**
-- nth-child(1) phone: cyan | nth-child(2) email: orange | nth-child(3) LinkedIn: violet
+- nth-child(1) phone: cyan | nth-child(2) email: orange | nth-child(3) LinkedIn: violet | nth-child(4) GitHub: steel
 
 ### Frosted glass treatments
 - **XP card hover**: `box-shadow: 0 14px 40px rgba(0,0,0,.4), inset 0 1px 0 <accent-rgba>` — tinted to match card's dot colour
@@ -438,6 +438,17 @@ Applied across the site using nth-child selectors — no HTML classes needed:
 - [ ] `images/landing-page-photo.webp` — no longer used, can be deleted from the repo to reduce size
 
 ## Completed
+- [x] **Mobile optimisation pass 2** — nav-links gap stepped (2.5rem→1.5rem@900px→1rem@768px); 640px block moved before 480px in cascade; xp-tab text-overflow:ellipsis; video play icon 2rem on mobile; landscape hero collapses to auto height; lightbox mobile adjustments (safe-area-inset, larger tap targets, swipe nav, frame sizing); scroll-to-top respects safe-area-inset-bottom; mobile-menu max-height (100dvh-64px) + overflow-y:auto; hamburger: outside-click close + body scroll lock + resize close (2026-07-02)
+- [x] **Mobile hamburger menu** — `.hamburger` button in `.nav-actions` (outside `.nav-links`) + `.mobile-menu` slide-down panel; visible ≤640px; includes nav anchors + Blog/Field Notes button; ESC + link-click close; active section synced with scroll (2026-07-02)
+- [x] **Scroll-to-top button** — `.scroll-top` fixed button (bottom-right), appears after 400px scroll, glass style with cyan border/glow (2026-07-02)
+- [x] **Touch/swipe carousel** — `touchstart`/`touchend` handlers on `.xp-viewer`; 40px threshold; respects video tab (no auto-advance after swipe in video tab) (2026-07-02)
+- [x] **IntroAnim cancel on slider touch** — `introAnim=null` added in slider `input` handler; prevents intro animation from overriding manual joint positions (2026-07-02)
+- [x] **GitHub link in contact** — 4th `.clink` pointing to `https://github.com/amritanshu-j`; steel hover colour (nth-child(4) rule) (2026-07-02)
+- [x] **Nav restructure** — theme toggle moved out of `.nav-links` into new `.nav-actions` wrapper; always visible including on mobile (2026-07-02)
+- [x] **Active nav underline** — `inset 0 -2px 0 var(--accent)` box-shadow on `.nav-links a.active` (2026-07-02)
+- [x] **Skill tag hover glow** — `box-shadow:0 0 10px rgba(143,180,204,.12)` added to `.stag:hover` (2026-07-02)
+- [x] **DNS prefetch for drive.google.com** — added to `<head>`; all Drive thumbnail images now prefetch DNS (2026-07-02)
+- [x] **Sitemap lastmod** — updated to `2026-07-02` for both URLs (2026-07-02)
 - [x] **About section restructured** — identity card (photo sidebar + bio) + credentials row + full-width awards list. Bio rewritten with specific language: KinesthetIQ/LBMs/ARTPARK/IISc. (2026-06-30)
 - [x] **Frosted glass system** — loader glass card, XP card hover highlights, skill block highlights, contact link glass tiles, award item highlights, sec-num--label chip (2026-06-30)
 - [x] **Animation refinement** — `cubic-bezier(0.22,1,0.36,1)` entrances, `ease-out` hovers, explicit transitions, scroll reveal scale+translate, tighter stagger (2026-06-30)
@@ -449,9 +460,9 @@ Applied across the site using nth-child selectors — no HTML classes needed:
 - [x] **URDF viewer fixed** — both hero and standalone viewer now use self-contained URDF parser. Fixed `||` → `??` for 0-value joint limits, `.trim()` on joint names (2026-06-27)
 - [x] **Favicon PNGs created** — `favicon-192.png`, `favicon-48.png`, `favicon-32.png` (2026-06-27)
 - [x] SEO — meta tags, OG, Twitter/X Card, JSON-LD Person + WebSite schemas (2026-06-26)
-- [x] robots.txt + sitemap (2 URLs, lastmod 2026-06-27) (2026-06-27)
+- [x] robots.txt + sitemap (2 URLs, lastmod 2026-07-02) (2026-06-27)
 - [x] Dark/light mode toggle with localStorage persistence (2026-06-26)
-- [x] Mobile optimisation — responsive breakpoints 768px + 480px, URDF as background (2026-06-27)
+- [x] Mobile optimisation — responsive breakpoints 900px / 768px / 640px / 480px + landscape; URDF as background (2026-06-27)
 - [x] Standalone URDF Viewer — `urdf-viewer/index.html`, drag-drop, full controls, joint sliders, animate mode (2026-06-27)
 - [x] Resume button in hero CTAs — Drive PDF id: 1zgP4bzyl2fhCIfZvKDf5tKxqWeEsjUkZ (2026-06-27)
 - [x] Mars Rover card — YouTube embed (`LtKkaTUwOCQ`, starts 38s) (2026-06-27)
