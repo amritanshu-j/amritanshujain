@@ -558,13 +558,13 @@
     .career-step{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;}
     .career-step:not(:last-child)::after{content:'';position:absolute;top:3px;left:50%;width:100%;height:1px;background:rgba(255,255,255,.07);z-index:0;}
     .career-step:nth-child(2)::after{background:linear-gradient(90deg,rgba(255,255,255,.07),rgba(255,107,53,.28));}
-    .career-dot{width:6px;height:6px;border-radius:50%;background:var(--steel);opacity:.22;position:relative;z-index:1;flex-shrink:0;margin-bottom:.48rem;transition:box-shadow .3s ease,opacity .3s ease;}
+    .career-dot{width:6px;height:6px;border-radius:50%;background:var(--steel);opacity:.4;position:relative;z-index:1;flex-shrink:0;margin-bottom:.48rem;transition:box-shadow .3s ease,opacity .3s ease;}
     .career-step.active .career-dot{background:var(--accent2);opacity:1;box-shadow:0 0 0 3px rgba(255,107,53,.13),0 0 10px rgba(255,107,53,.5);}
     .career-info{display:flex;flex-direction:column;align-items:center;gap:.1rem;}
-    .career-role{font-family:'DM Mono',monospace;font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);opacity:.42;text-align:center;white-space:nowrap;}
+    .career-role{font-family:'DM Mono',monospace;font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);opacity:.7;text-align:center;white-space:nowrap;}
     .career-step.active .career-role{color:var(--accent2);opacity:1;}
-    .career-dates{font-family:'DM Mono',monospace;font-size:.45rem;color:var(--text-dim);opacity:.3;text-align:center;white-space:nowrap;}
-    .career-step.active .career-dates{opacity:.52;}
+    .career-dates{font-family:'DM Mono',monospace;font-size:.45rem;color:var(--text-dim);opacity:.52;text-align:center;white-space:nowrap;}
+    .career-step.active .career-dates{opacity:.75;}
     @media(max-width:480px){
       .career-track{flex-direction:column;align-items:flex-start;gap:.32rem;}
       .career-step{flex-direction:row;align-items:flex-start;gap:.55rem;flex:none;width:100%;}
