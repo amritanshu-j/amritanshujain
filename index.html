@@ -242,9 +242,9 @@
     /* Top meta row */
     .xp-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1.5rem 1.5rem 0;}
     .xp-meta{flex:1;}
-    .xp-date{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--accent);letter-spacing:.16em;text-transform:uppercase;margin-bottom:.3rem;}
-    .xp-role{font-size:1.05rem;font-weight:600;color:var(--white);margin-bottom:.2rem;}
-    .xp-co{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--steel);}
+    .xp-date{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--accent);letter-spacing:.16em;text-transform:uppercase;margin-bottom:.35rem;}
+    .xp-role{font-size:1.2rem;font-weight:600;color:var(--white);margin-bottom:.25rem;}
+    .xp-co{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--steel);}
     /* Two-column body: bullet points left, media right */
     .xp-body{display:grid;grid-template-columns:2fr 3fr;gap:0;align-items:start;position:relative;}
     .xp-body::before{content:'';position:absolute;left:40%;top:0;bottom:0;width:1px;background:var(--line);pointer-events:none;}
@@ -258,7 +258,7 @@
     .xp-tab.active{color:var(--accent);background:rgba(0,212,255,.05);border-bottom:2px solid var(--accent);margin-bottom:-1px;}
     .xp-tab:hover:not(.active){color:var(--text);}
     /* Carousel viewer */
-    .xp-viewer{position:relative;width:100%;aspect-ratio:16/9;background:#060a0f;overflow:hidden;}
+    .xp-viewer{position:relative;width:100%;aspect-ratio:16/9;max-height:240px;background:#060a0f;overflow:hidden;}
     .xp-viewer img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .4s ease-out;}
     .xp-viewer img.active{opacity:1;}
     .xp-viewer::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(6,10,15,.65) 0%,transparent 55%);pointer-events:none;z-index:1;}
@@ -421,7 +421,7 @@
 
       /* Experience cards */
       .xp-head{padding:1.25rem 1.25rem 0;}
-      .xp-role{font-size:.95rem;}
+      .xp-role{font-size:1.08rem;}
       .xp-pts{padding:1rem 1.25rem;}
       .xp-tab{font-size:.6rem;letter-spacing:.08em;padding:.75rem .6rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
       .xp-viewer[data-media-type="video"]::before{font-size:2rem;}
@@ -469,8 +469,8 @@
       /* Experience */
       .xp-list{padding-left:.75rem;}
       .xp-card::before{left:-.75rem;top:1.3rem;}
-      .xp-role{font-size:.88rem;}
-      .xp-co{font-size:.65rem;}
+      .xp-role{font-size:.98rem;}
+      .xp-co{font-size:.72rem;}
       .xp-tab{font-size:.58rem;letter-spacing:.05em;padding:.65rem .4rem;}
 
       /* Awards */
