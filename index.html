@@ -553,6 +553,28 @@
     .mobile-blog-btn{display:block;width:100%;text-align:left;background:none;border:none;border-top:1px solid var(--line);padding:.7rem 0;margin-top:.25rem;font-family:'DM Mono',monospace;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);cursor:pointer;transition:color .2s ease-out;}
     .mobile-blog-btn:hover{color:var(--white);}
 
+    /* ── Career progression strip (Mars Rover) ── */
+    .career-track{display:flex;align-items:flex-start;gap:0;margin-top:.75rem;}
+    .career-step{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;}
+    .career-step:not(:last-child)::after{content:'';position:absolute;top:3px;left:50%;width:100%;height:1px;background:rgba(255,255,255,.07);z-index:0;}
+    .career-step:nth-child(2)::after{background:linear-gradient(90deg,rgba(255,255,255,.07),rgba(255,107,53,.28));}
+    .career-dot{width:6px;height:6px;border-radius:50%;background:var(--steel);opacity:.22;position:relative;z-index:1;flex-shrink:0;margin-bottom:.48rem;transition:box-shadow .3s ease,opacity .3s ease;}
+    .career-step.active .career-dot{background:var(--accent2);opacity:1;box-shadow:0 0 0 3px rgba(255,107,53,.13),0 0 10px rgba(255,107,53,.5);}
+    .career-info{display:flex;flex-direction:column;align-items:center;gap:.1rem;}
+    .career-role{font-family:'DM Mono',monospace;font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);opacity:.42;text-align:center;white-space:nowrap;}
+    .career-step.active .career-role{color:var(--accent2);opacity:1;}
+    .career-dates{font-family:'DM Mono',monospace;font-size:.45rem;color:var(--text-dim);opacity:.3;text-align:center;white-space:nowrap;}
+    .career-step.active .career-dates{opacity:.52;}
+    @media(max-width:480px){
+      .career-track{flex-direction:column;align-items:flex-start;gap:.32rem;}
+      .career-step{flex-direction:row;align-items:flex-start;gap:.55rem;flex:none;width:100%;}
+      .career-step:not(:last-child)::after{top:6px;left:2.5px;width:1px;height:calc(100% + .32rem);}
+      .career-step:nth-child(2)::after{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,107,53,.28));}
+      .career-dot{margin-bottom:0;margin-top:.05rem;}
+      .career-info{align-items:flex-start;}
+      .career-role,.career-dates{text-align:left;}
+    }
+
     /* ── Scroll-to-top button ── */
     .scroll-top{position:fixed;bottom:calc(2rem + env(safe-area-inset-bottom,0px));right:1.75rem;z-index:90;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.45);backdrop-filter:blur(12px);border:1px solid rgba(0,212,255,.25);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .35s,transform .35s,background .2s,box-shadow .2s;transform:translateY(10px);}
     .scroll-top.visible{opacity:1;pointer-events:all;transform:translateY(0);}
@@ -973,16 +995,39 @@
     <div class="xp-card reveal">
       <div class="xp-head">
         <div class="xp-meta">
-          <div class="xp-date">Jul 2021 — Sep 2023</div>
-          <div class="xp-role">Mechanical Head</div>
+          <div class="xp-date">Nov 2020 — Sep 2023</div>
+          <div class="career-track">
+            <div class="career-step">
+              <div class="career-dot"></div>
+              <div class="career-info">
+                <div class="career-role">Trainee</div>
+                <div class="career-dates">Nov '20 – Jul '21</div>
+              </div>
+            </div>
+            <div class="career-step">
+              <div class="career-dot"></div>
+              <div class="career-info">
+                <div class="career-role">Engineer</div>
+                <div class="career-dates">Jul '21 – Jul '22</div>
+              </div>
+            </div>
+            <div class="career-step active">
+              <div class="career-dot"></div>
+              <div class="career-info">
+                <div class="career-role">Mechanical Head</div>
+                <div class="career-dates">Jul '22 – Sep '23</div>
+              </div>
+            </div>
+          </div>
           <div class="xp-co">Mars Rover Manipal · MIT Udupi</div>
         </div>
       </div>
       <div class="xp-body">
         <ul class="xp-pts">
-          <li>Led 10 engineers across Wheel, Suspension, Soil Module, and 6-DOF Arm subsystems</li>
-          <li>Managed budget, fundraising, recruitment, training and competition logistics</li>
-          <li>Determined design and manufacturing cycle for annual competition readiness</li>
+          <li>Designed a 3D-printed all-terrain wheel with a custom planetary gearbox and floating bearing assembly to reduce motor loads</li>
+          <li>Developed a 6-DOF robotic manipulator and a purpose-built in-situ soil collection and analysis module to competition spec</li>
+          <li>Defined annual design and manufacturing cycles to keep all subsystems tested and competition-ready</li>
+          <li>Managed team budget, fundraising, and a 200+ applicant recruitment and training programme</li>
         </ul>
         <div class="xp-media">
           <div class="xp-viewer" style="padding:0;">
